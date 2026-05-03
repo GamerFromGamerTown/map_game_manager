@@ -1,0 +1,536 @@
+import { RESOURCE_TYPES, RulesConfig } from "../types";
+
+export const defaultRules: RulesConfig = {
+  resources: [...RESOURCE_TYPES],
+  settings: {
+    auto_downgrade_settlements_on_missing_upkeep: false,
+    partial_factory_production: false,
+    partial_trade_transfer: false,
+    apply_capital_bonus: true,
+    base_capital_gold_per_turn: 2000,
+    puppet_rebellion_immunity_turns: 4,
+    sea_transport_cost_per_unit_resource: 500,
+    base_manpower_cap: 40000,
+    base_manpower_gain_per_turn: 2000,
+    reserve_cap_multiplier: 2,
+    necessities_manpower_cap_divisor: 50000,
+    necessities_met_stability_per_turn: 2,
+    necessities_missing_stability_per_turn: -5
+  },
+  settlementTiers: {
+    village: {
+      creation_gold_cost: 1000,
+      creation_stability_cost: 5,
+      gold_per_turn: 500,
+      capital_extra_gold_per_turn: 0,
+      manpower_cap_bonus: 2000,
+      manpower_gain_per_turn: 1000,
+      tier_number: 1,
+      tier_multiplier: 1,
+      upkeep: {}
+    },
+    city: {
+      gold_per_turn: 3000,
+      capital_extra_gold_per_turn: 3000,
+      manpower_cap_bonus: 20000,
+      manpower_gain_per_turn: 5000,
+      tier_number: 2,
+      tier_multiplier: 2,
+      upkeep: {
+        A: { food: 5, aluminium_parts: 1 },
+        B: { food: 5, iron_parts: 2 }
+      }
+    },
+    large_city: {
+      gold_per_turn: 7000,
+      capital_extra_gold_per_turn: 6000,
+      manpower_cap_bonus: 50000,
+      manpower_gain_per_turn: 15000,
+      tier_number: 3,
+      tier_multiplier: 3,
+      upkeep: {
+        A: { food: 10, plank: 3, aluminium_parts: 2 },
+        B: { food: 10, plank: 3, iron_parts: 4 }
+      }
+    },
+    metropole: {
+      gold_per_turn: 16000,
+      capital_extra_gold_per_turn: 10000,
+      manpower_cap_bonus: 200000,
+      manpower_gain_per_turn: 30000,
+      tier_number: 4,
+      tier_multiplier: 4,
+      upkeep: {
+        A: { food: 20, plank: 6, aluminium_parts: 4 },
+        B: { food: 20, plank: 6, iron_parts: 8 }
+      }
+    }
+  },
+  resourceProduction: {
+    plains: { food: 1 },
+    shrublands: { food: 1 },
+    savannah: { food: 1 },
+    forest: { wood: 1 },
+    jungle: { wood: 1 },
+    desert: {},
+    swamp: {},
+    mountains: { cannot_be_settled: true },
+    coal_ore: { coal: 2 },
+    iron_ore: { iron: 1 },
+    gold_ore: { gold_ore: 1 },
+    copper_ore: { copper: 1 },
+    bauxite_ore: { bauxite: 1 }
+  },
+  factoryRules: [
+    { type: "Sawmill", build_gold_cost: 2000, inputs_per_turn: { wood: 1 }, outputs_per_turn: { plank: 1 } },
+    { type: "Iron Parts Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, iron: 1 }, outputs_per_turn: { iron_parts: 1 } },
+    { type: "Troop Equipment Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, iron_parts: 1 }, outputs_per_turn: { equipment: 6 } },
+    { type: "Tank Parts Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, iron_parts: 1 }, outputs_per_turn: { tank_parts: 1 } },
+    { type: "Copper Parts Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, copper: 1 }, outputs_per_turn: { copper_parts: 1 } },
+    { type: "Electronics Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, copper_parts: 1 }, outputs_per_turn: { necessities: 1 } },
+    { type: "Tank Electronics Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, copper_parts: 1 }, outputs_per_turn: { tank_electronics: 1 } },
+    { type: "Tank Assembly Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, tank_parts: 1, tank_electronics: 1 }, outputs_per_turn: { tanks: 1 } },
+    { type: "Aluminium Parts Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, aluminium: 1 }, outputs_per_turn: { aluminium_parts: 1 } },
+    { type: "Aluminium Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, aluminium_parts: 1 }, outputs_per_turn: { necessities: 1 } },
+    { type: "Bauxite Smeltery", build_gold_cost: 2000, inputs_per_turn: { coal: 1, bauxite: 1 }, outputs_per_turn: { aluminium: 1 } },
+    { type: "Gold Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, gold_ore: 1 }, outputs_per_turn: { gold_ingot: 1 } },
+    { type: "Bank", build_gold_cost: 5000, inputs_per_turn: { gold_ingot: 1 }, outputs_per_turn: { gold: 2000 } },
+    { type: "Luxuries Factory", build_gold_cost: 2000, inputs_per_turn: { coal: 1, gold_ingot: 1 }, outputs_per_turn: { necessities: 1 } },
+    { type: "Fine Machinery Factory", build_gold_cost: 5000, inputs_per_turn: { coal: 1, gold_ingot: 1, iron: 1 }, outputs_per_turn: { fine_machinery: 1 } },
+    { type: "Large Equipment Factory", build_gold_cost: 5000, inputs_per_turn: { coal: 1, iron: 1, fine_machinery: 1 }, outputs_per_turn: { equipment: 20 } },
+    { type: "Advanced Machinery Factory", build_gold_cost: 3000, inputs_per_turn: { coal: 1, fine_machinery: 1 }, outputs_per_turn: { necessities: 3 } },
+    { type: "High Quality Equipment Factory", build_gold_cost: 3000, inputs_per_turn: { coal: 1, equipment: 3, fine_machinery: 1 }, outputs_per_turn: { high_quality_equipment: 3 } },
+    { type: "Supply Factory", build_gold_cost: 2000, inputs_per_turn: { aluminium: 1, coal: 1 }, outputs_per_turn: { supply: 1 } }
+  ],
+  factoryRepair: {
+    damaged_factory_repair_gold_cost: 500,
+    bombed_factory_repair_cost: "build_gold_cost",
+    bombing_gold_cost: 1000
+  },
+  manpowerRules: {
+    normal_troop_cost_per_1000: { manpower: 1000, equipment: 1 },
+    high_quality_troop_cost_per_1000: { manpower: 1000, high_quality_equipment: 1 },
+    tank_troop_cost_per_1000: { manpower: 1000, tanks: 1 }
+  },
+  stabilityRules: {
+    base_stability: 100,
+    default_stability_cap: 100,
+    base_stability_gain_per_turn: 10,
+    peace_bonus_after_turns: 5,
+    peace_bonus_stability_per_turn: 5,
+    capital_change_stability_cost: 20,
+    rename_settlement_stability_cost: 1,
+    stabilityBands: [
+      { min: 80, max: 100, gold_per_turn: 2000, revolt_risk: "none" },
+      { min: 60, max: 79, gold_per_turn: 1000, revolt_risk: "none" },
+      { min: 40, max: 59, gold_per_turn: 0, revolt_risk: "none" },
+      { min: 30, max: 39, gold_per_turn: -1500, revolt_risk: "none" },
+      { min: 20, max: 29, gold_per_turn: 0, revolt_risk: "30% revolt risk" },
+      { min: 1, max: 19, gold_per_turn: 0, revolt_risk: "60% double revolt risk" },
+      { min: 0, max: 0, gold_per_turn: -10000, revolt_risk: "Anarchism and 30% double revolt risk" }
+    ]
+  },
+  rulingParties: {
+    Authoritarian: { stability_per_turn: 5, gold_per_turn: 0, stability_cap: 100 },
+    Democratic: {
+      stability_per_turn_at_peace: 10,
+      stability_per_turn_at_war: 5,
+      gold_per_turn: 0,
+      stability_cap_at_peace: 100,
+      stability_cap_at_war: 80,
+      notes: "+10 stability at peace, +5 at war; cap 80 at war."
+    },
+    Monarchy: { stability_per_turn: 5, gold_per_turn: 0, stability_cap: 100 },
+    Council: {
+      stability_per_council_player: 5,
+      minimum_players_required: 2,
+      fallback_party_when_below_minimum: "Authoritarian",
+      fallback_stability_when_below_minimum: 50,
+      gold_per_turn: 0,
+      stability_cap: 100,
+      notes: "+5 stability per council player; minimum 2 players."
+    },
+    Anarchism: { stability_per_turn: -10, gold_per_turn: -10000, stability_cap: 50 }
+  },
+  policyCategories: [
+    {
+      category: "Population Growth",
+      abbreviation: "PG",
+      step_cost: 2,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "No Policy",
+      options: [
+        { name: "Forced by Law", manpower_per_turn: 20000, gold_per_turn: -10000, stability_per_turn: -1 },
+        { name: "Encouraged", manpower_per_turn: 10000, gold_per_turn: -5000, stability_per_turn: 0 },
+        { name: "Slightly Encouraged", manpower_per_turn: 5000, gold_per_turn: -2500, stability_per_turn: 0 },
+        { name: "No Policy", manpower_per_turn: 0, gold_per_turn: 0, stability_per_turn: 0 },
+        { name: "Slightly Discouraged", manpower_per_turn: -2000, gold_per_turn: 0, stability_per_turn: 0 },
+        { name: "Discouraged", manpower_per_turn: -5000, gold_per_turn: 0, stability_per_turn: 0 },
+        { name: "Set Birth Rate", manpower_per_turn: -10000, gold_per_turn: 0, stability_per_turn: -1 }
+      ]
+    },
+    {
+      category: "Market Type",
+      abbreviation: "M",
+      step_cost: 10,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Mixed Market",
+      options: [
+        { name: "Nationally Owned Economy", gold_per_turn: 0, stability_per_turn: 2 },
+        { name: "Highly Regulated Market", gold_per_turn: 2500, stability_per_turn: 1 },
+        { name: "Mixed Market", gold_per_turn: 5000, stability_per_turn: 0 },
+        { name: "Private Market", gold_per_turn: 0, stability_per_turn: 0 },
+        { name: "Laissez Faire", gold_per_turn: 10000, stability_per_turn: -2 }
+      ]
+    },
+    {
+      category: "Immigration Laws",
+      abbreviation: "IL",
+      step_cost: 10,
+      can_be_forced_by_master: false,
+      base_option: "Strict Citizenship",
+      options: [
+        { name: "Citizenship", stability_per_turn: 1, manpower_per_turn: 5000, gold_per_turn: -2500 },
+        { name: "Strict Citizenship", stability_per_turn: 0, manpower_per_turn: 0, gold_per_turn: 0 },
+        { name: "Secondary Citizenship", stability_per_turn: -1, manpower_per_turn: 0, gold_per_turn: 2500 },
+        { name: "Illegal", stability_per_turn: -2, manpower_per_turn: -1000, gold_per_turn: 5000 }
+      ]
+    },
+    {
+      category: "Economical Focus",
+      abbreviation: "EF",
+      step_cost: 20,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Agricultural",
+      options: [
+        { name: "Touristic", gold_per_turn: 10000, stability_per_turn: 0, special: "no food doubling" },
+        { name: "Industrial", gold_per_turn: 0, stability_per_turn: 0, special: "halves construction and factory gold costs" },
+        { name: "Agricultural", gold_per_turn: 0, stability_per_turn: 0, special: "doubles food production from settlements" }
+      ]
+    },
+    {
+      category: "Living Conditions",
+      abbreviation: "L",
+      step_cost: 10,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Low Regulations",
+      options: [
+        { name: "High Regulations", stability_per_turn: 3, gold_per_turn: -5000 },
+        { name: "Medium Regulations", stability_per_turn: 2, gold_per_turn: -2500 },
+        { name: "Low Regulations", stability_per_turn: 1, gold_per_turn: 0 },
+        { name: "No Regulations", stability_per_turn: 0, gold_per_turn: 2500 },
+        { name: "Fully Privatised", stability_per_turn: -1, gold_per_turn: 5000 }
+      ]
+    },
+    {
+      category: "Healthcare",
+      abbreviation: "H",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Nationally Owned But Not Paid For",
+      options: [
+        { name: "Fully Paid by the State", stability_per_turn: 2, manpower_per_turn: 10000, gold_per_turn: -5000 },
+        { name: "Partially Paid by the State", stability_per_turn: 1, manpower_per_turn: 5000, gold_per_turn: -2500 },
+        { name: "Small Portion Paid by the State", stability_per_turn: 0, manpower_per_turn: 2000, gold_per_turn: -1000 },
+        { name: "Nationally Owned But Not Paid For", stability_per_turn: 0, manpower_per_turn: 0, gold_per_turn: 0 },
+        { name: "Partially Privately Owned", stability_per_turn: 0, manpower_per_turn: -2000, gold_per_turn: 1000 },
+        { name: "Privately Owned with Regulations", stability_per_turn: -1, manpower_per_turn: -5000, gold_per_turn: 2500 },
+        { name: "Privately Owned", stability_per_turn: -2, manpower_per_turn: -10000, gold_per_turn: 5000 }
+      ]
+    },
+    {
+      category: "Business Scale",
+      abbreviation: "B",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Mixed Focus",
+      options: [
+        { name: "Large Corporation Focus", stability_per_turn: -1, gold_per_turn: 5000 },
+        { name: "Corporation Focus", stability_per_turn: 0, gold_per_turn: 2500 },
+        { name: "Mixed Focus", stability_per_turn: 1, gold_per_turn: 0 },
+        { name: "Independent Focus", stability_per_turn: 2, gold_per_turn: -2500 }
+      ]
+    },
+    {
+      category: "Segregation",
+      abbreviation: "S",
+      step_cost: 10,
+      can_be_forced_by_master: true,
+      forced_cost_halved: false,
+      base_option: "Illegal",
+      options: [
+        { name: "Allowed", manpower_per_turn: -10000, stability_per_turn: -1, gold_per_turn: 2500 },
+        { name: "Regulated", manpower_per_turn: -5000, stability_per_turn: 0, gold_per_turn: 500 },
+        { name: "Illegal", manpower_per_turn: 0, stability_per_turn: 1, gold_per_turn: 0 }
+      ]
+    },
+    {
+      category: "Welfare",
+      abbreviation: "W",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "No Welfare",
+      options: [
+        { name: "Large Welfare", gold_per_turn: -10000, stability_per_turn: 3 },
+        { name: "Medium Welfare", gold_per_turn: -5000, stability_per_turn: 2 },
+        { name: "Low Welfare", gold_per_turn: -2500, stability_per_turn: 1 },
+        { name: "No Welfare", gold_per_turn: 0, stability_per_turn: 0 },
+        { name: "Anti-Welfare", gold_per_turn: 2500, stability_per_turn: -1 }
+      ]
+    },
+    {
+      category: "Protest Rights",
+      abbreviation: "P",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: false,
+      base_option: "Regulated",
+      options: [
+        { name: "Allowed", stability_per_turn: 1, gold_per_turn: -2500 },
+        { name: "Regulated", stability_per_turn: 0, gold_per_turn: 0 },
+        { name: "Illegal", stability_per_turn: -1, gold_per_turn: 0 }
+      ]
+    },
+    {
+      category: "Judicial Rights",
+      abbreviation: "J",
+      step_cost: 10,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "State Run",
+      options: [
+        { name: "Fair", stability_per_turn: 2, gold_per_turn: -5000 },
+        { name: "State Run", stability_per_turn: 0, gold_per_turn: 0 },
+        { name: "Corrupt", stability_per_turn: -2, gold_per_turn: 5000 }
+      ]
+    },
+    {
+      category: "Worker's Rights",
+      abbreviation: "WR",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "No Rights",
+      options: [
+        { name: "Major Rights", stability_per_turn: 3, gold_per_turn: -10000 },
+        { name: "Some Rights", stability_per_turn: 2, gold_per_turn: -5000 },
+        { name: "Few Rights", stability_per_turn: 1, gold_per_turn: -2500 },
+        { name: "No Rights", stability_per_turn: 0, gold_per_turn: 0 },
+        { name: "Anti-Worker Rights", stability_per_turn: -1, gold_per_turn: 2500 }
+      ]
+    },
+    {
+      category: "Military Service",
+      abbreviation: "MS",
+      step_cost: "15 stability per upward step out of war, 5 downward or at war",
+      military_service_upward_peace_step_cost: 15,
+      military_service_downward_step_cost: 5,
+      military_service_at_war_step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: false,
+      base_option: "Volunteer Army",
+      options: [
+        { name: "All Adults Serve", manpower_per_turn: 30000, stability_per_turn: -5, gold_per_turn: 0 },
+        { name: "Extensive Conscription", manpower_per_turn: 10000, stability_per_turn: -2, gold_per_turn: 0 },
+        { name: "Conscription", manpower_per_turn: 5000, stability_per_turn: -1, gold_per_turn: 0 },
+        { name: "Volunteer Army", manpower_per_turn: 0, stability_per_turn: 0, gold_per_turn: 0 },
+        { name: "Mercenary Reliance", manpower_per_turn: -5000, stability_per_turn: 1, gold_per_turn: -2500 }
+      ]
+    },
+    {
+      category: "Infrastructure",
+      abbreviation: "I",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Private Investment",
+      options: [
+        { name: "Extensive State-Funded Transport", stability_per_turn: 2, gold_per_turn: -5000, special: "1 free bridge and 1 free railway per turn as note/free_build_credit" },
+        { name: "Public-Private Partnership", stability_per_turn: 1, gold_per_turn: -2500 },
+        { name: "Private Investment", stability_per_turn: 0, gold_per_turn: 2500 },
+        { name: "Neglected Infrastructure", stability_per_turn: -1, gold_per_turn: 2500 }
+      ]
+    },
+    {
+      category: "Education",
+      abbreviation: "E",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Nationally Owned But Not Paid For",
+      options: [
+        { name: "Full Education", gold_per_turn: -7500, stability_per_turn: 3, manpower_per_turn: 0 },
+        { name: "Partially Paid Past Elementary", gold_per_turn: -5000, stability_per_turn: 2, manpower_per_turn: 0 },
+        { name: "Elementary Education", gold_per_turn: -1000, stability_per_turn: 1, manpower_per_turn: -2000 },
+        { name: "Nationally Owned But Not Paid For", gold_per_turn: 0, stability_per_turn: 0, manpower_per_turn: 0 },
+        { name: "Partially Privately Owned", gold_per_turn: 2500, stability_per_turn: 0, manpower_per_turn: 2000 },
+        { name: "Privately Owned with Regulations", gold_per_turn: 2500, stability_per_turn: -1, manpower_per_turn: 5000 },
+        { name: "Privately Owned", gold_per_turn: 5000, stability_per_turn: -2, manpower_per_turn: 10000 }
+      ]
+    },
+    {
+      category: "Press Rights",
+      abbreviation: "PR",
+      step_cost: 5,
+      can_be_forced_by_master: true,
+      forced_cost_halved: true,
+      base_option: "Regulated",
+      options: [
+        { name: "Free", stability_per_turn: 2, gold_per_turn: -2500 },
+        { name: "Regulated", stability_per_turn: 0, gold_per_turn: 2500 },
+        { name: "State Run", stability_per_turn: -1, gold_per_turn: 5000 }
+      ]
+    }
+  ],
+  diplomacyRelationTypes: [
+    "War",
+    "Military Alliance",
+    "Defensive Pact",
+    "Economic Alliance",
+    "Non-Aggression Pact",
+    "Guarantee",
+    "Embargo",
+    "Harbour Access",
+    "Railway Access",
+    "Troop Passthrough Authorization",
+    "Troop Movement Authorization",
+    "Coastal Fort Protection"
+  ],
+  puppetTypes: {
+    "Integrated Territories": {
+      tribute_percent: 80,
+      rounded_up: true,
+      diplomacy_inherited_from_master: true,
+      color_changes: "master",
+      master_permissions: ["any buildings", "country name", "settlement names", "trades", "creating settlements", "upgrading settlements", "ideological policies", "ruling party"]
+    },
+    "Occupied Territories": {
+      tribute_percent: 60,
+      rounded_up: true,
+      diplomacy_inherited_from_master: true,
+      color_changes: "lighter master",
+      master_permissions: ["militaristic buildings", "country name", "settlement names"]
+    },
+    "Semi-Autonomous State": {
+      tribute_percent: 50,
+      rounded_up: true,
+      diplomacy_inherited_from_master: true,
+      color_changes: "master",
+      master_permissions: ["any buildings", "settlement names", "trades", "creating settlements", "upgrading settlements", "ideological policies"]
+    },
+    Colony: {
+      tribute_percent: 50,
+      rounded_up: true,
+      diplomacy_inherited_from_master: true,
+      color_changes: "lighter master",
+      master_permissions: ["any buildings", "settlement names", "country name", "trades", "creating settlements", "upgrading settlements", "ideological policies"]
+    },
+    Protectorate: {
+      tribute_percent: "custom",
+      rounded_up: true,
+      diplomacy_inherited_from_master: "only militaristic diplomacy",
+      color_changes: false,
+      master_permissions: ["militaristic buildings"]
+    }
+  },
+  military: {
+    supplyTiers: {
+      "Very Low": 1,
+      Low: 2,
+      Medium: 3,
+      High: 4,
+      "Very High": 5
+    },
+    supply_missing_dice_modifier: -2,
+    overseas_movement_gold_per_1000_per_sea_tile: 500,
+    operations: {
+      "General Push Offensive": { abbreviation: "GPO", base_supply_tier: "Low", supply_required: 2, overlap_allowed: false },
+      "Spearhead Offensive": { abbreviation: "SO", base_supply_tier: "Medium", supply_required: 3, overlap_allowed: false },
+      "Encirclement Offensive": { abbreviation: "EO", base_supply_tier: "Medium", supply_required: 3, overlap_allowed: true },
+      "Tank Breakthrough": { abbreviation: "TB", base_supply_tier: "High", supply_required: 4, overlap_allowed: false, minimum_tank_troops: 5 },
+      "Defensive Operation": { abbreviation: "DO", base_supply_tier: "Very Low", supply_required: 1, tank_troops_allowed: false },
+      "Stalling Operation": { abbreviation: "Stalling", base_supply_tier: "Medium", supply_required: 3, tank_troops_allowed: false }
+    }
+  },
+  dice: {
+    resultBands: [
+      { min: -999, max: 5, category: "fail" },
+      { min: 6, max: 9, category: "minor victory" },
+      { min: 10, max: 14, category: "victory" },
+      { min: 15, max: 19, category: "big victory" },
+      { min: 20, max: 999, category: "huge victory" }
+    ],
+    attackTerrainNormal: {
+      cliff: -10,
+      mountains: -8,
+      major_uphill: -6,
+      across_water_body: -5,
+      large_river: -5,
+      medium_uphill: -4,
+      jungle: -4,
+      swamp: -3,
+      medium_river: -3,
+      minor_uphill: -2,
+      forest: -2,
+      savannah: -1,
+      small_river: -2,
+      desert: -2,
+      shrubland: 1,
+      plain: 1,
+      mineral_tile: 0
+    },
+    attackTerrainTank: {
+      cliff: "impassable",
+      mountains: "impassable",
+      jungle: -6,
+      swamp: -6,
+      forest: -4,
+      savannah: 2,
+      desert: 2,
+      shrubland: 3,
+      plain: 3
+    },
+    expansionTerrain: {
+      cliff: -10,
+      mountains: -8,
+      major_uphill: -6,
+      across_water_body: -5,
+      large_river: -5,
+      medium_uphill: -4,
+      jungle: -4,
+      swamp: -3,
+      medium_river: -3,
+      minor_uphill: -2,
+      forest: -2,
+      savannah: -2,
+      small_river: -2,
+      desert: -1,
+      shrubland: 1,
+      plain: 1,
+      mineral_tile: 0
+    },
+    encirclement: {
+      none: 0,
+      "encircled territory counterattack": -7,
+      "attack against encircled territory": 3
+    },
+    fortifications: {
+      none: 0,
+      trenchline: -1,
+      "fortification level 1": -3,
+      "fortification level 2": -5,
+      "fortification level 3": -7,
+      wall: -5,
+      "coastal fort level 1 against naval invasion": -3,
+      "coastal fort level 2 against naval invasion": -5,
+      "coastal fort level 3 against naval invasion": -7
+    }
+  }
+};
