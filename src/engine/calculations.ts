@@ -225,6 +225,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
     {
       country: Country;
       resources: ResourceBag;
+      factoryInputFlow: ResourceBag;
       preview: CountryPreview;
       policyStability: number;
       policyManpower: number;
@@ -240,6 +241,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
     work.set(country.id, {
       country,
       resources,
+      factoryInputFlow: emptyBag(),
       preview: initializePreview(country, cloneBag(resources)),
       policyStability: 0,
       policyManpower: 0,
@@ -289,6 +291,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
       settlementManpowerGain += tierRule.manpower_gain_per_turn;
       const produced = settlementProduction(settlement, state, agricultural);
       addBag(item.resources, produced);
+      addBag(item.factoryInputFlow, produced);
       addBag(item.preview.resourceProduction, produced);
     });
 
@@ -325,44 +328,6 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
       item.peaceStability = state.rules.stabilityRules.peace_bonus_stability_per_turn;
     }
     item.preview.stabilityBandGold = getStabilityBandGold(state.rules, country.stability);
-  });
-
-  state.factories.forEach((factory) => {
-    const item = work.get(factory.country_id);
-    if (!item) return;
-
-    if (!factory.active) {
-      return;
-    }
-    if (factory.damaged || factory.bombed) {
-      item.preview.warnings.push(`${factory.type} is damaged or bombed and produces nothing.`);
-      return;
-    }
-
-    const rule = state.rules.factoryRules.find((candidate) => candidate.type === factory.type);
-    if (!rule) {
-      item.preview.warnings.push(`Factory type "${factory.type}" is missing from rules.`);
-      return;
-    }
-
-    if (!hasResources(item.resources, rule.inputs_per_turn)) {
-      item.preview.warnings.push(
-        `${factory.type} missing inputs: ${missingResources(item.resources, rule.inputs_per_turn).join(", ")}.`
-      );
-      return;
-    }
-
-    subtractBag(item.resources, rule.inputs_per_turn);
-    addBag(item.preview.factoryInputs, rule.inputs_per_turn);
-
-    Object.entries(rule.outputs_per_turn).forEach(([resource, amount]) => {
-      if (resource === "gold") {
-        item.preview.bankGold += Number(amount ?? 0);
-        return;
-      }
-      addToBag(item.resources, resource as ResourceType, Number(amount ?? 0));
-      addToBag(item.preview.factoryOutputs, resource as ResourceType, Number(amount ?? 0));
-    });
   });
 
   state.trades.forEach((route) => {
@@ -415,6 +380,8 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
       addToBag(receiver.resources, resource, amount);
       addToBag(sender.preview.tradeOut, resource, amount);
       addToBag(receiver.preview.tradeIn, resource, amount);
+      addToBag(receiver.factoryInputFlow, resource, amount);
+      addToBag(sender.factoryInputFlow, resource, -Math.min(Number(sender.factoryInputFlow[resource] ?? 0), amount));
     }
 
     const payment = Number(route.payment_gold_per_turn ?? 0);
@@ -426,7 +393,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
 
     if (route.route_type === "sea") {
       const cost =
-        Number(route.sea_transport_cost_per_unit || state.rules.settings.sea_transport_cost_per_unit_resource) *
+        Number(route.sea_transport_cost_per_unit ?? state.rules.settings.sea_transport_cost_per_unit_resource) *
         Number(route.amount_per_turn || 0);
       const payer = route.sea_cost_payer === "receiver" ? receiver : sender;
       payer.preview.tradeGoldNet -= cost;
@@ -434,6 +401,52 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
         payer.preview.warnings.push(`Sea trade unaffordable for ${label}; cost ${cost} gold.`);
       }
     }
+  });
+
+  state.factories.forEach((factory) => {
+    const item = work.get(factory.country_id);
+    if (!item) return;
+
+    if (!factory.active) {
+      return;
+    }
+    if (factory.damaged || factory.bombed) {
+      item.preview.warnings.push(`${factory.type} is damaged or bombed and produces nothing.`);
+      return;
+    }
+
+    const rule = state.rules.factoryRules.find((candidate) => candidate.type === factory.type);
+    if (!rule) {
+      item.preview.warnings.push(`Factory type "${factory.type}" is missing from rules.`);
+      return;
+    }
+
+    if (!hasResources(item.factoryInputFlow, rule.inputs_per_turn)) {
+      item.preview.warnings.push(
+        `${factory.type} input flow missing: ${missingResources(item.factoryInputFlow, rule.inputs_per_turn).join(", ")}.`
+      );
+    }
+
+    if (!hasResources(item.resources, rule.inputs_per_turn)) {
+      item.preview.warnings.push(
+        `${factory.type} missing inputs: ${missingResources(item.resources, rule.inputs_per_turn).join(", ")}.`
+      );
+      return;
+    }
+
+    subtractBag(item.resources, rule.inputs_per_turn);
+    subtractBag(item.factoryInputFlow, rule.inputs_per_turn);
+    addBag(item.preview.factoryInputs, rule.inputs_per_turn);
+
+    Object.entries(rule.outputs_per_turn).forEach(([resource, amount]) => {
+      if (resource === "gold") {
+        item.preview.bankGold += Number(amount ?? 0);
+        return;
+      }
+      addToBag(item.resources, resource as ResourceType, Number(amount ?? 0));
+      addToBag(item.factoryInputFlow, resource as ResourceType, Number(amount ?? 0));
+      addToBag(item.preview.factoryOutputs, resource as ResourceType, Number(amount ?? 0));
+    });
   });
 
   state.settlements.forEach((settlement) => {
@@ -480,10 +493,6 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
     if (item.preview.necessitiesRequired > 0) {
       if (item.preview.necessitiesMet) {
         addToBag(item.resources, "necessities", -item.preview.necessitiesRequired);
-      } else {
-        item.preview.warnings.push(
-          `Necessities not met: ${item.resources.necessities ?? 0}/${item.preview.necessitiesRequired}.`
-        );
       }
     }
   });

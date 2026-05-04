@@ -1,9 +1,10 @@
 import { useRef } from "react";
-import { DatabaseBackup, Download, FileJson, Upload } from "lucide-react";
+import { DatabaseBackup, Download, FileJson, ScrollText, Upload } from "lucide-react";
 import { GameState } from "../types";
-import { downloadJson, importStateFromSqliteFile } from "../db/sqlite";
+import { downloadJson, downloadText, importStateFromSqliteFile } from "../db/sqlite";
 import { normalizeLoadedState } from "../data/migrations";
 import { parseGameStateJson } from "../data/validation";
+import { renderAllCountryStatSheets } from "../export/statSheets";
 
 export function ExportImportControls({
   state,
@@ -38,6 +39,26 @@ export function ExportImportControls({
         </button>
         <button onClick={() => downloadJson(state, `gm-game-turn-${state.turnNumber}.json`)}>
           <FileJson size={16} /> Export JSON backup
+        </button>
+        <button
+          onClick={() =>
+            downloadText(
+              renderAllCountryStatSheets(state, "polished"),
+              `gm-stat-sheets-polished-turn-${state.turnNumber}.md`
+            )
+          }
+        >
+          <ScrollText size={16} /> Export polished stat sheets
+        </button>
+        <button
+          onClick={() =>
+            downloadText(
+              renderAllCountryStatSheets(state, "verbatim"),
+              `gm-stat-sheets-verbatim-turn-${state.turnNumber}.md`
+            )
+          }
+        >
+          <ScrollText size={16} /> Export verbatim stat sheets
         </button>
         <button onClick={() => sqliteInputRef.current?.click()}>
           <Upload size={16} /> Import SQLite save

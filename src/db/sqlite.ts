@@ -433,3 +433,12 @@ export const downloadJson = (state: GameState, filename: string) => {
   link.click();
   URL.revokeObjectURL(link.href);
 };
+
+export const downloadText = (text: string, filename: string, type = "text/markdown") => {
+  const blob = new Blob([text], { type });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+};

@@ -30,7 +30,9 @@ There is currently no lint script. Do not claim lint has passed unless one is ad
 - Use TypeScript strict mode and keep types explicit at module boundaries.
 - Prefer small focused modules. If a file is growing much beyond roughly 400 lines, extract cohesive helpers or components when touching that area.
 - Keep React components presentational where practical; move calculations and business rules into `src/engine`, `src/rules`, `src/data`, or typed helpers.
-- Do not hardcode country names, settlement names, diplomacy pairs, seed stockpiles, or named game entities in application logic. Country-specific data belongs in seed data, fixtures, saves, or imports.
+- Do not hardcode country names, settlement names, diplomacy pairs, stockpiles, or named game entities in application logic.
+- Seed scripts and seed-state modules are strictly prohibited. Do not add or use `seed.ts`, `createSeedState`, or any equivalent hardcoded state generator.
+- The only authoritative game-state data source is a JSON or SQLite save artifact. Runtime state must be loaded from saves, and country-specific setup belongs in save files or import/export fixtures derived from saves.
 - Do not scatter rule constants through UI components. Add editable values to `RulesConfig` and `src/rules/defaultRules.ts`, then consume them through the rules object.
 - Keep JSON editing as an advanced option only. Prefer structured controls for GM-facing rules and state editing.
 - Use React text rendering for user-authored content. Do not use `dangerouslySetInnerHTML`, `innerHTML`, `eval`, `new Function`, or dynamic code execution.
@@ -70,3 +72,4 @@ There is currently no lint script. Do not claim lint has passed unless one is ad
 - No telemetry or remote persistence.
 - File imports are untrusted input.
 - SQLite saves are local export/import artifacts, not a trusted execution format.
+- Do not persist game state in browser storage. The only stateful game data the program may use is JSON/SQLite save content.

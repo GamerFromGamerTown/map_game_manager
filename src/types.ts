@@ -31,6 +31,7 @@ export type RouteType = "road" | "railway" | "sea" | "abstract";
 export interface Country {
   id: string;
   name: string;
+  short_name?: string;
   color: string;
   is_player_country: boolean;
   ruling_party: string;

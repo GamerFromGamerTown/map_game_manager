@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Country, DiplomaticRelation, GameState, MilitaryOperation, PuppetRelation, RESOURCE_TYPES, TradeRoute } from "../../types";
 import { createId } from "../../engine/calculations";
@@ -48,11 +49,11 @@ export function DiplomacyTab({
         <Plus size={16} /> Relation
       </button>
       <div className="table-wrap">
-        <table className="country-data-table dense-table sticky-first-column">
+        <table>
           <thead><tr><th>Type</th><th>A</th><th>B</th><th>Active</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {relations.map((relation) => (
-              <tr key={relation.id} id={`relation-${relation.id}`} tabIndex={-1}>
+              <tr key={relation.id}>
                 <td>
                   <select value={relation.relation_type} onChange={(event) => update(relation.id, { relation_type: event.target.value })}>
                     {state.rules.diplomacyRelationTypes.map((type) => <option key={type}>{type}</option>)}
@@ -81,6 +82,7 @@ export function DiplomacyTab({
 }
 
 export function PuppetsTab({ state, country, patchState }: { state: GameState; country: Country; patchState: (updater: (current: GameState) => GameState) => void }) {
+  const [creating, setCreating] = useState<"master" | "subject" | null>(null);
   const rows = state.puppets.filter((row) => row.master_country_id === country.id || row.puppet_country_id === country.id);
   const typeOptions = Object.keys(state.rules.puppetTypes);
   const update = (id: string, patch: Partial<PuppetRelation>) =>
@@ -88,14 +90,33 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
 
   return (
     <div className="section-stack">
-      <button onClick={() => addPuppet(state, country, patchState)}><Plus size={16} /> Puppet</button>
+      <div className="actions left">
+        <button onClick={() => setCreating(creating === "master" ? null : "master")}><Plus size={16} /> Add subject puppet</button>
+        <button onClick={() => setCreating(creating === "subject" ? null : "subject")}><Plus size={16} /> Make this country a puppet</button>
+      </div>
+      {creating && (
+        <PuppetCreatePanel
+          state={state}
+          country={country}
+          mode={creating}
+          onCancel={() => setCreating(null)}
+          onCreate={(masterId, subjectId, type) => {
+            addPuppet(state, masterId, subjectId, type, patchState);
+            setCreating(null);
+          }}
+        />
+      )}
       <div className="table-wrap">
-        <table className="country-data-table dense-table sticky-first-column">
+        <table>
           <thead><tr><th>Master</th><th>Puppet</th><th>Type</th><th>Tribute %</th><th>Immunity</th><th>Active</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} id={`puppet-${row.id}`} tabIndex={-1}>
-                <td>{countryName(state, row.master_country_id)}</td>
+              <tr key={row.id}>
+                <td>
+                  <select value={row.master_country_id} onChange={(event) => update(row.id, { master_country_id: event.target.value })}>
+                    {state.countries.filter((item) => item.id !== row.puppet_country_id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+                  </select>
+                </td>
                 <td>
                   <select value={row.puppet_country_id} onChange={(event) => update(row.id, { puppet_country_id: event.target.value })}>
                     {state.countries.filter((item) => item.id !== row.master_country_id).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
@@ -116,10 +137,61 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
   );
 }
 
-function addPuppet(state: GameState, country: Country, patchState: (updater: (current: GameState) => GameState) => void) {
-  const subject = state.countries.find((item) => item.id !== country.id);
-  if (!subject) return;
-  const type = Object.keys(state.rules.puppetTypes)[0] ?? "Protectorate";
+function PuppetCreatePanel({
+  state,
+  country,
+  mode,
+  onCancel,
+  onCreate
+}: {
+  state: GameState;
+  country: Country;
+  mode: "master" | "subject";
+  onCancel: () => void;
+  onCreate: (masterId: string, subjectId: string, type: string) => void;
+}) {
+  const typeOptions = Object.keys(state.rules.puppetTypes);
+  const [masterId, setMasterId] = useState(mode === "master" ? country.id : state.countries.find((item) => item.id !== country.id)?.id ?? country.id);
+  const [subjectId, setSubjectId] = useState(mode === "subject" ? country.id : state.countries.find((item) => item.id !== country.id)?.id ?? country.id);
+  const [type, setType] = useState(typeOptions[0] ?? "Protectorate");
+  const canCreate = masterId !== subjectId;
+
+  return (
+    <section className="form-section puppet-create-panel">
+      <div className="section-heading">
+        <h2>{mode === "master" ? "Add a puppet under this country" : "Make this country a puppet"}</h2>
+        <span>Creates an active puppet relation</span>
+      </div>
+      <div className="form-row three-wide">
+        <label>
+          <span>Master</span>
+          <select value={masterId} onChange={(event) => setMasterId(event.target.value)} disabled={mode === "master"}>
+            {state.countries.filter((item) => item.id !== subjectId).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Puppet</span>
+          <select value={subjectId} onChange={(event) => setSubjectId(event.target.value)} disabled={mode === "subject"}>
+            {state.countries.filter((item) => item.id !== masterId).map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Puppet type</span>
+          <select value={type} onChange={(event) => setType(event.target.value)}>
+            {typeOptions.map((option) => <option key={option}>{option}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="actions left">
+        <button className="primary" disabled={!canCreate} onClick={() => canCreate && onCreate(masterId, subjectId, type)}>Create puppet relation</button>
+        <button onClick={onCancel}>Cancel</button>
+      </div>
+    </section>
+  );
+}
+
+function addPuppet(state: GameState, masterId: string, subjectId: string, type: string, patchState: (updater: (current: GameState) => GameState) => void) {
+  if (masterId === subjectId) return;
   const rule = state.rules.puppetTypes[type];
   patchState((current) => ({
     ...current,
@@ -127,8 +199,8 @@ function addPuppet(state: GameState, country: Country, patchState: (updater: (cu
       ...current.puppets,
       {
         id: createId("puppet"),
-        master_country_id: country.id,
-        puppet_country_id: subject.id,
+        master_country_id: masterId,
+        puppet_country_id: subjectId,
         puppet_type: type,
         tribute_percent: rule?.tribute_percent === "custom" ? 50 : Number(rule?.tribute_percent ?? 50),
         rebellion_immunity_turns_remaining: current.rules.settings.puppet_rebellion_immunity_turns,
@@ -148,11 +220,11 @@ export function TradeTab({ state, country, patchState }: { state: GameState; cou
     <div className="section-stack">
       <button onClick={() => addTrade(state, country, patchState)}><Plus size={16} /> Trade Route</button>
       <div className="table-wrap">
-        <table className="country-data-table dense-table sticky-first-column">
+        <table>
           <thead><tr><th>Sender</th><th>Receiver</th><th>Resource</th><th>Amount</th><th>Payment</th><th>Route</th><th>Sea cost</th><th>Flags</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} id={`trade-${row.id}`} tabIndex={-1}>
+              <tr key={row.id}>
                 <td>{countryName(state, row.sender_country_id)}</td>
                 <td><CountrySelect state={state} value={row.receiver_country_id} exclude={row.sender_country_id} onChange={(receiver_country_id) => update(row.id, { receiver_country_id })} /></td>
                 <td><select value={row.resource_type} onChange={(event) => update(row.id, { resource_type: event.target.value as TradeRoute["resource_type"] })}>{["gold", ...RESOURCE_TYPES].map((resource) => <option key={resource}>{resource}</option>)}</select></td>
@@ -208,11 +280,11 @@ export function MilitaryTab({ state, country, patchState }: { state: GameState; 
     <div className="section-stack">
       <button onClick={() => addOperation(state, country, patchState)}><Plus size={16} /> Operation</button>
       <div className="table-wrap">
-        <table className="country-data-table dense-table sticky-first-column">
+        <table>
           <thead><tr><th>Name</th><th>Type</th><th>Attacker</th><th>Defender</th><th>Troops N/Q/T</th><th>Supply</th><th>Status</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id} id={`operation-${row.id}`} tabIndex={-1}>
+              <tr key={row.id}>
                 <td><input value={row.name} onChange={(event) => update(row.id, { name: event.target.value })} /></td>
                 <td><select value={row.operation_type} onChange={(event) => update(row.id, { operation_type: event.target.value, supply_required: state.rules.military.operations[event.target.value]?.supply_required ?? row.supply_required })}>{Object.keys(state.rules.military.operations).map((type) => <option key={type}>{type}</option>)}</select></td>
                 <td>{countryName(state, row.attacker_country_id)}</td>
@@ -294,7 +366,7 @@ function JsonTable({ rows }: { rows: object[] }) {
   const columns = Object.keys(normalized[0]);
   return (
     <div className="table-wrap">
-      <table className="country-data-table dense-table sticky-first-column json-data-table">
+      <table>
         <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
         <tbody>
           {normalized.map((row, index) => (

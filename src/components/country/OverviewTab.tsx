@@ -83,6 +83,7 @@ export function OverviewTab({
               onChange={(name) => updateCountry(country.id, { name })}
             />
           </div>
+          <TextField label="Short sidebar name" value={country.short_name ?? ""} onChange={(short_name) => updateCountry(country.id, { short_name })} />
           <div className="form-row two-wide">
             <SelectField
               label="Ruling party"
