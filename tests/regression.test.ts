@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { commitTurn, previewNextTurn } from "../src/engine/calculations";
-import { createSeedState } from "../src/data/seed";
+import starterGameJson from "../src/data/starter_game.json";
 import { normalizeLoadedState } from "../src/data/migrations";
 import { validateGameState } from "../src/data/validation";
 import { policyChangeStabilityCost } from "../src/engine/policies";
+import { normalizePreviewWarnings } from "../src/ui/warningModel";
+import { buildTurnTransactionSummary } from "../src/ui/turnTransaction";
 import type { GameState } from "../src/types";
 
 const test = (name: string, run: () => void) => {
@@ -19,7 +21,7 @@ const test = (name: string, run: () => void) => {
 const clone = <T>(value: T): T => structuredClone(value);
 
 test("validation accepts the seed state and rejects partial imports", () => {
-  const seed = createSeedState();
+  const seed = validateGameState(starterGameJson) as GameState;
   assert.doesNotThrow(() => validateGameState(seed));
   assert.throws(() => validateGameState({ schemaVersion: 2, countries: [] }), /missing|must/i);
   const invalidTrade = clone(seed);
@@ -28,7 +30,7 @@ test("validation accepts the seed state and rejects partial imports", () => {
 });
 
 test("normalization fills newly-added rule defaults without hardcoding country data", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   delete (state.rules.settings as Partial<typeof state.rules.settings>).base_capital_gold_per_turn;
   delete state.rules.rulingParties.Democratic.stability_per_turn_at_peace;
 
@@ -41,7 +43,7 @@ test("normalization fills newly-added rule defaults without hardcoding country d
 });
 
 test("commit recomputes preview from the current state instead of trusting stale previews", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   const stalePreview = previewNextTurn(state);
   const current = clone(state);
   current.rules.settings.base_manpower_gain_per_turn += 1234;
@@ -57,7 +59,7 @@ test("commit recomputes preview from the current state instead of trusting stale
 });
 
 test("ruling party effects use editable rule config values", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   const country = state.countries.find((item) => item.id === "magnus");
   assert.ok(country);
   country.stability = 40;
@@ -71,7 +73,7 @@ test("ruling party effects use editable rule config values", () => {
 });
 
 test("military service policy change costs use editable policy config values", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   const category = state.rules.policyCategories.find((item) => item.category === "Military Service");
   const country = state.countries[0];
   assert.ok(category);
@@ -85,7 +87,7 @@ test("military service policy change costs use editable policy config values", (
 });
 
 test("capital income uses editable rule config values", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   (state.rules.settings as GameState["rules"]["settings"] & { base_capital_gold_per_turn: number })
     .base_capital_gold_per_turn = 123;
 
@@ -95,7 +97,7 @@ test("capital income uses editable rule config values", () => {
 });
 
 test("application logic does not special-case the Player Country name", () => {
-  const state = createSeedState();
+  const state = validateGameState(starterGameJson) as GameState;
   state.turnNumber = 0;
   state.countries = [clone(state.countries[0])];
   state.countries[0].id = "test-country";
@@ -121,4 +123,44 @@ test("application logic does not special-case the Player Country name", () => {
     ),
     false
   );
+});
+
+test("preview warnings are normalized into actionable fix targets", () => {
+  const state = validateGameState(starterGameJson) as GameState;
+  const preview = previewNextTurn(state);
+  const warnings = normalizePreviewWarnings(state, preview);
+
+  assert.ok(warnings.length > 0);
+  assert.equal(warnings.every((warning) => warning.id && warning.message && warning.recommendedAction), true);
+  assert.equal(warnings.every((warning) => warning.target.view && warning.target.label), true);
+
+  const necessityWarning = warnings.find(
+    (warning) => warning.countryId === "dew" && warning.fieldPath === "stockpiles.necessities"
+  );
+
+  assert.ok(necessityWarning);
+  assert.equal(necessityWarning.severity, "error");
+  assert.equal(necessityWarning.entityType, "resource");
+  assert.equal(necessityWarning.target.view, "country");
+  assert.equal(necessityWarning.target.countryTab, "Production");
+  assert.equal(necessityWarning.target.focusId, "resource-dew-necessities");
+  assert.match(necessityWarning.recommendedAction, /add.*necessities|imports/i);
+});
+
+test("turn transaction summary blocks severe warnings until override reason is supplied", () => {
+  const state = validateGameState(starterGameJson) as GameState;
+  const preview = previewNextTurn(state);
+  const summary = buildTurnTransactionSummary(state, preview, "");
+  const overrideSummary = buildTurnTransactionSummary(state, preview, "GM accepts unresolved blockers for this turn");
+
+  assert.equal(summary.nextTurnNumber, state.turnNumber + 1);
+  assert.ok(summary.countryDeltas.length >= state.countries.length);
+  assert.ok(summary.resourceDeltas.some((row) => row.resource === "food" && row.delta !== 0));
+  assert.ok(summary.unresolvedBlockers.length > 0);
+  assert.equal(summary.canCommit, false);
+  assert.match(summary.commitBlockReason, /override reason/i);
+
+  assert.equal(overrideSummary.canCommit, true);
+  assert.equal(overrideSummary.overrideReason, "GM accepts unresolved blockers for this turn");
+  assert.ok(overrideSummary.warningsIntroduced.length >= summary.unresolvedBlockers.length);
 });

@@ -51,6 +51,7 @@ There is currently no lint script. Do not claim lint has passed unless one is ad
 - Add or update regression coverage for calculation, validation, persistence, or audit-log bugs.
 - Use `npm test` for the lightweight regression suite.
 - Use `npm run build` for TypeScript and production bundle verification.
+- For visual, layout, or responsive UI fixes, use Playwright screenshots to verify the affected screens and common viewport widths before claiming the issue is fixed.
 - If a behavior is important and currently uncovered, write a failing regression test before patching when practical.
 
 ## UI Guidelines

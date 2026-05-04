@@ -8,17 +8,20 @@ export function NumberField({
   label,
   value,
   onChange,
-  min
+  min,
+  id
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
   min?: number;
+  id?: string;
 }) {
   return (
     <label>
       <span>{label}</span>
       <input
+        id={id}
         type="number"
         min={min}
         value={Number.isFinite(value) ? value : 0}
@@ -32,17 +35,19 @@ export function TextField({
   label,
   value,
   onChange,
-  placeholder
+  placeholder,
+  id
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  id?: string;
 }) {
   return (
     <label>
       <span>{label}</span>
-      <input value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
+      <input id={id} value={value} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
     </label>
   );
 }
@@ -50,15 +55,17 @@ export function TextField({
 export function CheckboxField({
   label,
   checked,
-  onChange
+  onChange,
+  id
 }: {
   label: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  id?: string;
 }) {
   return (
     <label className="check-field">
-      <input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
+      <input id={id} type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} />
       <span>{label}</span>
     </label>
   );
@@ -69,18 +76,20 @@ export function SelectField({
   value,
   options,
   onChange,
-  optionLabel
+  optionLabel,
+  id
 }: {
   label: string;
   value: string;
   options: string[];
   onChange: (value: string) => void;
   optionLabel?: (value: string) => string;
+  id?: string;
 }) {
   return (
     <label>
       <span>{label}</span>
-      <select value={value} onChange={(event) => onChange(event.target.value)}>
+      <select id={id} value={value} onChange={(event) => onChange(event.target.value)}>
         {options.map((option) => (
           <option value={option} key={option}>
             {optionLabel ? optionLabel(option) : option}

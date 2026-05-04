@@ -64,12 +64,12 @@ export function PoliciesTab({
   };
 
   return (
-    <div className="section-stack">
+    <div className="section-stack" id={`policies-${country.id}`} tabIndex={-1}>
       <div className="toolbar-line">
         <CheckboxField label="Waive policy stability side effects" checked={waiveCost} onChange={setWaiveCost} />
       </div>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead>
             <tr>
               <th>Category</th>
@@ -88,7 +88,7 @@ export function PoliciesTab({
                 ({ selected_option: category.base_option, last_changed_turn: -1 } as PolicySelection);
               const option = category.options.find((item) => item.name === selected.selected_option) ?? category.options[0];
               return (
-                <tr key={category.category}>
+                <tr key={category.category} id={`policy-${country.id}-${category.category.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`} tabIndex={-1}>
                   <td>{category.category}</td>
                   <td>
                     <select value={selected.selected_option} onChange={(event) => changePolicy(category, event.target.value)}>

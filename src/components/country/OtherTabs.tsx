@@ -48,11 +48,11 @@ export function DiplomacyTab({
         <Plus size={16} /> Relation
       </button>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead><tr><th>Type</th><th>A</th><th>B</th><th>Active</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {relations.map((relation) => (
-              <tr key={relation.id}>
+              <tr key={relation.id} id={`relation-${relation.id}`} tabIndex={-1}>
                 <td>
                   <select value={relation.relation_type} onChange={(event) => update(relation.id, { relation_type: event.target.value })}>
                     {state.rules.diplomacyRelationTypes.map((type) => <option key={type}>{type}</option>)}
@@ -90,11 +90,11 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
     <div className="section-stack">
       <button onClick={() => addPuppet(state, country, patchState)}><Plus size={16} /> Puppet</button>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead><tr><th>Master</th><th>Puppet</th><th>Type</th><th>Tribute %</th><th>Immunity</th><th>Active</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id}>
+              <tr key={row.id} id={`puppet-${row.id}`} tabIndex={-1}>
                 <td>{countryName(state, row.master_country_id)}</td>
                 <td>
                   <select value={row.puppet_country_id} onChange={(event) => update(row.id, { puppet_country_id: event.target.value })}>
@@ -148,11 +148,11 @@ export function TradeTab({ state, country, patchState }: { state: GameState; cou
     <div className="section-stack">
       <button onClick={() => addTrade(state, country, patchState)}><Plus size={16} /> Trade Route</button>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead><tr><th>Sender</th><th>Receiver</th><th>Resource</th><th>Amount</th><th>Payment</th><th>Route</th><th>Sea cost</th><th>Flags</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id}>
+              <tr key={row.id} id={`trade-${row.id}`} tabIndex={-1}>
                 <td>{countryName(state, row.sender_country_id)}</td>
                 <td><CountrySelect state={state} value={row.receiver_country_id} exclude={row.sender_country_id} onChange={(receiver_country_id) => update(row.id, { receiver_country_id })} /></td>
                 <td><select value={row.resource_type} onChange={(event) => update(row.id, { resource_type: event.target.value as TradeRoute["resource_type"] })}>{["gold", ...RESOURCE_TYPES].map((resource) => <option key={resource}>{resource}</option>)}</select></td>
@@ -208,11 +208,11 @@ export function MilitaryTab({ state, country, patchState }: { state: GameState; 
     <div className="section-stack">
       <button onClick={() => addOperation(state, country, patchState)}><Plus size={16} /> Operation</button>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead><tr><th>Name</th><th>Type</th><th>Attacker</th><th>Defender</th><th>Troops N/Q/T</th><th>Supply</th><th>Status</th><th>Notes</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id}>
+              <tr key={row.id} id={`operation-${row.id}`} tabIndex={-1}>
                 <td><input value={row.name} onChange={(event) => update(row.id, { name: event.target.value })} /></td>
                 <td><select value={row.operation_type} onChange={(event) => update(row.id, { operation_type: event.target.value, supply_required: state.rules.military.operations[event.target.value]?.supply_required ?? row.supply_required })}>{Object.keys(state.rules.military.operations).map((type) => <option key={type}>{type}</option>)}</select></td>
                 <td>{countryName(state, row.attacker_country_id)}</td>
@@ -294,7 +294,7 @@ function JsonTable({ rows }: { rows: object[] }) {
   const columns = Object.keys(normalized[0]);
   return (
     <div className="table-wrap">
-      <table>
+      <table className="country-data-table dense-table sticky-first-column json-data-table">
         <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
         <tbody>
           {normalized.map((row, index) => (

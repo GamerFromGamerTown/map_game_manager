@@ -26,7 +26,7 @@ export function FactoriesTab({
         <Plus size={16} /> Factory
       </button>
       <div className="table-wrap">
-        <table>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead>
             <tr>
               <th>Type</th>
@@ -43,9 +43,9 @@ export function FactoriesTab({
             {factories.map((factory) => {
               const rule = state.rules.factoryRules.find((item) => item.type === factory.type);
               return (
-                <tr key={factory.id}>
+                <tr key={factory.id} id={`factory-${factory.id}`} tabIndex={-1}>
                   <td>
-                    <select value={factory.type} onChange={(event) => updateFactory(factory.id, { type: event.target.value })}>
+                    <select id={`factory-${factory.id}-type`} value={factory.type} onChange={(event) => updateFactory(factory.id, { type: event.target.value })}>
                       {factoryTypes.map((type) => <option key={type}>{type}</option>)}
                     </select>
                   </td>

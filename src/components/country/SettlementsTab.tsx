@@ -29,8 +29,8 @@ export function SettlementsTab({
       <button onClick={() => setCreating(true)}>
         <Plus size={16} /> Settlement
       </button>
-      <div className="table-wrap">
-        <table>
+      <div className="table-wrap" id={`settlements-${country.id}`} tabIndex={-1}>
+        <table className="country-data-table dense-table sticky-first-column">
           <thead>
             <tr>
               <th>Name</th>
@@ -48,8 +48,8 @@ export function SettlementsTab({
             {settlements.map((settlement) => {
               const production = firstProduction(settlement.manual_resource_override);
               return (
-                <tr key={settlement.id}>
-                  <td><input value={settlement.name} onChange={(event) => updateSettlement(settlement.id, { name: event.target.value })} /></td>
+                <tr key={settlement.id} id={`settlement-${settlement.id}`} tabIndex={-1}>
+                  <td><input id={`settlement-${settlement.id}-name`} value={settlement.name} onChange={(event) => updateSettlement(settlement.id, { name: event.target.value })} /></td>
                   <td>
                     <select value={settlement.tier} onChange={(event) => updateSettlement(settlement.id, { tier: event.target.value as SettlementTier })}>
                       {(["village", "city", "large_city", "metropole"] as SettlementTier[]).map((tier) => <option key={tier}>{tier}</option>)}
@@ -57,6 +57,7 @@ export function SettlementsTab({
                   </td>
                   <td>
                     <input
+                      id={`settlement-${settlement.id}-capital`}
                       type="checkbox"
                       checked={settlement.is_capital}
                       onChange={(event) =>
@@ -72,7 +73,7 @@ export function SettlementsTab({
                     />
                   </td>
                   <td>
-                    <select value={settlement.biome_or_resource_type} onChange={(event) => updateSettlement(settlement.id, { biome_or_resource_type: event.target.value })}>
+                    <select id={`settlement-${settlement.id}-biome`} value={settlement.biome_or_resource_type} onChange={(event) => updateSettlement(settlement.id, { biome_or_resource_type: event.target.value })}>
                       {Object.keys(state.rules.resourceProduction).map((option) => <option key={option}>{option}</option>)}
                     </select>
                   </td>

@@ -76,7 +76,12 @@ export function OverviewTab({
               <span>Country color</span>
               <input type="color" value={country.color} onChange={(event) => updateCountry(country.id, { color: event.target.value })} />
             </label>
-            <TextField label="Country name" value={country.name} onChange={(name) => updateCountry(country.id, { name })} />
+            <TextField
+              id={`country-${country.id}-name`}
+              label="Country name"
+              value={country.name}
+              onChange={(name) => updateCountry(country.id, { name })}
+            />
           </div>
           <div className="form-row two-wide">
             <SelectField
@@ -85,7 +90,11 @@ export function OverviewTab({
               options={Object.keys(state.rules.rulingParties)}
               onChange={(ruling_party) => updateCountry(country.id, { ruling_party })}
             />
-            <NumberField label="Peace turns" value={country.peace_turns_count} onChange={(peace_turns_count) => updateCountry(country.id, { peace_turns_count })} />
+            <NumberField
+              label="Peace turns"
+              value={country.peace_turns_count}
+              onChange={(peace_turns_count) => updateCountry(country.id, { peace_turns_count })}
+            />
           </div>
           <div className="toolbar-line">
             <CheckboxField label="Player country" checked={country.is_player_country} onChange={(is_player_country) => updateCountry(country.id, { is_player_country })} />
@@ -99,8 +108,18 @@ export function OverviewTab({
             <span>Values the turn processor will use</span>
           </div>
           <div className="form-row three-wide">
-            <NumberField label="Gold" value={country.gold} onChange={(gold) => updateCountry(country.id, { gold })} />
-            <NumberField label="Stability" value={country.stability} onChange={(stability) => updateCountry(country.id, { stability })} />
+            <NumberField
+              id={`country-${country.id}-gold`}
+              label="Gold"
+              value={country.gold}
+              onChange={(gold) => updateCountry(country.id, { gold })}
+            />
+            <NumberField
+              id={`country-${country.id}-stability`}
+              label="Stability"
+              value={country.stability}
+              onChange={(stability) => updateCountry(country.id, { stability })}
+            />
             <NumberField label="Manpower" value={country.manpower} onChange={(manpower) => updateCountry(country.id, { manpower })} />
           </div>
           <div className="form-row three-wide">
@@ -130,13 +149,6 @@ export function OverviewTab({
         <TextField label="Reason" value={overrideReason} onChange={setOverrideReason} />
         <button className="primary" onClick={applyOverride}>Apply Override</button>
       </div>
-      {preview && preview.warnings.length > 0 && (
-        <ul className="warning-list">
-          {preview.warnings.map((warning) => (
-            <li key={warning}>{warning}</li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
