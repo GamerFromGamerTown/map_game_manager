@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { Database, Moon, Plus, RefreshCw, RotateCcw, Save, Sun } from "lucide-react";
 import { Country, Factory, GameState, Settlement } from "./types";
-import { createSeedState } from "./data/seed";
-import { normalizeLoadedState } from "./data/migrations";
+import { createBundledState } from "./data/defaultState";
 import { commitTurn, previewNextTurn } from "./engine/calculations";
 import { downloadBytes, exportStateAsSqlite } from "./db/sqlite";
-import { parseGameStateJson } from "./data/validation";
 import { Dashboard } from "./components/Dashboard";
 import { CountrySheet, CountryTab } from "./components/CountrySheet";
 import { RulesEditor } from "./components/RulesEditor";
@@ -13,23 +11,15 @@ import { DiplomacyGraph } from "./components/DiplomacyGraph";
 import { DiceRoller } from "./components/DiceRoller";
 import { ExportImportControls } from "./components/ExportImportControls";
 import { CountryOnboardingModal } from "./components/modals/CountryOnboardingModal";
+import { countryShortName } from "./utils/names";
 import "./styles.css";
 
-const STORAGE_KEY = "gm-economy-console-state";
 const THEME_KEY = "gm-economy-console-theme-v2";
 
 type View = "dashboard" | "country" | "dice" | "graph" | "rules";
 type Theme = "light" | "dark";
 
-const loadInitialState = (): GameState => {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return normalizeLoadedState(createSeedState());
-  try {
-    return normalizeLoadedState(parseGameStateJson(saved));
-  } catch {
-    return normalizeLoadedState(createSeedState());
-  }
-};
+const loadInitialState = (): GameState => createBundledState();
 
 const titleForView = (view: View) => {
   if (view === "dashboard") return "Dashboard";
@@ -50,7 +40,6 @@ function App() {
   const preview = useMemo(() => previewNextTurn(state), [state]);
   const selectedCountry = state.countries.find((country) => country.id === selectedCountryId) ?? state.countries[0];
 
-  useEffect(() => localStorage.setItem(STORAGE_KEY, JSON.stringify(state)), [state]);
   useEffect(() => localStorage.setItem(THEME_KEY, theme), [theme]);
 
   useEffect(() => {
@@ -136,7 +125,7 @@ function App() {
               }}
             >
               <span style={{ background: country.color }} />
-              {country.name}
+              <strong>{countryShortName(state, country.id)}</strong>
             </button>
           ))}
         </div>

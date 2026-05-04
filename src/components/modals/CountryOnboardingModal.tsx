@@ -13,6 +13,7 @@ export function CountryOnboardingModal({
   onClose: () => void;
 }) {
   const [name, setName] = useState("New Country");
+  const [shortName, setShortName] = useState("");
   const [color, setColor] = useState("#8d6fcb");
   const [rulingParty, setRulingParty] = useState(Object.keys(state.rules.rulingParties)[0] ?? "Authoritarian");
   const [gold, setGold] = useState(0);
@@ -73,6 +74,7 @@ export function CountryOnboardingModal({
           {
             id,
             name,
+            short_name: shortName.trim() || undefined,
             color,
             is_player_country: false,
             ruling_party: rulingParty,
@@ -122,6 +124,7 @@ export function CountryOnboardingModal({
     >
       <div className="form-grid">
         <TextField label="Name" value={name} onChange={setName} />
+        <TextField label="Short sidebar name" value={shortName} onChange={setShortName} />
         <label>
           <span>Color</span>
           <input type="color" value={color} onChange={(event) => setColor(event.target.value)} />

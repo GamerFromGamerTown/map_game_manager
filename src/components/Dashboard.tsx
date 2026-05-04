@@ -56,8 +56,10 @@ export function Dashboard({
                 return (
                   <tr key={country.id} onClick={() => onOpenCountry(country.id)}>
                     <td>
-                      <span className="swatch" style={{ background: country.color }} />
-                      {country.name}
+                      <span className="country-name-cell">
+                        <span className="swatch" style={{ background: country.color }} />
+                        <span>{country.name}</span>
+                      </span>
                     </td>
                     <td>{Math.round(country.gold)}</td>
                     <td className={item && item.goldDelta < 0 ? "bad" : "good"}>

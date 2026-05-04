@@ -226,6 +226,8 @@ tr:hover td {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .brand {
@@ -278,6 +280,34 @@ tr:hover td {
   border-radius: 50%;
   display: inline-block;
   border: 1px solid rgba(0, 0, 0, 0.18);
+  flex: 0 0 auto;
+}
+
+.country-chip {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.country-chip strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+.country-name-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  max-width: 260px;
+  white-space: nowrap;
+}
+
+.country-name-cell span:last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 main {
@@ -658,6 +688,25 @@ label span {
   background: var(--panel);
 }
 
+.stability-bands-rule {
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  align-items: stretch;
+}
+
+.stability-bands-rule h3 {
+  grid-column: 1 / -1;
+}
+
+.stability-band-card {
+  display: grid;
+  min-width: 0;
+}
+
+.stability-band-card .rule-grid {
+  grid-template-columns: 1fr;
+}
+
 .rule-field {
   display: grid;
   gap: 4px;
@@ -734,7 +783,32 @@ label span {
   gap: 14px;
 }
 
-.graph-panel svg {
+.graph-canvas-wrap {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+
+.graph-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.graph-toolbar button {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.graph-toolbar span {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.graph-canvas-wrap > svg {
   width: 100%;
   min-height: 560px;
   border: 1px solid var(--line);
@@ -743,8 +817,16 @@ label span {
   touch-action: none;
 }
 
-.theme-dark .graph-panel svg {
+.theme-dark .graph-canvas-wrap > svg {
   background: #111b27;
+}
+
+.graph-toolbar button > svg,
+.graph-filter-panel h2 > svg {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  flex: 0 0 16px;
 }
 
 .edge {
@@ -818,6 +900,28 @@ label span {
   display: grid;
   gap: 10px;
   align-content: start;
+}
+
+.graph-filter-panel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--panel-strong);
+}
+
+.graph-filter-panel h2 {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.graph-filter-list {
+  display: grid;
+  gap: 8px;
 }
 
 .dice-panel {

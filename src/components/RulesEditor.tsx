@@ -3,6 +3,7 @@ import { Save } from "lucide-react";
 import { GameState } from "../types";
 
 type RuleValue = string | number | boolean | null | RuleValue[] | { [key: string]: RuleValue };
+type RuleObject = { [key: string]: RuleValue };
 
 const sections = [
   ["Settings", "settings"],
@@ -12,12 +13,34 @@ const sections = [
   ["Policy rules", "policyCategories"],
   ["Ruling parties", "rulingParties"],
   ["Stability rules", "stabilityRules"],
-  ["Diplomacy rules", "diplomacyRelationTypes"],
   ["Puppet rules", "puppetTypes"],
   ["Dice modifiers", "dice"]
 ] as const;
 
 type RuleSection = (typeof sections)[number][1];
+
+const permissionPresets = [
+  {
+    label: "Full control",
+    value: ["any buildings", "country name", "settlement names", "trades", "creating settlements", "upgrading settlements", "ideological policies", "ruling party"]
+  },
+  {
+    label: "Administrative control",
+    value: ["any buildings", "settlement names", "country name", "trades", "creating settlements", "upgrading settlements", "ideological policies"]
+  },
+  {
+    label: "Occupation control",
+    value: ["militaristic buildings", "country name", "settlement names"]
+  },
+  {
+    label: "Military only",
+    value: ["militaristic buildings"]
+  },
+  {
+    label: "Custom",
+    value: null
+  }
+] as const;
 
 export function RulesEditor({
   state,
@@ -111,13 +134,33 @@ function RuleValueEditor({
   }
 
   if (Array.isArray(value)) {
+    if (label === "Master permissions") {
+      const selected = permissionPresetFor(value);
+      return (
+        <label className="rule-field">
+          <span>{label}</span>
+          <select
+            value={selected}
+            onChange={(event) => {
+              const preset = permissionPresets.find((item) => item.label === event.target.value);
+              if (preset?.value) onChange([...preset.value]);
+            }}
+          >
+            {permissionPresets.map((preset) => (
+              <option key={preset.label}>{preset.label}</option>
+            ))}
+          </select>
+        </label>
+      );
+    }
+
     return (
-      <div className="rule-group">
+      <div className={label === "Stability bands" ? "rule-group stability-bands-rule" : "rule-group"}>
         <h3>{label}</h3>
         {value.map((item, index) => (
-          <div className="rule-array-row" key={index}>
+          <div className={label === "Stability bands" ? "rule-array-row stability-band-card" : "rule-array-row"} key={index}>
             <RuleValueEditor
-              label={`${label} ${index + 1}`}
+              label={arrayItemLabel(label, item, index)}
               value={item}
               onChange={(next) => onChange(value.map((entry, itemIndex) => (itemIndex === index ? next : entry)))}
             />
@@ -127,14 +170,16 @@ function RuleValueEditor({
     );
   }
 
+  const entries = visibleObjectEntries(label, value);
+
   return (
     <div className="rule-group">
       <h3>{label}</h3>
       <div className="rule-grid">
-        {Object.entries(value).map(([key, entry]) => (
+        {entries.map(([key, entry]) => (
           <RuleValueEditor
             key={key}
-            label={humanizeKey(key)}
+            label={fieldLabel(label, key)}
             value={entry}
             onChange={(next) => onChange({ ...value, [key]: next })}
           />
@@ -146,4 +191,55 @@ function RuleValueEditor({
 
 function humanizeKey(key: string): string {
   return key.replace(/_/g, " ").replace(/\b\w/g, (match: string) => match.toUpperCase());
+}
+
+function arrayItemLabel(label: string, item: RuleValue, index: number): string {
+  if (label === "Factory rules" && isRuleObject(item) && typeof item.type === "string") {
+    return item.type;
+  }
+
+  if (label === "Stability bands" && isRuleObject(item) && typeof item.min === "number" && typeof item.max === "number") {
+    return `Stability ${item.min}-${item.max}`;
+  }
+
+  return `${label} ${index + 1}`;
+}
+
+function fieldLabel(parentLabel: string, key: string): string {
+  const factoryLabels: Record<string, string> = {
+    type: "Factory name",
+    build_gold_cost: "Build cost (gold)",
+    inputs_per_turn: "Consumes each turn",
+    outputs_per_turn: "Produces each turn"
+  };
+  if (parentLabel === "Factory rules" || key in factoryLabels) return factoryLabels[key] ?? humanizeKey(key);
+  if (key === "stabilityBands") return "Stability bands";
+  if (key === "master_permissions") return "Master permissions";
+
+  return humanizeKey(key);
+}
+
+function visibleObjectEntries(label: string, value: RuleObject): [string, RuleValue][] {
+  const entries = Object.entries(value);
+  if (isPuppetRule(value)) return entries.filter(([key]) => key !== "color_changes");
+  if (label !== "Resource production") return entries;
+
+  return entries.filter(([, entry]) => !isEmptyRuleObject(entry));
+}
+
+function permissionPresetFor(value: RuleValue[]): string {
+  const normalized = JSON.stringify([...value].sort());
+  return permissionPresets.find((preset) => preset.value && JSON.stringify([...preset.value].sort()) === normalized)?.label ?? "Custom";
+}
+
+function isEmptyRuleObject(value: RuleValue): boolean {
+  return isRuleObject(value) && Object.keys(value).length === 0;
+}
+
+function isRuleObject(value: RuleValue): value is RuleObject {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function isPuppetRule(value: RuleObject): boolean {
+  return "tribute_percent" in value && "master_permissions" in value && "diplomacy_inherited_from_master" in value;
 }
