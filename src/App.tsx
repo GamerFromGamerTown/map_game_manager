@@ -11,6 +11,7 @@ import { DiplomacyGraph } from "./components/DiplomacyGraph";
 import { DiceRoller } from "./components/DiceRoller";
 import { ExportImportControls } from "./components/ExportImportControls";
 import { CountryOnboardingModal } from "./components/modals/CountryOnboardingModal";
+import { NormalizedWarning, normalizePreviewWarnings } from "./ui/warningModel";
 import { countryShortName } from "./utils/names";
 import "./styles.css";
 
@@ -37,7 +38,9 @@ function App() {
   const [countryTab, setCountryTab] = useState<CountryTab>("Overview");
   const [gmNotes, setGmNotes] = useState("");
   const [creatingCountry, setCreatingCountry] = useState(false);
+  const [focusTargetId, setFocusTargetId] = useState("");
   const preview = useMemo(() => previewNextTurn(state), [state]);
+  const warnings = useMemo(() => normalizePreviewWarnings(state, preview), [state, preview]);
   const selectedCountry = state.countries.find((country) => country.id === selectedCountryId) ?? state.countries[0];
 
   useEffect(() => localStorage.setItem(THEME_KEY, theme), [theme]);
@@ -46,6 +49,31 @@ function App() {
     if (selectedCountryId && state.countries.some((country) => country.id === selectedCountryId)) return;
     setSelectedCountryId(state.countries[0]?.id ?? "");
   }, [selectedCountryId, state.countries]);
+
+  useEffect(() => {
+    if (!focusTargetId) return;
+
+    let attempts = 0;
+    const timer = window.setInterval(() => {
+      attempts += 1;
+      const target = document.getElementById(focusTargetId);
+      if (!target && attempts < 12) return;
+
+      window.clearInterval(timer);
+      if (!target) {
+        setFocusTargetId("");
+        return;
+      }
+
+      target.scrollIntoView({ block: "center", inline: "nearest" });
+      if (target instanceof HTMLElement) {
+        target.focus({ preventScroll: true });
+      }
+      setFocusTargetId("");
+    }, 80);
+
+    return () => window.clearInterval(timer);
+  }, [countryTab, focusTargetId, selectedCountryId, view]);
 
   const setTrackedState = (next: GameState) => {
     setHistory((current) => [state, ...current].slice(0, 50));
@@ -88,6 +116,24 @@ function App() {
       factories: current.factories.map((factory) => (factory.id === id ? { ...factory, ...patch } : factory))
     }));
 
+  const openWarning = (warning: NormalizedWarning) => {
+    if (warning.target.view === "country" && warning.target.countryId) {
+      setSelectedCountryId(warning.target.countryId);
+      setCountryTab(warning.target.countryTab ?? "Overview");
+      setView("country");
+    } else if (warning.target.view === "rules") {
+      setView("rules");
+    } else if (warning.target.view === "graph") {
+      setView("graph");
+    } else if (warning.target.view === "dice") {
+      setView("dice");
+    } else {
+      setView("dashboard");
+    }
+
+    if (warning.target.focusId) setFocusTargetId(warning.target.focusId);
+  };
+
   const commit = () => {
     patchState((current) => commitTurn(current, previewNextTurn(current), gmNotes));
     setGmNotes("");
@@ -119,6 +165,7 @@ function App() {
             <button
               key={country.id}
               className={country.id === selectedCountryId && view === "country" ? "country-chip active" : "country-chip"}
+              title={country.name}
               onClick={() => {
                 setSelectedCountryId(country.id);
                 setView("country");
@@ -174,6 +221,8 @@ function App() {
             updateCountry={updateCountry}
             updateSettlement={updateSettlement}
             updateFactory={updateFactory}
+            warnings={warnings.filter((warning) => warning.countryId === selectedCountry.id)}
+            onOpenWarning={openWarning}
           />
         )}
         {view === "dice" && <DiceRoller state={state} patchState={patchState} />}

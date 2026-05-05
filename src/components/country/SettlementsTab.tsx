@@ -1,13 +1,15 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { Country, GameState, RESOURCE_TYPES, ResourceBag, ResourceType, Settlement, SettlementTier } from "../../types";
-import { createId } from "../../engine/calculations";
-import { asNumber, CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
+import { Country, GameState, ResourceBag, Settlement, SettlementTier } from "../../types";
+import { createId, settlementProductionForCountry } from "../../engine/calculations";
+import { CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
 
-const firstProduction = (bag?: ResourceBag | null): { resource: ResourceType | "calculated"; amount: number } => {
-  const entry = Object.entries(bag ?? {}).find(([, amount]) => Number(amount) !== 0);
-  if (!entry) return { resource: "calculated", amount: 0 };
-  return { resource: entry[0] as ResourceType, amount: Number(entry[1]) };
+const formatAmount = (amount: number): string => (Number.isInteger(amount) ? String(amount) : amount.toFixed(2));
+
+const productionSummary = (bag: ResourceBag): string => {
+  const entries = Object.entries(bag).filter(([, amount]) => Number(amount) !== 0);
+  if (entries.length === 0) return "No resource output";
+  return entries.map(([resource, amount]) => `${resource} x${formatAmount(Number(amount))} / turn`).join(", ");
 };
 
 export function SettlementsTab({
@@ -26,98 +28,98 @@ export function SettlementsTab({
 
   return (
     <div className="section-stack">
-      <button onClick={() => setCreating(true)}>
-        <Plus size={16} /> Settlement
+      <button className="large-add-action" onClick={() => setCreating(true)}>
+        <Plus size={18} /> Add settlement
       </button>
-      <div className="table-wrap" id={`settlements-${country.id}`} tabIndex={-1}>
-        <table className="country-data-table dense-table sticky-first-column">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Tier</th>
-              <th>Capital</th>
-              <th>Biome/resource</th>
-              <th>Produces</th>
-              <th>Amount</th>
-              <th>State</th>
-              <th>Notes</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {settlements.map((settlement) => {
-              const production = firstProduction(settlement.manual_resource_override);
-              return (
-                <tr key={settlement.id} id={`settlement-${settlement.id}`} tabIndex={-1}>
-                  <td><input id={`settlement-${settlement.id}-name`} value={settlement.name} onChange={(event) => updateSettlement(settlement.id, { name: event.target.value })} /></td>
-                  <td>
-                    <select value={settlement.tier} onChange={(event) => updateSettlement(settlement.id, { tier: event.target.value as SettlementTier })}>
-                      {(["village", "city", "large_city", "metropole"] as SettlementTier[]).map((tier) => <option key={tier}>{tier}</option>)}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      id={`settlement-${settlement.id}-capital`}
-                      type="checkbox"
-                      checked={settlement.is_capital}
-                      onChange={(event) =>
-                        patchState((current) => ({
-                          ...current,
-                          settlements: current.settlements.map((item) =>
-                            item.country_id === country.id
-                              ? { ...item, is_capital: item.id === settlement.id ? event.target.checked : false }
-                              : item
-                          )
-                        }))
-                      }
-                    />
-                  </td>
-                  <td>
-                    <select id={`settlement-${settlement.id}-biome`} value={settlement.biome_or_resource_type} onChange={(event) => updateSettlement(settlement.id, { biome_or_resource_type: event.target.value })}>
-                      {Object.keys(state.rules.resourceProduction).map((option) => <option key={option}>{option}</option>)}
-                    </select>
-                  </td>
-                  <td>
-                    <select
-                      value={production.resource}
-                      onChange={(event) => {
-                        const resource = event.target.value as ResourceType | "calculated";
-                        updateSettlement(settlement.id, {
-                          manual_resource_override: resource === "calculated" ? null : { [resource]: production.amount || 1 }
-                        });
-                      }}
-                    >
-                      <option value="calculated">calculated</option>
-                      {RESOURCE_TYPES.map((resource) => <option key={resource}>{resource}</option>)}
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="number"
-                      value={production.amount}
-                      disabled={production.resource === "calculated"}
-                      onChange={(event) =>
-                        production.resource !== "calculated" &&
-                        updateSettlement(settlement.id, { manual_resource_override: { [production.resource]: asNumber(event.target.value) } })
-                      }
-                    />
-                  </td>
-                  <td className="inline-checks">
-                    <CheckboxField label="Damaged" checked={settlement.damaged} onChange={(damaged) => updateSettlement(settlement.id, { damaged })} />
-                    <CheckboxField label="Bombed" checked={settlement.bombed} onChange={(bombed) => updateSettlement(settlement.id, { bombed })} />
-                    <CheckboxField label="Connected" checked={settlement.connected_for_upkeep} onChange={(connected_for_upkeep) => updateSettlement(settlement.id, { connected_for_upkeep })} />
-                  </td>
-                  <td><input value={settlement.notes} onChange={(event) => updateSettlement(settlement.id, { notes: event.target.value })} /></td>
-                  <td>
-                    <button className="icon danger" onClick={() => patchState((current) => ({ ...current, settlements: current.settlements.filter((item) => item.id !== settlement.id) }))}>
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="settlement-card-grid" id={`settlements-${country.id}`} tabIndex={-1}>
+        {settlements.map((settlement) => (
+          <article className="settlement-card" key={settlement.id} id={`settlement-${settlement.id}`} tabIndex={-1}>
+            <div className="settlement-main-grid">
+              <label className="settlement-name-field">
+                <span>Name</span>
+                <input
+                  id={`settlement-${settlement.id}-name`}
+                  value={settlement.name}
+                  onChange={(event) => updateSettlement(settlement.id, { name: event.target.value })}
+                />
+              </label>
+              <label>
+                <span>Tier</span>
+                <select
+                  value={settlement.tier}
+                  onChange={(event) => updateSettlement(settlement.id, { tier: event.target.value as SettlementTier })}
+                >
+                  {(["village", "city", "large_city", "metropole"] as SettlementTier[]).map((tier) => (
+                    <option key={tier}>{tier}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Biome/resource</span>
+                <select
+                  id={`settlement-${settlement.id}-biome`}
+                  value={settlement.biome_or_resource_type}
+                  onChange={(event) =>
+                    updateSettlement(settlement.id, {
+                      biome_or_resource_type: event.target.value,
+                      manual_resource_override: null
+                    })
+                  }
+                >
+                  {Object.keys(state.rules.resourceProduction).map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span>Output</span>
+                <div className="derived-output">{productionSummary(settlementProductionForCountry(state, settlement))}</div>
+              </label>
+            </div>
+            <div className="settlement-state-row">
+              <CheckboxField
+                label="Connected"
+                checked={settlement.connected_for_upkeep}
+                onChange={(connected_for_upkeep) => updateSettlement(settlement.id, { connected_for_upkeep })}
+              />
+              <CheckboxField
+                id={`settlement-${settlement.id}-capital`}
+                label="Capital"
+                checked={settlement.is_capital}
+                onChange={(isCapital) =>
+                  patchState((current) => ({
+                    ...current,
+                    settlements: current.settlements.map((item) =>
+                      item.country_id === country.id
+                        ? { ...item, is_capital: item.id === settlement.id ? isCapital : false }
+                        : item
+                    )
+                  }))
+                }
+              />
+              <CheckboxField label="Damaged" checked={settlement.damaged} onChange={(damaged) => updateSettlement(settlement.id, { damaged })} />
+              <CheckboxField label="Bombed" checked={settlement.bombed} onChange={(bombed) => updateSettlement(settlement.id, { bombed })} />
+              <button
+                className="icon danger settlement-delete"
+                onClick={() =>
+                  patchState((current) => ({
+                    ...current,
+                    settlements: current.settlements.filter((item) => item.id !== settlement.id)
+                  }))
+                }
+                aria-label={`Delete ${settlement.name}`}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+            <div className="settlement-notes">
+              <details>
+                <summary>Notes</summary>
+                <input value={settlement.notes} onChange={(event) => updateSettlement(settlement.id, { notes: event.target.value })} />
+              </details>
+            </div>
+          </article>
+        ))}
       </div>
       {creating && (
         <SettlementCreateModal
@@ -149,8 +151,6 @@ function SettlementCreateModal({
   const [baseName, setBaseName] = useState("New Settlement");
   const [tier, setTier] = useState<SettlementTier>("village");
   const [biome, setBiome] = useState("plains");
-  const [productionResource, setProductionResource] = useState<ResourceType | "calculated">("calculated");
-  const [productionAmount, setProductionAmount] = useState(1);
   const [firstCapital, setFirstCapital] = useState(false);
   const names = useMemo(
     () => Array.from({ length: Math.max(1, count) }, (_, index) => (count === 1 ? baseName : `${baseName} ${index + 1}`)),
@@ -175,8 +175,7 @@ function SettlementCreateModal({
                   tier,
                   is_capital: firstCapital && index === 0,
                   biome_or_resource_type: biome,
-                  manual_resource_override:
-                    productionResource === "calculated" ? null : { [productionResource]: productionAmount },
+                  manual_resource_override: null,
                   upkeep_option: "A",
                   occupied_by_country_id: null,
                   damaged: false,
@@ -197,8 +196,6 @@ function SettlementCreateModal({
         <TextField label="Base name" value={baseName} onChange={setBaseName} />
         <SelectField label="Tier" value={tier} options={["village", "city", "large_city", "metropole"]} onChange={(value) => setTier(value as SettlementTier)} />
         <SelectField label="Biome/resource" value={biome} options={Object.keys(state.rules.resourceProduction)} onChange={setBiome} />
-        <SelectField label="Production override" value={productionResource} options={["calculated", ...RESOURCE_TYPES]} onChange={(value) => setProductionResource(value as ResourceType | "calculated")} />
-        <NumberField label="Override units produced each turn" value={productionAmount} min={0} onChange={setProductionAmount} />
         <CheckboxField label="First is capital" checked={firstCapital} onChange={setFirstCapital} />
       </div>
       <p className="quiet">Names: {names.join(", ")}</p>

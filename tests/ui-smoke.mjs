@@ -58,6 +58,14 @@ await test("primary navigation and dialogs are reachable without runtime errors"
   assert.deepEqual(errors, []);
 });
 
+await test("country sidebar chips open country sheets without runtime errors", async () => {
+  await page.getByRole("button", { name: "Pristanek", exact: true }).click();
+  await assertVisibleHeading("United Kingdom of Pristanekdrzave");
+  await page.getByRole("tab", { name: "Overview", exact: true }).waitFor({ state: "visible" });
+
+  assert.deepEqual(errors, []);
+});
+
 await test("country workflow tabs are task-focused and stay active across countries", async () => {
   await page.getByRole("button", { name: "United Kingdom of Pristanekdrzave" }).click();
   const tabs = ["Overview", "Settlements", "Production", "Policies", "Trade/Diplomacy", "Military", "Dice/History", "Notes"];

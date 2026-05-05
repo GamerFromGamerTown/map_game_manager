@@ -22,49 +22,62 @@ export function FactoriesTab({
 
   return (
     <div className="section-stack">
-      <button onClick={() => setCreating(true)}>
-        <Plus size={16} /> Factory
+      <button className="large-add-action" onClick={() => setCreating(true)}>
+        <Plus size={18} /> Add factory
       </button>
-      <div className="table-wrap">
-        <table className="country-data-table dense-table sticky-first-column">
-          <thead>
-            <tr>
-              <th>Type</th>
-              <th>Inputs</th>
-              <th>Outputs</th>
-              <th>Active</th>
-              <th>Damaged</th>
-              <th>Bombed</th>
-              <th>Notes</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {factories.map((factory) => {
-              const rule = state.rules.factoryRules.find((item) => item.type === factory.type);
-              return (
-                <tr key={factory.id} id={`factory-${factory.id}`} tabIndex={-1}>
-                  <td>
-                    <select id={`factory-${factory.id}-type`} value={factory.type} onChange={(event) => updateFactory(factory.id, { type: event.target.value })}>
-                      {factoryTypes.map((type) => <option key={type}>{type}</option>)}
-                    </select>
-                  </td>
-                  <td><ResourceBagView bag={rule?.inputs_per_turn} /></td>
-                  <td><ResourceBagView bag={rule?.outputs_per_turn} /></td>
-                  <td><input type="checkbox" checked={factory.active} onChange={(event) => updateFactory(factory.id, { active: event.target.checked })} /></td>
-                  <td><input type="checkbox" checked={factory.damaged} onChange={(event) => updateFactory(factory.id, { damaged: event.target.checked })} /></td>
-                  <td><input type="checkbox" checked={factory.bombed} onChange={(event) => updateFactory(factory.id, { bombed: event.target.checked })} /></td>
-                  <td><input value={factory.notes} onChange={(event) => updateFactory(factory.id, { notes: event.target.value })} /></td>
-                  <td>
-                    <button className="icon danger" onClick={() => patchState((current) => ({ ...current, factories: current.factories.filter((item) => item.id !== factory.id) }))}>
-                      <Trash2 size={16} />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <div className="factory-card-grid">
+        {factories.map((factory) => {
+          const rule = state.rules.factoryRules.find((item) => item.type === factory.type);
+          return (
+            <article className="factory-card" key={factory.id} id={`factory-${factory.id}`} tabIndex={-1}>
+              <div className="factory-main-grid">
+                <label>
+                  <span>Type</span>
+                  <select
+                    id={`factory-${factory.id}-type`}
+                    value={factory.type}
+                    onChange={(event) => updateFactory(factory.id, { type: event.target.value })}
+                  >
+                    {factoryTypes.map((type) => (
+                      <option key={type}>{type}</option>
+                    ))}
+                  </select>
+                </label>
+                <div className="rule-output-box">
+                  <span>Inputs</span>
+                  <ResourceBagView bag={rule?.inputs_per_turn} />
+                </div>
+                <div className="rule-output-box">
+                  <span>Outputs</span>
+                  <ResourceBagView bag={rule?.outputs_per_turn} />
+                </div>
+              </div>
+              <div className="settlement-state-row">
+                <CheckboxField label="Active" checked={factory.active} onChange={(active) => updateFactory(factory.id, { active })} />
+                <CheckboxField label="Damaged" checked={factory.damaged} onChange={(damaged) => updateFactory(factory.id, { damaged })} />
+                <CheckboxField label="Bombed" checked={factory.bombed} onChange={(bombed) => updateFactory(factory.id, { bombed })} />
+                <button
+                  className="icon danger settlement-delete"
+                  onClick={() =>
+                    patchState((current) => ({
+                      ...current,
+                      factories: current.factories.filter((item) => item.id !== factory.id)
+                    }))
+                  }
+                  aria-label={`Delete ${factory.type}`}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+              <div className="settlement-notes">
+                <details>
+                  <summary>Notes</summary>
+                  <input value={factory.notes} onChange={(event) => updateFactory(factory.id, { notes: event.target.value })} />
+                </details>
+              </div>
+            </article>
+          );
+        })}
       </div>
       {creating && (
         <FactoryCreateModal

@@ -1,0 +1,103 @@
+import assert from "node:assert/strict";
+import { mkdir } from "node:fs/promises";
+import { createServer } from "vite";
+import { firefox } from "playwright";
+
+await mkdir("artifacts/country-editor", { recursive: true });
+
+const server = await createServer({
+  configFile: "vite.config.ts",
+  logLevel: "error",
+  server: {
+    host: "127.0.0.1",
+    port: 5242,
+    strictPort: false
+  }
+});
+
+await server.listen();
+const baseUrl = server.resolvedUrls?.local?.[0] ?? "http://127.0.0.1:5242/";
+const browser = await firefox.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+const errors = [];
+
+page.on("console", (message) => {
+  if (message.type() === "error") errors.push(message.text());
+});
+page.on("pageerror", (error) => errors.push(error.message));
+
+try {
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Terria", exact: true }).click();
+  await page.locator("h1").filter({ hasText: "Terria Rosia" }).first().waitFor({ state: "visible" });
+
+  const tabLabels = await page.getByRole("tab").evaluateAll((tabs) =>
+    tabs.map((tab) => tab.textContent?.trim().replace(/\s+/g, " ") ?? "")
+  );
+  assert.deepEqual(tabLabels, [
+    "Overview",
+    "Settlements +",
+    "Production +",
+    "Trade/Diplomacy +",
+    "Military +",
+    "Dice/History",
+    "Notes",
+    "Policies"
+  ]);
+
+  const coreInputWidths = await page.locator(".core-number-grid input").evaluateAll((inputs) =>
+    inputs.map((input) => Math.round(input.getBoundingClientRect().width))
+  );
+  assert.ok(coreInputWidths.length >= 6);
+  assert.ok(coreInputWidths.every((width) => width <= 280), `core input widths: ${coreInputWidths.join(", ")}`);
+  await page.screenshot({ path: "artifacts/country-editor/overview-desktop.png", fullPage: true });
+
+  await page.getByRole("tab", { name: "Settlements +", exact: true }).click();
+  await page.locator(".settlement-card").first().waitFor({ state: "visible" });
+  assert.equal(await page.locator(".settlement-card").count() > 1, true);
+  assert.equal(await page.locator(".settlement-card select option[value='calculated']").count(), 0);
+  assert.equal(await page.getByText("wood x1 / turn").first().isVisible(), true);
+  assert.equal(await page.locator(".settlement-notes details").first().isVisible(), true);
+
+  const settlementGridColumns = await page.locator(".settlement-card-grid").evaluate((grid) =>
+    getComputedStyle(grid).gridTemplateColumns.split(" ").length
+  );
+  assert.equal(settlementGridColumns, 2);
+  const desktopLayout = await page.evaluate(() => ({
+    bodyScrollWidth: document.body.scrollWidth,
+    viewportWidth: window.innerWidth
+  }));
+  assert.ok(desktopLayout.bodyScrollWidth <= desktopLayout.viewportWidth + 1);
+
+  await page.screenshot({ path: "artifacts/country-editor/settlements-desktop.png", fullPage: true });
+
+  await page.getByRole("tab", { name: "Production +", exact: true }).click();
+  await page.locator(".factory-card").first().waitFor({ state: "visible" });
+  assert.equal(await page.locator(".factory-card").count() > 1, true);
+  const productionLayout = await page.evaluate(() => ({
+    bodyScrollWidth: document.body.scrollWidth,
+    viewportWidth: window.innerWidth
+  }));
+  assert.ok(productionLayout.bodyScrollWidth <= productionLayout.viewportWidth + 1);
+  await page.screenshot({ path: "artifacts/country-editor/production-desktop.png", fullPage: true });
+
+  await page.getByRole("tab", { name: "Settlements +", exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 900 });
+  await page.waitForTimeout(100);
+  const mobileLayout = await page.evaluate(() => {
+    const grid = document.querySelector(".settlement-card-grid");
+    return {
+      bodyScrollWidth: document.body.scrollWidth,
+      viewportWidth: window.innerWidth,
+      settlementColumns: grid ? getComputedStyle(grid).gridTemplateColumns.split(" ").length : 0
+    };
+  });
+  assert.ok(mobileLayout.bodyScrollWidth <= mobileLayout.viewportWidth + 1);
+  assert.equal(mobileLayout.settlementColumns, 1);
+  await page.screenshot({ path: "artifacts/country-editor/settlements-mobile.png", fullPage: true });
+
+  assert.deepEqual(errors, []);
+} finally {
+  await browser.close();
+  await server.close();
+}

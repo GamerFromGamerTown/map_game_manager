@@ -486,6 +486,24 @@ h2 {
   margin-bottom: 14px;
 }
 
+.country-tabs {
+  gap: 9px;
+}
+
+.country-tabs button {
+  min-height: 44px;
+  min-width: 108px;
+  justify-content: space-between;
+  padding: 0 13px;
+  font-weight: 700;
+}
+
+.country-tabs .tab-plus {
+  color: var(--blue);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
 .section-stack {
   display: grid;
   gap: 14px;
@@ -561,6 +579,13 @@ h2 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.core-number-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 240px));
+  gap: 10px;
+  align-items: end;
+}
+
 .compact-row {
   max-width: 720px;
 }
@@ -616,6 +641,100 @@ label span {
 
 .inline-checks .check-field {
   min-height: 24px;
+}
+
+.large-add-action {
+  width: fit-content;
+  min-height: 44px;
+  padding: 0 16px;
+  font-weight: 700;
+}
+
+.settlement-card-grid,
+.factory-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(520px, 100%), 1fr));
+  gap: 12px;
+}
+
+.settlement-card,
+.factory-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--panel-strong);
+}
+
+.settlement-main-grid {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) minmax(96px, 120px) minmax(130px, 0.9fr);
+  gap: 10px;
+  align-items: end;
+}
+
+.settlement-main-grid label,
+.factory-main-grid label {
+  min-width: 0;
+}
+
+.settlement-main-grid label:last-child {
+  grid-column: 1 / -1;
+}
+
+.factory-main-grid {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) minmax(130px, 0.75fr) minmax(130px, 0.75fr);
+  gap: 10px;
+  align-items: stretch;
+}
+
+.derived-output,
+.rule-output-box {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(35, 104, 176, 0.08);
+  padding: 8px 9px;
+  overflow-wrap: anywhere;
+}
+
+.theme-dark .derived-output,
+.theme-dark .rule-output-box {
+  background: rgba(106, 166, 232, 0.09);
+}
+
+.rule-output-box > span {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.settlement-state-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+
+.settlement-state-row .check-field {
+  min-height: 28px;
+}
+
+.settlement-delete {
+  margin-left: auto;
+}
+
+.settlement-notes details {
+  margin-top: 2px;
+  padding: 8px 0 0;
+}
+
+.settlement-notes input {
+  margin-top: 8px;
 }
 
 .override-bar {
@@ -1124,6 +1243,7 @@ details summary {
 
   .form-grid,
   .stat-grid,
+  .core-number-grid,
   .override-bar {
     grid-template-columns: 1fr 1fr;
   }
@@ -1154,9 +1274,12 @@ details summary {
 
   .form-grid,
   .stat-grid,
+  .core-number-grid,
   .override-bar,
   .form-row.two-wide,
   .form-row.three-wide,
+  .settlement-main-grid,
+  .factory-main-grid,
   .manual-roll-row,
   .identity-color-row {
     grid-template-columns: 1fr;

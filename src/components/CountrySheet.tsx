@@ -30,12 +30,14 @@ export const countryTabs: CountryTab[] = [
   "Overview",
   "Settlements",
   "Production",
-  "Policies",
   "Trade/Diplomacy",
   "Military",
   "Dice/History",
-  "Notes"
+  "Notes",
+  "Policies"
 ];
+
+const tabsWithAddActions = new Set<CountryTab>(["Settlements", "Production", "Trade/Diplomacy", "Military"]);
 
 export function CountrySheet({
   state,
@@ -90,7 +92,8 @@ export function CountrySheet({
             className={activeTab === tab ? "active" : ""}
             onClick={() => setActiveTab(tab)}
           >
-            {tab}
+            <span>{tab}</span>
+            {tabsWithAddActions.has(tab) && <span className="tab-plus"> +</span>}
           </button>
         ))}
       </div>
@@ -174,4 +177,3 @@ export function CountrySheet({
     </section>
   );
 }
-

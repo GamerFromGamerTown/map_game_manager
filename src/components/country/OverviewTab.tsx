@@ -108,7 +108,7 @@ export function OverviewTab({
             <h2>Core Numbers</h2>
             <span>Values the turn processor will use</span>
           </div>
-          <div className="form-row three-wide">
+          <div className="core-number-grid">
             <NumberField
               id={`country-${country.id}-gold`}
               label="Gold"
@@ -122,8 +122,6 @@ export function OverviewTab({
               onChange={(stability) => updateCountry(country.id, { stability })}
             />
             <NumberField label="Manpower" value={country.manpower} onChange={(manpower) => updateCountry(country.id, { manpower })} />
-          </div>
-          <div className="form-row three-wide">
             <NumberField label="Manpower cap" value={country.manpower_cap} onChange={(manpower_cap) => updateCountry(country.id, { manpower_cap, manual_manpower_cap_override: manpower_cap })} />
             <NumberField label="Reserve" value={country.reserve} onChange={(reserve) => updateCountry(country.id, { reserve })} />
             <NumberField label="Supply" value={country.supply} onChange={(supply) => updateCountry(country.id, { supply })} />
