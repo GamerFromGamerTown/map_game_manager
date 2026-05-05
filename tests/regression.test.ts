@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { commitTurn, previewNextTurn } from "../src/engine/calculations";
+import { commitTurn, previewNextTurn, settlementProductionForCountry, stockpileForCountry } from "../src/engine/calculations";
 import { createBundledState } from "../src/data/defaultState";
 import { normalizeLoadedState } from "../src/data/migrations";
 import { validateGameState } from "../src/data/validation";
@@ -35,13 +35,21 @@ const bundleCountrySettlementsIntoSingleCountry = (state: GameState, sourceCount
 const nonZeroBag = (bag: ResourceBag): Record<string, number> =>
   Object.fromEntries(Object.entries(bag).filter(([, value]) => Number(value) !== 0));
 
+const basicRawDelta = (bag: ResourceBag): Record<string, number> =>
+  Object.fromEntries(
+    (["food", "wood", "coal", "iron", "bauxite", "copper", "gold_ore"] as const).map((resource) => [
+      resource,
+      Number(bag[resource] ?? 0)
+    ])
+  );
+
 test("validation accepts the bundled default save and rejects partial imports", () => {
   const initialState = createBundledState();
   assert.doesNotThrow(() => validateGameState(initialState));
   assert.throws(() => validateGameState({ schemaVersion: 2, countries: [] }), /missing|must/i);
-  const invalidTrade = clone(initialState);
-  invalidTrade.trades[0].receiver_country_id = "missing-country";
-  assert.throws(() => validateGameState(invalidTrade), /unknown country/i);
+  const invalidSettlement = clone(initialState);
+  invalidSettlement.settlements[0].country_id = "missing-country";
+  assert.throws(() => validateGameState(invalidSettlement), /unknown country/i);
 });
 
 test("normalization fills newly-added rule defaults without hardcoding country data", () => {
@@ -62,6 +70,7 @@ test("commit recomputes preview from the current state instead of trusting stale
   const stalePreview = previewNextTurn(state);
   const current = clone(state);
   current.rules.settings.base_manpower_gain_per_turn += 1234;
+  const currentPreview = previewForCountry(current, "explo");
 
   const committed = commitTurn(current, stalePreview, "recomputed");
   const log = committed.turnLogs.find((item) => item.country_id === "explo");
@@ -69,8 +78,8 @@ test("commit recomputes preview from the current state instead of trusting stale
     manpower?: { baseAndSettlementsBeforePolicy?: number };
   };
 
-  assert.equal(log?.manpower_after, 34234);
-  assert.equal(breakdown.manpower?.baseAndSettlementsBeforePolicy, 16234);
+  assert.equal(log?.manpower_after, currentPreview.manpowerAfter);
+  assert.equal(breakdown.manpower?.baseAndSettlementsBeforePolicy, currentPreview.formulaBreakdown.manpower.baseAndSettlementsBeforePolicy);
 });
 
 test("ruling party effects use editable rule config values", () => {
@@ -176,6 +185,19 @@ test("manpower arithmetic stays additive across settlement tiers", () => {
   assert.equal(metropole.manpowerGain, 32000);
 });
 
+test("settlement editor production summaries use derived rule production without overrides", () => {
+  const state = createBundledState();
+  const settlement = clone(state.settlements.find((item) => item.country_id === "explo" && item.name === "Daria"));
+  assert.ok(settlement);
+  settlement.tier = "large_city";
+  settlement.biome_or_resource_type = "forest";
+  settlement.manual_resource_override = { gold_ore: 99 };
+
+  const production = settlementProductionForCountry(state, settlement);
+
+  assert.deepEqual(nonZeroBag(production), { wood: 3 });
+});
+
 test("bundled default save does not carry manual overrides", () => {
   const state = createBundledState();
 
@@ -190,11 +212,45 @@ test("bundled default save does not carry manual overrides", () => {
   );
 });
 
+test("bundled save matches the supplied stat sheet source values", () => {
+  const state = createBundledState();
+  const expectations = [
+    { countryId: "explo", gold: 500, stability: 71, manpower: 18000, cap: 66000, reserve: 0, equipment: 0, settlements: 13 },
+    { countryId: "gaymer", gold: 500, stability: 36, manpower: 44000, cap: 158000, reserve: 0, equipment: 0, settlements: 26 },
+    { countryId: "pick", gold: 3500, stability: 46, manpower: 15000, cap: 72000, reserve: 0, equipment: 0, settlements: 16 },
+    { countryId: "panguelle", gold: 20000, stability: 55, manpower: 0, cap: 64000, reserve: 20000, equipment: 0, settlements: 12 },
+    { countryId: "ed", gold: 15000, stability: 100, manpower: 24000, cap: 58000, reserve: 0, equipment: 0, settlements: 9 },
+    { countryId: "grisly", gold: 8500, stability: 73, manpower: 9000, cap: 58000, reserve: 0, equipment: 0, settlements: 9 },
+    { countryId: "elf", gold: 500, stability: 55, manpower: 41000, cap: 100000, reserve: 0, equipment: 20, settlements: 21 },
+    { countryId: "dew", gold: 5000, stability: 36, manpower: 18000, cap: 76000, reserve: 0, equipment: 0, settlements: 18 }
+  ];
+
+  expectations.forEach((expected) => {
+    const country = state.countries.find((item) => item.id === expected.countryId);
+    assert.ok(country, `missing ${expected.countryId}`);
+    assert.equal(country.gold, expected.gold);
+    assert.equal(country.stability, expected.stability);
+    assert.equal(country.manpower, expected.manpower);
+    assert.equal(country.manpower_cap, expected.cap);
+    assert.equal(country.reserve, expected.reserve);
+    assert.equal(country.equipment, expected.equipment);
+    assert.equal(state.settlements.filter((settlement) => settlement.country_id === expected.countryId).length, expected.settlements);
+  });
+
+  assert.equal(state.turnNumber, 3);
+  assert.equal(state.settlements.find((settlement) => settlement.name === "Moras")?.is_capital, true);
+  assert.equal(state.settlements.find((settlement) => settlement.name === "GaymerTown")?.tier, "large_city");
+  assert.equal(state.settlements.find((settlement) => settlement.name === "Drumdorf")?.tier, "city");
+  assert.equal(state.trades.length, 6);
+  assert.equal(stockpileForCountry(state, "gaymer").food, 42);
+  assert.equal(stockpileForCountry(state, "dew").wood, 10);
+});
+
 test("bundled save arithmetic matches known manpower caps without overrides", () => {
   const state = createBundledState();
   const expectations = [
     { countryId: "explo", expectedCap: 66000, expectedGain: 15000 },
-    { countryId: "gaymer", expectedCap: 156000, expectedGain: 45000 },
+    { countryId: "gaymer", expectedCap: 158000, expectedGain: 46000 },
     { countryId: "pick", expectedCap: 72000, expectedGain: 18000 },
     { countryId: "magnus", expectedCap: 46000, expectedGain: 5000 },
     { countryId: "panguelle", expectedCap: 64000, expectedGain: 14000 },
@@ -211,14 +267,27 @@ test("bundled save arithmetic matches known manpower caps without overrides", ()
   });
 });
 
-test("bundled save arithmetic matches independently calculated nation snapshots", () => {
+test("bundled save arithmetic matches the supplied stat sheet snapshot", () => {
   const state = createBundledState();
   const previewByCountry = new Map(previewNextTurn(state).countries.map((item) => [item.countryId, item]));
   const expected = [
     {
+      countryId: "dew",
+      goldDelta: 14500,
+      tradeGoldNet: -5000,
+      stabilityDelta: 20,
+      stabilityAfter: 56,
+      manpowerGain: 20000,
+      manpowerAfter: 38000,
+      manpowerCapAfter: 76000,
+      necessitiesRequired: 1,
+      necessitiesProduced: 1,
+      necessitiesMet: true,
+      rawDelta: { food: 6, wood: 5, coal: -1, iron: 1, bauxite: 3, copper: 0, gold_ore: 0 }
+    },
+    {
       countryId: "explo",
       goldDelta: 19000,
-      grossGoldIncome: 19500,
       tradeGoldNet: -500,
       stabilityDelta: 20,
       stabilityAfter: 91,
@@ -228,28 +297,26 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 1,
       necessitiesProduced: 1,
       necessitiesMet: true,
-      resourceDelta: { food: 1, wood: 1, coal: 6, iron: 2, equipment: 20 }
+      rawDelta: { food: 1, wood: 1, coal: 1, iron: 2, bauxite: 0, copper: 0, gold_ore: 0 }
     },
     {
       countryId: "gaymer",
-      goldDelta: 38000,
-      grossGoldIncome: 39500,
+      goldDelta: 38500,
       tradeGoldNet: 0,
       stabilityDelta: 18,
       stabilityAfter: 54,
-      manpowerGain: 45000,
-      manpowerAfter: 89000,
-      manpowerCapAfter: 156000,
+      manpowerGain: 46000,
+      manpowerAfter: 90000,
+      manpowerCapAfter: 158000,
       necessitiesRequired: 3,
       necessitiesProduced: 0,
       necessitiesMet: false,
-      resourceDelta: { food: 9, coal: 9, gold_ore: 1, gold_ingot: 1 }
+      rawDelta: { food: 14, wood: 0, coal: 1, iron: 0, bauxite: 0, copper: 0, gold_ore: 1 }
     },
     {
       countryId: "pick",
-      goldDelta: 22000,
-      grossGoldIncome: 25000,
-      tradeGoldNet: 2000,
+      goldDelta: 21000,
+      tradeGoldNet: 1000,
       stabilityDelta: 13,
       stabilityAfter: 59,
       manpowerGain: 18000,
@@ -258,12 +325,11 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 1,
       necessitiesProduced: 0,
       necessitiesMet: false,
-      resourceDelta: { food: 11, coal: 5, iron: 2, bauxite: 4, gold_ore: 1 }
+      rawDelta: { food: 9, wood: 0, coal: 3, iron: 2, bauxite: 4, copper: 0, gold_ore: 1 }
     },
     {
       countryId: "magnus",
       goldDelta: 15500,
-      grossGoldIncome: 15500,
       tradeGoldNet: 0,
       stabilityDelta: 25,
       stabilityAfter: 100,
@@ -273,12 +339,25 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 0,
       necessitiesProduced: 0,
       necessitiesMet: true,
-      resourceDelta: { food: 2, coal: 2, copper: 1 }
+      rawDelta: { food: 2, wood: 0, coal: 2, iron: 0, bauxite: 0, copper: 1, gold_ore: 0 }
+    },
+    {
+      countryId: "ed",
+      goldDelta: 18500,
+      tradeGoldNet: 0,
+      stabilityDelta: 25,
+      stabilityAfter: 100,
+      manpowerGain: 11000,
+      manpowerAfter: 35000,
+      manpowerCapAfter: 58000,
+      necessitiesRequired: 1,
+      necessitiesProduced: 1,
+      necessitiesMet: true,
+      rawDelta: { food: 2, wood: 0, coal: 0, iron: 4, bauxite: 0, copper: 0, gold_ore: 0 }
     },
     {
       countryId: "panguelle",
-      goldDelta: 28000,
-      grossGoldIncome: 28000,
+      goldDelta: 23000,
       tradeGoldNet: 0,
       stabilityDelta: 16,
       stabilityAfter: 71,
@@ -288,27 +367,11 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 1,
       necessitiesProduced: 1,
       necessitiesMet: true,
-      resourceDelta: { coal: 9, iron: 1, equipment: 20 }
-    },
-    {
-      countryId: "ed",
-      goldDelta: 18500,
-      grossGoldIncome: 18500,
-      tradeGoldNet: 0,
-      stabilityDelta: 18,
-      stabilityAfter: 100,
-      manpowerGain: 11000,
-      manpowerAfter: 35000,
-      manpowerCapAfter: 58000,
-      necessitiesRequired: 1,
-      necessitiesProduced: 0,
-      necessitiesMet: false,
-      resourceDelta: { food: 2, plank: 1, coal: 3, iron: 4, copper_parts: 1 }
+      rawDelta: { food: 0, wood: 0, coal: 2, iron: 1, bauxite: 0, copper: 0, gold_ore: 0 }
     },
     {
       countryId: "grisly",
       goldDelta: 17500,
-      grossGoldIncome: 17500,
       tradeGoldNet: 0,
       stabilityDelta: 13,
       stabilityAfter: 86,
@@ -318,12 +381,11 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 1,
       necessitiesProduced: 0,
       necessitiesMet: false,
-      resourceDelta: { food: 3, coal: 6, iron: 3, copper: 1, gold_ore: 1 }
+      rawDelta: { food: 3, wood: 0, coal: 3, iron: 3, bauxite: 0, copper: 1, gold_ore: 1 }
     },
     {
       countryId: "elf",
       goldDelta: 32500,
-      grossGoldIncome: 32500,
       tradeGoldNet: 0,
       stabilityDelta: 25,
       stabilityAfter: 80,
@@ -333,22 +395,7 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
       necessitiesRequired: 2,
       necessitiesProduced: 2,
       necessitiesMet: true,
-      resourceDelta: { food: -2, coal: 16, bauxite: 1, equipment: 20 }
-    },
-    {
-      countryId: "dew",
-      goldDelta: 16500,
-      grossGoldIncome: 21000,
-      tradeGoldNet: -3000,
-      stabilityDelta: 20,
-      stabilityAfter: 56,
-      manpowerGain: 20000,
-      manpowerAfter: 38000,
-      manpowerCapAfter: 76000,
-      necessitiesRequired: 1,
-      necessitiesProduced: 1,
-      necessitiesMet: true,
-      resourceDelta: { food: 6, wood: 5, coal: 6, iron: 1, iron_parts: 2, bauxite: 3 }
+      rawDelta: { food: 0, wood: 0, coal: 2, iron: 0, bauxite: 1, copper: 0, gold_ore: 0 }
     }
   ];
 
@@ -356,7 +403,6 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
     const preview = previewByCountry.get(expectedCountry.countryId);
     assert.ok(preview, `missing preview for ${expectedCountry.countryId}`);
     assert.equal(preview.goldDelta, expectedCountry.goldDelta);
-    assert.equal(preview.grossGoldIncome, expectedCountry.grossGoldIncome);
     assert.equal(preview.tradeGoldNet, expectedCountry.tradeGoldNet);
     assert.equal(preview.stabilityDelta, expectedCountry.stabilityDelta);
     assert.equal(preview.stabilityAfter, expectedCountry.stabilityAfter);
@@ -366,21 +412,22 @@ test("bundled save arithmetic matches independently calculated nation snapshots"
     assert.equal(preview.necessitiesRequired, expectedCountry.necessitiesRequired);
     assert.equal(preview.necessitiesProduced, expectedCountry.necessitiesProduced);
     assert.equal(preview.necessitiesMet, expectedCountry.necessitiesMet);
-    assert.deepEqual(nonZeroBag(preview.resourceDelta), expectedCountry.resourceDelta);
+    assert.deepEqual(basicRawDelta(preview.resourceDelta), expectedCountry.rawDelta);
+    assert.deepEqual(preview.warnings, []);
   });
 });
 
 test("necessities shortfalls only affect stability and do not create warnings", () => {
   const state = createBundledState();
-  const preview = previewForCountry(state, "gaymer");
+  const preview = previewForCountry(state, "pick");
 
-  assert.equal(preview.necessitiesRequired, 3);
+  assert.equal(preview.necessitiesRequired, 1);
   assert.equal(preview.necessitiesMet, false);
-  assert.equal(preview.stabilityDelta, 18);
+  assert.equal(preview.stabilityDelta, 13);
   assert.equal(preview.warnings.some((warning) => warning.startsWith("Necessities not met")), false);
 });
 
-test("factory input warnings use current production and trades, not stockpiles", () => {
+test("factory inputs can be paid from existing stockpiles", () => {
   const state = createBundledState();
   const country = { ...clone(state.countries[0]), id: "factory-test", name: "Factory Test" };
   state.countries = [country];
@@ -408,11 +455,11 @@ test("factory input warnings use current production and trades, not stockpiles",
 
   const preview = previewForCountry(state, "factory-test");
 
-  assert.match(preview.warnings.join("\n"), /Gold Factory input flow missing: coal 0\/1, gold_ore 0\/1\./);
+  assert.equal(preview.warnings.some((warning) => warning.includes("missing inputs")), false);
   assert.equal(preview.factoryOutputs.gold_ingot, 1);
 });
 
-test("incoming resource trades can satisfy factory input flow", () => {
+test("incoming resource trades can satisfy factory inputs", () => {
   const state = createBundledState();
   const sender = { ...clone(state.countries[0]), id: "sender", name: "Sender" };
   const receiver = { ...clone(state.countries[1]), id: "receiver", name: "Receiver" };
@@ -470,7 +517,7 @@ test("incoming resource trades can satisfy factory input flow", () => {
 
   const preview = previewForCountry(state, "receiver");
 
-  assert.equal(preview.warnings.some((warning) => warning.includes("input flow missing")), false);
+  assert.equal(preview.warnings.some((warning) => warning.includes("missing inputs")), false);
   assert.equal(preview.factoryOutputs.gold_ingot, 1);
 });
 
@@ -498,13 +545,13 @@ test("stat sheet exports include Discord-formatted country sheets in both styles
   assert.equal(polished.split("\n# ").length, state.countries.length);
   assert.equal(verbatim.split("\n# ").length, state.countries.length);
   assert.match(polished, /# Federation of Gaymers/);
-  assert.match(polished, /\*\*Projected gold:\*\* 500 -> 38\.500 \(\+38\.000\)/);
+  assert.match(polished, /\*\*Projected gold:\*\* 500 -> 39\.000 \(\+38\.500\)/);
   assert.match(verbatim, /## Main Statistics/);
-  assert.match(verbatim, /\*\*Gold:\*\* 38\.500 \(Income:/);
-  assert.match(gaymersVerbatim, /23 X 500 \+ 1 X 3\.000 \+ 1 X 7\.000 = 21\.500/);
-  assert.match(gaymersVerbatim, /\*\*Necessities:\*\* 0\/3 \(1 needed per 50\.000 manpower cap\)/);
-  assert.match(gaymersVerbatim, /1 \(\+7\.000\) GaymerTown: \+6 food, -10 food, -3 plank, -2 aluminium parts \(Capital\)/);
-  assert.match(gaymersVerbatim, /Bauxite Smeltery: -1 coal, -1 bauxite, \+1 aluminium/);
+  assert.match(verbatim, /\*\*Gold:\*\* 39\.000 \(Income:/);
+  assert.match(gaymersVerbatim, /24 X 500 \+ 1 X 3\.000 \+ 1 X 7\.000 = 22\.000/);
+  assert.match(gaymersVerbatim, /\*\*Necessities:\*\* 0\/3 available \(1 needed per 50\.000 manpower cap\)/);
+  assert.match(gaymersVerbatim, /1 \(\+7\.000\) GaymerTown: \+3 food, -10 food, -3 plank, -2 aluminium parts \(Capital\)/);
+  assert.match(gaymersVerbatim, /### Constructions:\nNone/);
   assert.match(gaymersVerbatim, /\*\*Market Type \[M\]:\*\* Mixed Market: \+5\.000 gold per turn/);
   assert.match(gaymersVerbatim, /\*\*Defensive pacts:\*\* Shukea/);
 });

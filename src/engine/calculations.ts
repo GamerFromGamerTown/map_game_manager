@@ -158,10 +158,6 @@ const settlementProduction = (
   agricultural: boolean
 ): ResourceBag => {
   const tierRule = state.rules.settlementTiers[settlement.tier];
-  if (settlement.manual_resource_override) {
-    return normalizeBag(settlement.manual_resource_override);
-  }
-
   const base = state.rules.resourceProduction[settlement.biome_or_resource_type] ?? {};
   const produced = emptyBag();
   RESOURCE_TYPES.forEach((resource) => {
@@ -175,6 +171,9 @@ const settlementProduction = (
   });
   return produced;
 };
+
+export const settlementProductionForCountry = (state: GameState, settlement: Settlement): ResourceBag =>
+  settlementProduction(settlement, state, isAgricultural(state, settlement.country_id));
 
 const initializePreview = (country: Country, resourcesBefore: ResourceBag): CountryPreview => ({
   countryId: country.id,
@@ -421,12 +420,6 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
       return;
     }
 
-    if (!hasResources(item.factoryInputFlow, rule.inputs_per_turn)) {
-      item.preview.warnings.push(
-        `${factory.type} input flow missing: ${missingResources(item.factoryInputFlow, rule.inputs_per_turn).join(", ")}.`
-      );
-    }
-
     if (!hasResources(item.resources, rule.inputs_per_turn)) {
       item.preview.warnings.push(
         `${factory.type} missing inputs: ${missingResources(item.resources, rule.inputs_per_turn).join(", ")}.`
@@ -484,8 +477,8 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
     item.preview.necessitiesRequired = Math.floor(
       item.preview.manpowerCapAfter / state.rules.settings.necessities_manpower_cap_divisor
     );
-    item.preview.necessitiesProduced = Number(item.preview.factoryOutputs.necessities ?? 0);
-    item.preview.necessitiesMet = Number(item.resources.necessities ?? 0) >= item.preview.necessitiesRequired;
+    item.preview.necessitiesProduced = Number(item.resources.necessities ?? 0);
+    item.preview.necessitiesMet = item.preview.necessitiesProduced >= item.preview.necessitiesRequired;
     item.necessityStability = item.preview.necessitiesMet
       ? state.rules.settings.necessities_met_stability_per_turn
       : state.rules.settings.necessities_missing_stability_per_turn;

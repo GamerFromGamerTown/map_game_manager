@@ -146,6 +146,40 @@
       },
       "bauxite_ore": {
         "bauxite": 1
+      },
+      "stat_empty": {},
+      "stat_food": {
+        "food": 1
+      },
+      "stat_wood": {
+        "wood": 1
+      },
+      "stat_coal": {
+        "coal": 1
+      },
+      "stat_iron": {
+        "iron": 1
+      },
+      "stat_bauxite": {
+        "bauxite": 1
+      },
+      "stat_copper": {
+        "copper": 1
+      },
+      "stat_gold": {
+        "gold_ore": 1
+      },
+      "stat_food_bauxite": {
+        "food": 1,
+        "bauxite": 1
+      },
+      "stat_food_coal": {
+        "food": 1,
+        "coal": 1
+      },
+      "stat_food_gold": {
+        "food": 1,
+        "gold_ore": 1
       }
     },
     "factoryRules": [
@@ -1269,6 +1303,29 @@
   },
   "countries": [
     {
+      "id": "dew",
+      "name": "United Kingdom of Pristanekdrzave",
+      "short_name": "Pristanek",
+      "color": "#3b9f9f",
+      "is_player_country": true,
+      "ruling_party": "Monarchy",
+      "gold": 5000,
+      "stability": 36,
+      "manpower": 18000,
+      "manpower_cap": 76000,
+      "manual_manpower_cap_override": null,
+      "reserve": 0,
+      "equipment": 0,
+      "high_quality_equipment": 0,
+      "tanks": 0,
+      "supply": 0,
+      "current_turn_created": 0,
+      "at_war": false,
+      "peace_turns_count": 0,
+      "notes": "Corrected sheet uses 18 villages while the source note listed 17; Mackenberg is retained as the 18th roster village.",
+      "turn_preview_warnings": []
+    },
+    {
       "id": "explo",
       "name": "Terria Rosia",
       "short_name": "Terria",
@@ -1288,7 +1345,8 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
+      "notes": "",
+      "turn_preview_warnings": []
     },
     {
       "id": "gaymer",
@@ -1300,7 +1358,7 @@
       "gold": 500,
       "stability": 36,
       "manpower": 44000,
-      "manpower_cap": 156000,
+      "manpower_cap": 158000,
       "manual_manpower_cap_override": null,
       "reserve": 0,
       "equipment": 0,
@@ -1310,7 +1368,8 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
+      "notes": "",
+      "turn_preview_warnings": []
     },
     {
       "id": "pick",
@@ -1332,7 +1391,8 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
+      "notes": "Corrected sheet uses 16 villages; Trinity is retained as the missing 16th roster village.",
+      "turn_preview_warnings": []
     },
     {
       "id": "magnus",
@@ -1354,29 +1414,8 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
-    },
-    {
-      "id": "panguelle",
-      "name": "Velkovaris Directorate",
-      "short_name": "Velkovaris",
-      "color": "#5f6673",
-      "is_player_country": true,
-      "ruling_party": "Authoritarian",
-      "gold": 20000,
-      "stability": 55,
-      "manpower": 0,
-      "manpower_cap": 64000,
-      "manual_manpower_cap_override": null,
-      "reserve": 20000,
-      "equipment": 0,
-      "high_quality_equipment": 0,
-      "tanks": 0,
-      "supply": 0,
-      "current_turn_created": 0,
-      "at_war": false,
-      "peace_turns_count": 0,
-      "notes": ""
+      "notes": "Corrected Blueland statblock was not provided; existing non-Dalkina placeholder retained.",
+      "turn_preview_warnings": []
     },
     {
       "id": "ed",
@@ -1398,7 +1437,31 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
+      "notes": "",
+      "turn_preview_warnings": []
+    },
+    {
+      "id": "panguelle",
+      "name": "Velkovaris Directorate",
+      "short_name": "Velkovaris",
+      "color": "#5f6673",
+      "is_player_country": true,
+      "ruling_party": "Authoritarian",
+      "gold": 20000,
+      "stability": 55,
+      "manpower": 0,
+      "manpower_cap": 64000,
+      "manual_manpower_cap_override": null,
+      "reserve": 20000,
+      "equipment": 0,
+      "high_quality_equipment": 0,
+      "tanks": 0,
+      "supply": 0,
+      "current_turn_created": 0,
+      "at_war": false,
+      "peace_turns_count": 0,
+      "notes": "",
+      "turn_preview_warnings": []
     },
     {
       "id": "grisly",
@@ -1420,7 +1483,8 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
+      "notes": "",
+      "turn_preview_warnings": []
     },
     {
       "id": "elf",
@@ -1442,39 +1506,288 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": ""
-    },
-    {
-      "id": "dew",
-      "name": "United Kingdom of Pristanekdrzave",
-      "short_name": "Pristanek",
-      "color": "#3b9f9f",
-      "is_player_country": true,
-      "ruling_party": "Monarchy",
-      "gold": 5000,
-      "stability": 36,
-      "manpower": 18000,
-      "manpower_cap": 76000,
-      "manual_manpower_cap_override": null,
-      "reserve": 0,
-      "equipment": 0,
-      "high_quality_equipment": 0,
-      "tanks": 0,
-      "supply": 0,
-      "current_turn_created": 0,
-      "at_war": false,
-      "peace_turns_count": 0,
-      "notes": ""
+      "notes": "",
+      "turn_preview_warnings": []
     }
   ],
   "settlements": [
     {
-      "id": "explo-town-1",
+      "id": "dew-settlement-01-grenvile",
+      "country_id": "dew",
+      "name": "Grenvile",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-02-victovilla",
+      "country_id": "dew",
+      "name": "Victovilla",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-03-latuque",
+      "country_id": "dew",
+      "name": "Latuque",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-04-sept-ile",
+      "country_id": "dew",
+      "name": "Sept-Ile",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-05-saint-mont",
+      "country_id": "dew",
+      "name": "Saint-Mont",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-06-villana",
+      "country_id": "dew",
+      "name": "Villana",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-07-saint-village",
+      "country_id": "dew",
+      "name": "Saint-Village",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_wood",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-08-saint-aste",
+      "country_id": "dew",
+      "name": "Saint-Aste",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_wood",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-09-idefixovilla",
+      "country_id": "dew",
+      "name": "Idefixovilla",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_wood",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-10-saint-juxta",
+      "country_id": "dew",
+      "name": "Saint-Juxta",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_wood",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-11-moulin-tourneville",
+      "country_id": "dew",
+      "name": "Moulin-Tourneville",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_wood",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-12-samtanek",
+      "country_id": "dew",
+      "name": "Samtanek",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-13-dewland",
+      "country_id": "dew",
+      "name": "Dewland",
+      "tier": "village",
+      "is_capital": true,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-14-coleville",
+      "country_id": "dew",
+      "name": "Coleville",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_iron",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-15-wavola",
+      "country_id": "dew",
+      "name": "Wavola",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_iron",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-16-cokevo",
+      "country_id": "dew",
+      "name": "Cokevo",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-17-dolova",
+      "country_id": "dew",
+      "name": "Dolova",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "dew-settlement-18-mackenberg",
+      "country_id": "dew",
+      "name": "Mackenberg",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "explo-settlement-01-daria",
       "country_id": "explo",
       "name": "Daria",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "forest",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1484,12 +1797,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-2",
+      "id": "explo-settlement-02-marsia",
       "country_id": "explo",
       "name": "Marsia",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_wood",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1499,12 +1812,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-3",
+      "id": "explo-settlement-03-saint-marsia",
       "country_id": "explo",
       "name": "Saint-Marsia",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1514,12 +1827,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-4",
+      "id": "explo-settlement-04-mark",
       "country_id": "explo",
       "name": "Mark",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1529,12 +1842,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-5",
+      "id": "explo-settlement-05-saint-mark",
       "country_id": "explo",
       "name": "Saint Mark",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1544,12 +1857,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-6",
+      "id": "explo-settlement-06-marsen",
       "country_id": "explo",
       "name": "Marsen",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1559,12 +1872,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-7",
+      "id": "explo-settlement-07-moras",
       "country_id": "explo",
       "name": "Moras",
       "tier": "village",
       "is_capital": true,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1574,12 +1887,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-8",
+      "id": "explo-settlement-08-rasio",
       "country_id": "explo",
       "name": "Rasio",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1589,12 +1902,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-9",
+      "id": "explo-settlement-09-dorsia",
       "country_id": "explo",
       "name": "Dorsia",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1604,12 +1917,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-10",
+      "id": "explo-settlement-10-saint-darsia",
       "country_id": "explo",
       "name": "Saint-Darsia",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1619,12 +1932,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-11",
+      "id": "explo-settlement-11-st-rasio",
       "country_id": "explo",
       "name": "St-Rasio",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1634,12 +1947,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-12",
+      "id": "explo-settlement-12-andria",
       "country_id": "explo",
       "name": "Andria",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1649,12 +1962,12 @@
       "notes": ""
     },
     {
-      "id": "explo-town-13",
+      "id": "explo-settlement-13-sikvia",
       "country_id": "explo",
       "name": "Sikvia",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1664,42 +1977,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-1",
-      "country_id": "gaymer",
-      "name": "GaymerTown",
-      "tier": "large_city",
-      "is_capital": true,
-      "biome_or_resource_type": "plains",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-town-2",
-      "country_id": "gaymer",
-      "name": "Zabrze",
-      "tier": "city",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-town-3",
+      "id": "gaymer-settlement-01-gayville",
       "country_id": "gaymer",
       "name": "Gayville",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1709,12 +1992,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-4",
+      "id": "gaymer-settlement-02-gaymesville",
       "country_id": "gaymer",
       "name": "Gaymesville",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1724,12 +2007,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-5",
+      "id": "gaymer-settlement-03-czajnik",
       "country_id": "gaymer",
       "name": "Czajnik",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1739,12 +2022,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-6",
+      "id": "gaymer-settlement-04-gay-city",
       "country_id": "gaymer",
       "name": "Gay City",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1754,12 +2037,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-7",
+      "id": "gaymer-settlement-05-happyvile",
       "country_id": "gaymer",
       "name": "Happyvile",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1769,12 +2052,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-8",
+      "id": "gaymer-settlement-06-homos",
       "country_id": "gaymer",
       "name": "Homoś",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1784,12 +2067,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-9",
+      "id": "gaymer-settlement-07-ciep-y",
       "country_id": "gaymer",
       "name": "Ciepły",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1799,12 +2082,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-10",
+      "id": "gaymer-settlement-08-k-iry",
       "country_id": "gaymer",
       "name": "Kłiry",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1814,12 +2097,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-11",
+      "id": "gaymer-settlement-09-homus",
       "country_id": "gaymer",
       "name": "Homuś",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1829,12 +2112,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-12",
+      "id": "gaymer-settlement-10-las",
       "country_id": "gaymer",
       "name": "Las",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "forest",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1844,12 +2127,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-13",
+      "id": "gaymer-settlement-11-bor",
       "country_id": "gaymer",
       "name": "Bór",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "forest",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1859,12 +2142,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-14",
+      "id": "gaymer-settlement-12-puszczn",
       "country_id": "gaymer",
-      "name": "Puszcza",
+      "name": "Puszczn",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "forest",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1874,12 +2157,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-15",
+      "id": "gaymer-settlement-13-rybnik",
       "country_id": "gaymer",
       "name": "Rybnik",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1889,12 +2172,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-16",
+      "id": "gaymer-settlement-14-nalesniki",
       "country_id": "gaymer",
       "name": "Naleśniki",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1904,12 +2187,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-17",
+      "id": "gaymer-settlement-15-burak",
       "country_id": "gaymer",
       "name": "Burak",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1919,12 +2202,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-18",
+      "id": "gaymer-settlement-16-ciemny",
       "country_id": "gaymer",
-      "name": "Ciemmy",
+      "name": "Ciemny",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1934,12 +2217,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-19",
+      "id": "gaymer-settlement-17-ciemnoszary",
       "country_id": "gaymer",
       "name": "Ciemnoszary",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1949,12 +2232,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-20",
+      "id": "gaymer-settlement-18-czarny",
       "country_id": "gaymer",
       "name": "Czarny",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1964,12 +2247,27 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-21",
+      "id": "gaymer-settlement-19-czarnoskory",
+      "country_id": "gaymer",
+      "name": "Czarnoskóry",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "gaymer-settlement-20-boksyt",
       "country_id": "gaymer",
       "name": "Boksyt",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1979,12 +2277,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-22",
+      "id": "gaymer-settlement-21-glin",
       "country_id": "gaymer",
       "name": "Glin",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -1994,12 +2292,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-23",
+      "id": "gaymer-settlement-22-szary",
       "country_id": "gaymer",
       "name": "Szary",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2009,12 +2307,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-24",
+      "id": "gaymer-settlement-23-z-oty",
       "country_id": "gaymer",
       "name": "Złoty",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2024,12 +2322,12 @@
       "notes": ""
     },
     {
-      "id": "gaymer-town-25",
+      "id": "gaymer-settlement-24-z-otscy",
       "country_id": "gaymer",
-      "name": "Złocisty",
+      "name": "Złotscy",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2039,12 +2337,42 @@
       "notes": ""
     },
     {
-      "id": "pick-town-1",
+      "id": "gaymer-settlement-25-zabrze",
+      "country_id": "gaymer",
+      "name": "Zabrze",
+      "tier": "city",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "gaymer-settlement-26-gaymertown",
+      "country_id": "gaymer",
+      "name": "GaymerTown",
+      "tier": "large_city",
+      "is_capital": true,
+      "biome_or_resource_type": "stat_food",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "pick-settlement-01-calvin",
       "country_id": "pick",
       "name": "Calvin",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2054,12 +2382,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-2",
+      "id": "pick-settlement-02-florla",
       "country_id": "pick",
       "name": "Florla",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2069,12 +2397,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-3",
+      "id": "pick-settlement-03-vince",
       "country_id": "pick",
       "name": "Vince",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2084,12 +2412,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-4",
+      "id": "pick-settlement-04-queens",
       "country_id": "pick",
       "name": "Queens",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2099,12 +2427,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-5",
+      "id": "pick-settlement-05-trinity",
       "country_id": "pick",
-      "name": "UNKNOWN_FOOD_VILLAGE",
+      "name": "Trinity",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2114,12 +2442,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-6",
+      "id": "pick-settlement-06-grilke",
       "country_id": "pick",
       "name": "Grilke",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2129,12 +2457,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-7",
+      "id": "pick-settlement-07-reed",
       "country_id": "pick",
       "name": "Reed",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2144,12 +2472,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-8",
+      "id": "pick-settlement-08-moriha",
       "country_id": "pick",
       "name": "Moriha",
       "tier": "village",
       "is_capital": true,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2159,12 +2487,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-9",
+      "id": "pick-settlement-09-tucktown",
       "country_id": "pick",
       "name": "TuckTown",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2174,12 +2502,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-10",
+      "id": "pick-settlement-10-prairie",
       "country_id": "pick",
       "name": "Prairie",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2189,12 +2517,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-11",
+      "id": "pick-settlement-11-huttuh",
       "country_id": "pick",
       "name": "Huttuh",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2204,12 +2532,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-12",
+      "id": "pick-settlement-12-vintage",
       "country_id": "pick",
       "name": "Vintage",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2219,12 +2547,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-13",
+      "id": "pick-settlement-13-colugo",
       "country_id": "pick",
       "name": "Colugo",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2234,12 +2562,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-14",
+      "id": "pick-settlement-14-stavill",
       "country_id": "pick",
       "name": "Stavill",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2249,12 +2577,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-15",
+      "id": "pick-settlement-15-shiftmill",
       "country_id": "pick",
       "name": "Shiftmill",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2264,12 +2592,12 @@
       "notes": ""
     },
     {
-      "id": "pick-town-16",
+      "id": "pick-settlement-16-grassroot",
       "country_id": "pick",
       "name": "Grassroot",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2279,7 +2607,7 @@
       "notes": ""
     },
     {
-      "id": "magnus-town-1",
+      "id": "magnus-settlement-01-redland-hills",
       "country_id": "magnus",
       "name": "Redland Hills",
       "tier": "village",
@@ -2294,7 +2622,7 @@
       "notes": ""
     },
     {
-      "id": "magnus-town-2",
+      "id": "magnus-settlement-02-kolipakastean",
       "country_id": "magnus",
       "name": "Kolipakastean",
       "tier": "village",
@@ -2309,7 +2637,7 @@
       "notes": ""
     },
     {
-      "id": "magnus-town-3",
+      "id": "magnus-settlement-03-mashwedisa",
       "country_id": "magnus",
       "name": "Mashwedisa",
       "tier": "village",
@@ -2324,192 +2652,12 @@
       "notes": ""
     },
     {
-      "id": "panguelle-town-1",
-      "country_id": "panguelle",
-      "name": "DreadVormis",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-2",
-      "country_id": "panguelle",
-      "name": "Wutheringers",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-3",
-      "country_id": "panguelle",
-      "name": "Ocs Volkavis",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-4",
-      "country_id": "panguelle",
-      "name": "La-Mancharand",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-5",
-      "country_id": "panguelle",
-      "name": "Beringerg",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-6",
-      "country_id": "panguelle",
-      "name": "Lagetan",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-7",
-      "country_id": "panguelle",
-      "name": "Roseston",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-8",
-      "country_id": "panguelle",
-      "name": "Virex Hollow",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-9",
-      "country_id": "panguelle",
-      "name": "Noctryss Vale",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-10",
-      "country_id": "panguelle",
-      "name": "Obsidian Reach",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-11",
-      "country_id": "panguelle",
-      "name": "Solkaris Pire",
-      "tier": "village",
-      "is_capital": true,
-      "biome_or_resource_type": "gold_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-town-12",
-      "country_id": "panguelle",
-      "name": "Sperentia",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-town-1",
+      "id": "ed-settlement-01-deux-rivierre",
       "country_id": "ed",
       "name": "Deux-Rivierre",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2519,12 +2667,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-2",
+      "id": "ed-settlement-02-guiovre",
       "country_id": "ed",
       "name": "Guiovre",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "forest",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2534,12 +2682,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-3",
+      "id": "ed-settlement-03-moselle",
       "country_id": "ed",
       "name": "Moselle",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2549,12 +2697,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-4",
+      "id": "ed-settlement-04-pereire",
       "country_id": "ed",
       "name": "Pereire",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2564,12 +2712,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-5",
+      "id": "ed-settlement-05-constantin",
       "country_id": "ed",
       "name": "Constantin",
       "tier": "village",
       "is_capital": true,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2579,12 +2727,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-6",
+      "id": "ed-settlement-06-sint-avertin",
       "country_id": "ed",
       "name": "Sint-Avertin",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2594,12 +2742,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-7",
+      "id": "ed-settlement-07-fessenheim",
       "country_id": "ed",
       "name": "Fessenheim",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2609,12 +2757,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-8",
+      "id": "ed-settlement-08-raccoon-city",
       "country_id": "ed",
       "name": "Raccoon City",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2624,12 +2772,12 @@
       "notes": ""
     },
     {
-      "id": "ed-town-9",
+      "id": "ed-settlement-09-oleste",
       "country_id": "ed",
       "name": "Oleste",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "copper_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2639,12 +2787,192 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-1",
+      "id": "panguelle-settlement-01-dreadvormis",
+      "country_id": "panguelle",
+      "name": "DreadVormis",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-02-wutheringers",
+      "country_id": "panguelle",
+      "name": "Wutheringers",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-03-ocs-volkavis",
+      "country_id": "panguelle",
+      "name": "Ocs Volkavis",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-04-la-mancharand",
+      "country_id": "panguelle",
+      "name": "La-Mancharand",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-05-beringerg",
+      "country_id": "panguelle",
+      "name": "Beringerg",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_coal",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-06-virex-hollow",
+      "country_id": "panguelle",
+      "name": "Virex Hollow",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_iron",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-07-noctryss-vale",
+      "country_id": "panguelle",
+      "name": "Noctryss Vale",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_iron",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-08-obsidian-reach",
+      "country_id": "panguelle",
+      "name": "Obsidian Reach",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_iron",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-09-solkaris-pire",
+      "country_id": "panguelle",
+      "name": "Solkaris Pire",
+      "tier": "village",
+      "is_capital": true,
+      "biome_or_resource_type": "stat_gold",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-10-lagetan",
+      "country_id": "panguelle",
+      "name": "Lagetan",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-11-roseston",
+      "country_id": "panguelle",
+      "name": "Roseston",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "panguelle-settlement-12-sperentia",
+      "country_id": "panguelle",
+      "name": "Sperentia",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "grisly-settlement-01-veinlands",
       "country_id": "grisly",
       "name": "Veinlands",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2654,12 +2982,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-2",
+      "id": "grisly-settlement-02-dustplague",
       "country_id": "grisly",
       "name": "Dustplague",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2669,12 +2997,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-3",
+      "id": "grisly-settlement-03-torchlight",
       "country_id": "grisly",
       "name": "Torchlight",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food_coal",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2684,27 +3012,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-4",
-      "country_id": "grisly",
-      "name": "Char",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "grisly-town-5",
+      "id": "grisly-settlement-04-earthforge",
       "country_id": "grisly",
       "name": "Earthforge",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2714,12 +3027,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-6",
+      "id": "grisly-settlement-05-anissin",
       "country_id": "grisly",
       "name": "Anissin",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2729,12 +3042,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-7",
+      "id": "grisly-settlement-06-brokstone",
       "country_id": "grisly",
       "name": "Brokstone",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2744,12 +3057,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-8",
+      "id": "grisly-settlement-07-combpa",
       "country_id": "grisly",
       "name": "Combpa",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "copper_ore",
+      "biome_or_resource_type": "stat_copper",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2759,12 +3072,12 @@
       "notes": ""
     },
     {
-      "id": "grisly-town-9",
+      "id": "grisly-settlement-08-erympus",
       "country_id": "grisly",
       "name": "Erympus",
       "tier": "village",
       "is_capital": true,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2774,12 +3087,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-1",
-      "country_id": "elf",
-      "name": "Drumdorf",
-      "tier": "city",
-      "is_capital": true,
-      "biome_or_resource_type": "gold_ore",
+      "id": "grisly-settlement-09-char",
+      "country_id": "grisly",
+      "name": "Char",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2789,12 +3102,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-2",
+      "id": "elf-settlement-01-erlberg",
       "country_id": "elf",
       "name": "Erlberg",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "plains",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2804,12 +3117,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-3",
+      "id": "elf-settlement-02-hirschrevier",
       "country_id": "elf",
       "name": "Hirschrevier",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2819,12 +3132,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-4",
+      "id": "elf-settlement-03-bumshausen",
       "country_id": "elf",
       "name": "Bumshausen",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2834,12 +3147,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-5",
+      "id": "elf-settlement-04-grunheim",
       "country_id": "elf",
       "name": "Grünheim",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2849,12 +3162,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-6",
+      "id": "elf-settlement-05-turmberg",
       "country_id": "elf",
       "name": "Turmberg",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_food",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2864,7 +3177,7 @@
       "notes": ""
     },
     {
-      "id": "elf-town-7",
+      "id": "elf-settlement-06-ducking",
       "country_id": "elf",
       "name": "Ducking",
       "tier": "village",
@@ -2879,7 +3192,7 @@
       "notes": ""
     },
     {
-      "id": "elf-town-8",
+      "id": "elf-settlement-07-dinhausen",
       "country_id": "elf",
       "name": "Dinhausen",
       "tier": "village",
@@ -2894,7 +3207,7 @@
       "notes": ""
     },
     {
-      "id": "elf-town-9",
+      "id": "elf-settlement-08-viehberg",
       "country_id": "elf",
       "name": "Viehberg",
       "tier": "village",
@@ -2909,9 +3222,9 @@
       "notes": ""
     },
     {
-      "id": "elf-town-10",
+      "id": "elf-settlement-09-steinhaus",
       "country_id": "elf",
-      "name": "Hirschrevier-Coal",
+      "name": "Steinhaus",
       "tier": "village",
       "is_capital": false,
       "biome_or_resource_type": "coal_ore",
@@ -2924,7 +3237,7 @@
       "notes": ""
     },
     {
-      "id": "elf-town-11",
+      "id": "elf-settlement-10-kohldorf",
       "country_id": "elf",
       "name": "Kohldorf",
       "tier": "village",
@@ -2939,7 +3252,7 @@
       "notes": ""
     },
     {
-      "id": "elf-town-12",
+      "id": "elf-settlement-11-schwarzheim",
       "country_id": "elf",
       "name": "Schwarzheim",
       "tier": "village",
@@ -2954,12 +3267,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-13",
+      "id": "elf-settlement-12-kohlspross",
       "country_id": "elf",
       "name": "Kohlspross",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2969,12 +3282,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-14",
+      "id": "elf-settlement-13-moordorf",
       "country_id": "elf",
       "name": "Moordorf",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_iron",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2984,12 +3297,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-15",
+      "id": "elf-settlement-14-dunkerlberg",
       "country_id": "elf",
       "name": "Dunkerlberg",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
+      "biome_or_resource_type": "stat_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -2999,12 +3312,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-16",
+      "id": "elf-settlement-15-kuhheim",
       "country_id": "elf",
       "name": "Kuhheim",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_bauxite",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3014,12 +3327,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-17",
+      "id": "elf-settlement-16-baumkirchen",
       "country_id": "elf",
       "name": "Baumkirchen",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3029,12 +3342,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-18",
+      "id": "elf-settlement-17-vugging",
       "country_id": "elf",
       "name": "Vugging",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3044,12 +3357,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-19",
+      "id": "elf-settlement-18-erzberg",
       "country_id": "elf",
       "name": "Erzberg",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "bauxite_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3059,12 +3372,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-20",
+      "id": "elf-settlement-19-beirdorf",
       "country_id": "elf",
       "name": "Beirdorf",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3074,12 +3387,12 @@
       "notes": ""
     },
     {
-      "id": "elf-town-21",
+      "id": "elf-settlement-20-augenheim",
       "country_id": "elf",
       "name": "Augenheim",
       "tier": "village",
       "is_capital": false,
-      "biome_or_resource_type": "gold_ore",
+      "biome_or_resource_type": "stat_empty",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3089,267 +3402,12 @@
       "notes": ""
     },
     {
-      "id": "dew-town-1",
-      "country_id": "dew",
-      "name": "Grenvile",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "plains",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-2",
-      "country_id": "dew",
-      "name": "Victovilla",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "plains",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-3",
-      "country_id": "dew",
-      "name": "Latuque",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "plains",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-4",
-      "country_id": "dew",
-      "name": "Sept-Ile",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "forest",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-5",
-      "country_id": "dew",
-      "name": "Saint-Mont",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "forest",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-6",
-      "country_id": "dew",
-      "name": "Villana",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "forest",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-7",
-      "country_id": "dew",
-      "name": "Saint-Village",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "forest",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-8",
-      "country_id": "dew",
-      "name": "Saint-Aste",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "forest",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-9",
-      "country_id": "dew",
-      "name": "Idefixovilla",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-10",
-      "country_id": "dew",
-      "name": "Saint-Juxta",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-11",
-      "country_id": "dew",
-      "name": "Moulin-Tourneville",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-12",
-      "country_id": "dew",
-      "name": "Samtanek",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-13",
-      "country_id": "dew",
-      "name": "Dewland",
-      "tier": "village",
+      "id": "elf-settlement-21-drumdorf",
+      "country_id": "elf",
+      "name": "Drumdorf",
+      "tier": "city",
       "is_capital": true,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-14",
-      "country_id": "dew",
-      "name": "UNKNOWN_COAL_VILLAGE",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-15",
-      "country_id": "dew",
-      "name": "Ferville",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-16",
-      "country_id": "dew",
-      "name": "Ferron",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-17",
-      "country_id": "dew",
-      "name": "Louisberg",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "dew-town-18",
-      "country_id": "dew",
-      "name": "Mackenberg",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "iron_ore",
+      "biome_or_resource_type": "stat_gold",
       "manual_resource_override": null,
       "upkeep_option": "A",
       "occupied_by_country_id": null,
@@ -3361,16 +3419,16 @@
   ],
   "factories": [
     {
-      "id": "explo-factory-1",
-      "country_id": "explo",
-      "type": "Harbour",
+      "id": "dew-factory-01-gold-factory",
+      "country_id": "dew",
+      "type": "Gold Factory",
       "active": true,
       "damaged": false,
       "bombed": false,
       "notes": ""
     },
     {
-      "id": "explo-factory-2",
+      "id": "explo-factory-01-gold-factory",
       "country_id": "explo",
       "type": "Gold Factory",
       "active": true,
@@ -3379,25 +3437,7 @@
       "notes": ""
     },
     {
-      "id": "explo-factory-3",
-      "country_id": "explo",
-      "type": "Gold Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "explo-factory-4",
-      "country_id": "explo",
-      "type": "Luxuries Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "explo-factory-5",
+      "id": "explo-factory-02-fine-machinery-factory",
       "country_id": "explo",
       "type": "Fine Machinery Factory",
       "active": true,
@@ -3406,7 +3446,7 @@
       "notes": ""
     },
     {
-      "id": "explo-factory-6",
+      "id": "explo-factory-03-large-equipment-factory",
       "country_id": "explo",
       "type": "Large Equipment Factory",
       "active": true,
@@ -3415,106 +3455,7 @@
       "notes": ""
     },
     {
-      "id": "gaymer-factory-1",
-      "country_id": "gaymer",
-      "type": "Bauxite Smeltery",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-2",
-      "country_id": "gaymer",
-      "type": "Bauxite Smeltery",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-3",
-      "country_id": "gaymer",
-      "type": "Bauxite Smeltery",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-4",
-      "country_id": "gaymer",
-      "type": "Aluminium Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-5",
-      "country_id": "gaymer",
-      "type": "Aluminium Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-6",
-      "country_id": "gaymer",
-      "type": "Aluminium Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-7",
-      "country_id": "gaymer",
-      "type": "Gold Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-8",
-      "country_id": "gaymer",
-      "type": "Sawmill",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-9",
-      "country_id": "gaymer",
-      "type": "Sawmill",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "gaymer-factory-10",
-      "country_id": "gaymer",
-      "type": "Sawmill",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "pick-factory-1",
-      "country_id": "pick",
-      "type": "Harbour",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-factory-1",
+      "id": "panguelle-factory-01-gold-factory",
       "country_id": "panguelle",
       "type": "Gold Factory",
       "active": true,
@@ -3523,25 +3464,7 @@
       "notes": ""
     },
     {
-      "id": "panguelle-factory-2",
-      "country_id": "panguelle",
-      "type": "Gold Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-factory-3",
-      "country_id": "panguelle",
-      "type": "Luxuries Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "panguelle-factory-4",
+      "id": "panguelle-factory-02-fine-machinery-factory",
       "country_id": "panguelle",
       "type": "Fine Machinery Factory",
       "active": true,
@@ -3550,7 +3473,7 @@
       "notes": ""
     },
     {
-      "id": "panguelle-factory-5",
+      "id": "panguelle-factory-03-large-equipment-factory",
       "country_id": "panguelle",
       "type": "Large Equipment Factory",
       "active": true,
@@ -3559,52 +3482,7 @@
       "notes": ""
     },
     {
-      "id": "ed-factory-1",
-      "country_id": "ed",
-      "type": "Sawmill",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "ed-factory-2",
-      "country_id": "ed",
-      "type": "Electronics Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "ed-factory-3",
-      "country_id": "ed",
-      "type": "Copper Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "grisly-factory-1",
-      "country_id": "grisly",
-      "type": "Harbour",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "elf-factory-1",
-      "country_id": "elf",
-      "type": "Harbour",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "elf-factory-2",
+      "id": "elf-factory-01-gold-factory",
       "country_id": "elf",
       "type": "Gold Factory",
       "active": true,
@@ -3613,7 +3491,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-3",
+      "id": "elf-factory-02-gold-factory",
       "country_id": "elf",
       "type": "Gold Factory",
       "active": true,
@@ -3622,7 +3500,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-4",
+      "id": "elf-factory-03-gold-factory",
       "country_id": "elf",
       "type": "Gold Factory",
       "active": true,
@@ -3631,7 +3509,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-5",
+      "id": "elf-factory-04-gold-factory",
       "country_id": "elf",
       "type": "Gold Factory",
       "active": true,
@@ -3640,7 +3518,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-6",
+      "id": "elf-factory-05-bank",
       "country_id": "elf",
       "type": "Bank",
       "active": true,
@@ -3649,7 +3527,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-7",
+      "id": "elf-factory-06-luxuries-factory",
       "country_id": "elf",
       "type": "Luxuries Factory",
       "active": true,
@@ -3658,7 +3536,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-8",
+      "id": "elf-factory-07-luxuries-factory",
       "country_id": "elf",
       "type": "Luxuries Factory",
       "active": true,
@@ -3667,7 +3545,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-9",
+      "id": "elf-factory-08-bauxite-smeltery",
       "country_id": "elf",
       "type": "Bauxite Smeltery",
       "active": true,
@@ -3676,7 +3554,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-10",
+      "id": "elf-factory-09-aluminium-parts-factory",
       "country_id": "elf",
       "type": "Aluminium Parts Factory",
       "active": true,
@@ -3685,7 +3563,7 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-11",
+      "id": "elf-factory-10-fine-machinery-factory",
       "country_id": "elf",
       "type": "Fine Machinery Factory",
       "active": true,
@@ -3694,45 +3572,9 @@
       "notes": ""
     },
     {
-      "id": "elf-factory-12",
+      "id": "elf-factory-11-large-equipment-factory",
       "country_id": "elf",
       "type": "Large Equipment Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "dew-factory-1",
-      "country_id": "dew",
-      "type": "Iron Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "dew-factory-2",
-      "country_id": "dew",
-      "type": "Iron Parts Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "dew-factory-3",
-      "country_id": "dew",
-      "type": "Gold Factory",
-      "active": true,
-      "damaged": false,
-      "bombed": false,
-      "notes": ""
-    },
-    {
-      "id": "dew-factory-4",
-      "country_id": "dew",
-      "type": "Luxuries Factory",
       "active": true,
       "damaged": false,
       "bombed": false,
@@ -3740,6 +3582,111 @@
     }
   ],
   "stockpiles": [
+    {
+      "country_id": "dew",
+      "resource_type": "food",
+      "amount": 12
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "wood",
+      "amount": 10
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "plank",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "coal",
+      "amount": 10
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "iron",
+      "amount": 2
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "iron_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "bauxite",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "aluminium",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "aluminium_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "copper",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "copper_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "gold_ore",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "gold_ingot",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "high_quality_equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "fine_machinery",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "tank_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "tank_electronics",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "tanks",
+      "amount": 0
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "necessities",
+      "amount": 1
+    },
+    {
+      "country_id": "dew",
+      "resource_type": "supply",
+      "amount": 0
+    },
     {
       "country_id": "explo",
       "resource_type": "food",
@@ -3838,7 +3785,7 @@
     {
       "country_id": "explo",
       "resource_type": "necessities",
-      "amount": 0
+      "amount": 1
     },
     {
       "country_id": "explo",
@@ -3858,7 +3805,7 @@
     {
       "country_id": "gaymer",
       "resource_type": "plank",
-      "amount": 0
+      "amount": 3
     },
     {
       "country_id": "gaymer",
@@ -3888,7 +3835,7 @@
     {
       "country_id": "gaymer",
       "resource_type": "aluminium_parts",
-      "amount": 0
+      "amount": 3
     },
     {
       "country_id": "gaymer",
@@ -4161,111 +4108,6 @@
       "amount": 0
     },
     {
-      "country_id": "panguelle",
-      "resource_type": "food",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "wood",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "plank",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "coal",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "iron",
-      "amount": 4
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "iron_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "bauxite",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "aluminium",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "aluminium_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "copper",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "copper_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "gold_ore",
-      "amount": 1
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "gold_ingot",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "high_quality_equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "fine_machinery",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "tank_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "tank_electronics",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "tanks",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "necessities",
-      "amount": 0
-    },
-    {
-      "country_id": "panguelle",
-      "resource_type": "supply",
-      "amount": 0
-    },
-    {
       "country_id": "ed",
       "resource_type": "food",
       "amount": 4
@@ -4363,10 +4205,115 @@
     {
       "country_id": "ed",
       "resource_type": "necessities",
-      "amount": 0
+      "amount": 1
     },
     {
       "country_id": "ed",
+      "resource_type": "supply",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "food",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "wood",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "plank",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "coal",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "iron",
+      "amount": 4
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "iron_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "bauxite",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "aluminium",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "aluminium_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "copper",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "copper_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "gold_ore",
+      "amount": 1
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "gold_ingot",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "high_quality_equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "fine_machinery",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "tank_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "tank_electronics",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "tanks",
+      "amount": 0
+    },
+    {
+      "country_id": "panguelle",
+      "resource_type": "necessities",
+      "amount": 1
+    },
+    {
+      "country_id": "panguelle",
       "resource_type": "supply",
       "amount": 0
     },
@@ -4579,115 +4526,106 @@
       "country_id": "elf",
       "resource_type": "supply",
       "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "food",
-      "amount": 12
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "wood",
-      "amount": 10
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "plank",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "coal",
-      "amount": 10
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "iron",
-      "amount": 2
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "iron_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "bauxite",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "aluminium",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "aluminium_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "copper",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "copper_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "gold_ore",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "gold_ingot",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "high_quality_equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "fine_machinery",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "tank_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "tank_electronics",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "tanks",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "necessities",
-      "amount": 0
-    },
-    {
-      "country_id": "dew",
-      "resource_type": "supply",
-      "amount": 0
     }
   ],
   "policies": [
     {
+      "country_id": "dew",
+      "policy_category": "Population Growth",
+      "selected_option": "No Policy",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Market Type",
+      "selected_option": "Mixed Market",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Immigration Laws",
+      "selected_option": "Strict Citizenship",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Economical Focus",
+      "selected_option": "Industrial",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Living Conditions",
+      "selected_option": "Low Regulations",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Healthcare",
+      "selected_option": "Nationally Owned But Not Paid For",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Business Scale",
+      "selected_option": "Mixed Focus",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Segregation",
+      "selected_option": "Illegal",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Welfare",
+      "selected_option": "No Welfare",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Protest Rights",
+      "selected_option": "Regulated",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Judicial Rights",
+      "selected_option": "State Run",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Worker's Rights",
+      "selected_option": "No Rights",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Military Service",
+      "selected_option": "Volunteer Army",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Infrastructure",
+      "selected_option": "Private Investment",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Education",
+      "selected_option": "Nationally Owned But Not Paid For",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "dew",
+      "policy_category": "Press Rights",
+      "selected_option": "Regulated",
+      "last_changed_turn": -1
+    },
+    {
       "country_id": "explo",
       "policy_category": "Population Growth",
       "selected_option": "No Policy",
@@ -4708,7 +4646,7 @@
     {
       "country_id": "explo",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -4804,7 +4742,7 @@
     {
       "country_id": "gaymer",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -4900,7 +4838,7 @@
     {
       "country_id": "pick",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -5072,6 +5010,102 @@
       "last_changed_turn": -1
     },
     {
+      "country_id": "ed",
+      "policy_category": "Population Growth",
+      "selected_option": "No Policy",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Market Type",
+      "selected_option": "Mixed Market",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Immigration Laws",
+      "selected_option": "Strict Citizenship",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Economical Focus",
+      "selected_option": "Industrial",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Living Conditions",
+      "selected_option": "Low Regulations",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Healthcare",
+      "selected_option": "Nationally Owned But Not Paid For",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Business Scale",
+      "selected_option": "Mixed Focus",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Segregation",
+      "selected_option": "Illegal",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Welfare",
+      "selected_option": "No Welfare",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Protest Rights",
+      "selected_option": "Regulated",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Judicial Rights",
+      "selected_option": "State Run",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Worker's Rights",
+      "selected_option": "No Rights",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Military Service",
+      "selected_option": "Volunteer Army",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Infrastructure",
+      "selected_option": "Private Investment",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Education",
+      "selected_option": "Nationally Owned But Not Paid For",
+      "last_changed_turn": -1
+    },
+    {
+      "country_id": "ed",
+      "policy_category": "Press Rights",
+      "selected_option": "Regulated",
+      "last_changed_turn": -1
+    },
+    {
       "country_id": "panguelle",
       "policy_category": "Population Growth",
       "selected_option": "No Policy",
@@ -5080,7 +5114,7 @@
     {
       "country_id": "panguelle",
       "policy_category": "Market Type",
-      "selected_option": "Mixed Market",
+      "selected_option": "Private Market",
       "last_changed_turn": -1
     },
     {
@@ -5092,7 +5126,7 @@
     {
       "country_id": "panguelle",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -5168,102 +5202,6 @@
       "last_changed_turn": -1
     },
     {
-      "country_id": "ed",
-      "policy_category": "Population Growth",
-      "selected_option": "No Policy",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Market Type",
-      "selected_option": "Mixed Market",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Immigration Laws",
-      "selected_option": "Strict Citizenship",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Living Conditions",
-      "selected_option": "Low Regulations",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Healthcare",
-      "selected_option": "Nationally Owned But Not Paid For",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Business Scale",
-      "selected_option": "Mixed Focus",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Segregation",
-      "selected_option": "Illegal",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Welfare",
-      "selected_option": "No Welfare",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Protest Rights",
-      "selected_option": "Regulated",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Judicial Rights",
-      "selected_option": "State Run",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Worker's Rights",
-      "selected_option": "No Rights",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Military Service",
-      "selected_option": "Volunteer Army",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Infrastructure",
-      "selected_option": "Private Investment",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Education",
-      "selected_option": "Nationally Owned But Not Paid For",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "ed",
-      "policy_category": "Press Rights",
-      "selected_option": "Regulated",
-      "last_changed_turn": -1
-    },
-    {
       "country_id": "grisly",
       "policy_category": "Population Growth",
       "selected_option": "No Policy",
@@ -5284,7 +5222,7 @@
     {
       "country_id": "grisly",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -5380,7 +5318,7 @@
     {
       "country_id": "elf",
       "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
+      "selected_option": "Industrial",
       "last_changed_turn": -1
     },
     {
@@ -5454,110 +5392,22 @@
       "policy_category": "Press Rights",
       "selected_option": "Regulated",
       "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Population Growth",
-      "selected_option": "No Policy",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Market Type",
-      "selected_option": "Mixed Market",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Immigration Laws",
-      "selected_option": "Strict Citizenship",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Economical Focus",
-      "selected_option": "Agricultural",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Living Conditions",
-      "selected_option": "Low Regulations",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Healthcare",
-      "selected_option": "Nationally Owned But Not Paid For",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Business Scale",
-      "selected_option": "Mixed Focus",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Segregation",
-      "selected_option": "Illegal",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Welfare",
-      "selected_option": "No Welfare",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Protest Rights",
-      "selected_option": "Regulated",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Judicial Rights",
-      "selected_option": "State Run",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Worker's Rights",
-      "selected_option": "No Rights",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Military Service",
-      "selected_option": "Volunteer Army",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Infrastructure",
-      "selected_option": "Private Investment",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Education",
-      "selected_option": "Nationally Owned But Not Paid For",
-      "last_changed_turn": -1
-    },
-    {
-      "country_id": "dew",
-      "policy_category": "Press Rights",
-      "selected_option": "Regulated",
-      "last_changed_turn": -1
     }
   ],
   "diplomacy": [
     {
+      "id": "relation-economic-alliance-dew-explo",
+      "relation_type": "Economic Alliance",
+      "country_a_id": "dew",
+      "country_b_id": "explo",
+      "active": true,
+      "notes": ""
+    },
+    {
       "id": "relation-defensive-pact-elf-explo",
       "relation_type": "Defensive Pact",
-      "country_a_id": "elf",
-      "country_b_id": "explo",
+      "country_a_id": "explo",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
@@ -5572,13 +5422,13 @@
     {
       "id": "relation-non-aggression-pact-elf-explo",
       "relation_type": "Non-Aggression Pact",
-      "country_a_id": "elf",
-      "country_b_id": "explo",
+      "country_a_id": "explo",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
-      "id": "relation-guarantee-explo-elf",
+      "id": "relation-guarantee-elf-explo",
       "relation_type": "Guarantee",
       "country_a_id": "explo",
       "country_b_id": "elf",
@@ -5586,23 +5436,55 @@
       "notes": ""
     },
     {
+      "id": "relation-guarantee-ed-explo",
+      "relation_type": "Guarantee",
+      "country_a_id": "explo",
+      "country_b_id": "ed",
+      "active": true,
+      "notes": ""
+    },
+    {
       "id": "relation-defensive-pact-elf-gaymer",
       "relation_type": "Defensive Pact",
-      "country_a_id": "elf",
-      "country_b_id": "gaymer",
+      "country_a_id": "gaymer",
+      "country_b_id": "elf",
+      "active": true,
+      "notes": ""
+    },
+    {
+      "id": "relation-coastal-fort-protection-elf-gaymer",
+      "relation_type": "Coastal Fort Protection",
+      "country_a_id": "gaymer",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
       "id": "relation-non-aggression-pact-elf-gaymer",
       "relation_type": "Non-Aggression Pact",
-      "country_a_id": "elf",
-      "country_b_id": "gaymer",
+      "country_a_id": "gaymer",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
-      "id": "relation-guarantee-gaymer-elf",
+      "id": "relation-railway-access-elf-gaymer",
+      "relation_type": "Railway Access",
+      "country_a_id": "gaymer",
+      "country_b_id": "elf",
+      "active": true,
+      "notes": ""
+    },
+    {
+      "id": "relation-troop-movement-authorization-elf-gaymer",
+      "relation_type": "Troop Movement Authorization",
+      "country_a_id": "gaymer",
+      "country_b_id": "elf",
+      "active": true,
+      "notes": ""
+    },
+    {
+      "id": "relation-guarantee-elf-gaymer",
       "relation_type": "Guarantee",
       "country_a_id": "gaymer",
       "country_b_id": "elf",
@@ -5610,7 +5492,7 @@
       "notes": ""
     },
     {
-      "id": "relation-guarantee-gaymer-ed",
+      "id": "relation-guarantee-ed-gaymer",
       "relation_type": "Guarantee",
       "country_a_id": "gaymer",
       "country_b_id": "ed",
@@ -5634,7 +5516,7 @@
       "notes": ""
     },
     {
-      "id": "relation-guarantee-gaymer-explo",
+      "id": "relation-guarantee-explo-gaymer",
       "relation_type": "Guarantee",
       "country_a_id": "gaymer",
       "country_b_id": "explo",
@@ -5652,13 +5534,13 @@
     {
       "id": "relation-non-aggression-pact-elf-panguelle",
       "relation_type": "Non-Aggression Pact",
-      "country_a_id": "elf",
-      "country_b_id": "panguelle",
+      "country_a_id": "panguelle",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
-      "id": "relation-guarantee-panguelle-ed",
+      "id": "relation-guarantee-ed-panguelle",
       "relation_type": "Guarantee",
       "country_a_id": "panguelle",
       "country_b_id": "ed",
@@ -5674,7 +5556,7 @@
       "notes": ""
     },
     {
-      "id": "relation-guarantee-panguelle-gaymer",
+      "id": "relation-guarantee-gaymer-panguelle",
       "relation_type": "Guarantee",
       "country_a_id": "panguelle",
       "country_b_id": "gaymer",
@@ -5684,64 +5566,24 @@
     {
       "id": "relation-defensive-pact-elf-grisly",
       "relation_type": "Defensive Pact",
-      "country_a_id": "elf",
-      "country_b_id": "grisly",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-non-aggression-pact-elf-grisly",
-      "relation_type": "Non-Aggression Pact",
-      "country_a_id": "elf",
-      "country_b_id": "grisly",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-guarantee-grisly-elf",
-      "relation_type": "Guarantee",
       "country_a_id": "grisly",
       "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
-      "id": "relation-guarantee-elf-gaymer",
-      "relation_type": "Guarantee",
-      "country_a_id": "elf",
-      "country_b_id": "gaymer",
+      "id": "relation-non-aggression-pact-elf-grisly",
+      "relation_type": "Non-Aggression Pact",
+      "country_a_id": "grisly",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     },
     {
       "id": "relation-guarantee-elf-grisly",
       "relation_type": "Guarantee",
-      "country_a_id": "elf",
-      "country_b_id": "grisly",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-guarantee-elf-explo",
-      "relation_type": "Guarantee",
-      "country_a_id": "elf",
-      "country_b_id": "explo",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-military-alliance-dew-explo",
-      "relation_type": "Military Alliance",
-      "country_a_id": "dew",
-      "country_b_id": "explo",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-economic-alliance-dew-explo",
-      "relation_type": "Economic Alliance",
-      "country_a_id": "dew",
-      "country_b_id": "explo",
+      "country_a_id": "grisly",
+      "country_b_id": "elf",
       "active": true,
       "notes": ""
     }
@@ -5749,36 +5591,20 @@
   "puppets": [],
   "trades": [
     {
-      "id": "trade-explo-dew-gold_ore",
-      "sender_country_id": "explo",
-      "receiver_country_id": "dew",
-      "resource_type": "gold_ore",
-      "amount_per_turn": 1,
-      "payment_gold_per_turn": 0,
+      "id": "trade-dew-pick-gold",
+      "sender_country_id": "dew",
+      "receiver_country_id": "pick",
+      "resource_type": "gold",
+      "amount_per_turn": 3000,
+      "payment_gold_per_turn": 1000,
       "recurring": true,
-      "route_type": "sea",
+      "route_type": "abstract",
       "sea_transport_cost_per_unit": 0,
       "sea_cost_payer": "sender",
       "route_valid": true,
       "blocked_by_embargo": false,
       "active": true,
-      "notes": ""
-    },
-    {
-      "id": "trade-pick-dew-bauxite",
-      "sender_country_id": "pick",
-      "receiver_country_id": "dew",
-      "resource_type": "bauxite",
-      "amount_per_turn": 3,
-      "payment_gold_per_turn": 0,
-      "recurring": true,
-      "route_type": "sea",
-      "sea_transport_cost_per_unit": 0,
-      "sea_cost_payer": "sender",
-      "route_valid": true,
-      "blocked_by_embargo": false,
-      "active": true,
-      "notes": ""
+      "notes": "Bookkeeping payment keeps Dalkina trade net aligned with the corrected 21.000 income formula."
     },
     {
       "id": "trade-dew-explo-coal",
@@ -5790,6 +5616,22 @@
       "recurring": true,
       "route_type": "sea",
       "sea_transport_cost_per_unit": 500,
+      "sea_cost_payer": "receiver",
+      "route_valid": true,
+      "blocked_by_embargo": false,
+      "active": true,
+      "notes": ""
+    },
+    {
+      "id": "trade-explo-dew-gold-ore",
+      "sender_country_id": "explo",
+      "receiver_country_id": "dew",
+      "resource_type": "gold_ore",
+      "amount_per_turn": 1,
+      "payment_gold_per_turn": 0,
+      "recurring": true,
+      "route_type": "sea",
+      "sea_transport_cost_per_unit": 3000,
       "sea_cost_payer": "receiver",
       "route_valid": true,
       "blocked_by_embargo": false,
@@ -5829,11 +5671,11 @@
       "notes": ""
     },
     {
-      "id": "trade-dew-pick-gold",
-      "sender_country_id": "dew",
-      "receiver_country_id": "pick",
-      "resource_type": "gold",
-      "amount_per_turn": 3000,
+      "id": "trade-pick-dew-bauxite",
+      "sender_country_id": "pick",
+      "receiver_country_id": "dew",
+      "resource_type": "bauxite",
+      "amount_per_turn": 3,
       "payment_gold_per_turn": 0,
       "recurring": true,
       "route_type": "sea",
@@ -5850,41 +5692,41 @@
   "turnLogs": [],
   "overrides": [],
   "graphPositions": {
-    "ed": {
-      "x": 450,
-      "y": 75
-    },
-    "grisly": {
-      "x": 662,
-      "y": 123
-    },
-    "elf": {
-      "x": 775,
-      "y": 244
+    "dew": {
+      "x": 840,
+      "y": 360
     },
     "explo": {
-      "x": 736,
-      "y": 383
-    },
-    "dew": {
-      "x": 563,
-      "y": 473
+      "x": 765,
+      "y": 501
     },
     "gaymer": {
-      "x": 337,
-      "y": 473
-    },
-    "magnus": {
-      "x": 164,
-      "y": 383
+      "x": 576,
+      "y": 577
     },
     "pick": {
-      "x": 125,
-      "y": 244
+      "x": 360,
+      "y": 551
+    },
+    "magnus": {
+      "x": 219,
+      "y": 435
+    },
+    "ed": {
+      "x": 219,
+      "y": 285
     },
     "panguelle": {
-      "x": 238,
-      "y": 123
+      "x": 360,
+      "y": 169
+    },
+    "grisly": {
+      "x": 576,
+      "y": 143
+    },
+    "elf": {
+      "x": 765,
+      "y": 219
     }
   }
 }
