@@ -219,7 +219,8 @@ test("bundled save matches the supplied stat sheet source values", () => {
     { countryId: "gaymer", gold: 500, stability: 36, manpower: 44000, cap: 158000, reserve: 0, equipment: 0, settlements: 26 },
     { countryId: "pick", gold: 3500, stability: 46, manpower: 15000, cap: 72000, reserve: 0, equipment: 0, settlements: 16 },
     { countryId: "panguelle", gold: 20000, stability: 55, manpower: 0, cap: 64000, reserve: 20000, equipment: 0, settlements: 12 },
-    { countryId: "ed", gold: 15000, stability: 100, manpower: 24000, cap: 58000, reserve: 0, equipment: 0, settlements: 9 },
+    { countryId: "magnus", gold: 50000, stability: 100, manpower: 13000, cap: 46000, reserve: 0, equipment: 0, settlements: 3 },
+    { countryId: "ed", gold: 22500, stability: 100, manpower: 40000, cap: 68000, reserve: 0, equipment: 0, settlements: 14 },
     { countryId: "grisly", gold: 8500, stability: 73, manpower: 9000, cap: 58000, reserve: 0, equipment: 0, settlements: 9 },
     { countryId: "elf", gold: 500, stability: 55, manpower: 41000, cap: 100000, reserve: 0, equipment: 20, settlements: 21 },
     { countryId: "dew", gold: 5000, stability: 36, manpower: 18000, cap: 76000, reserve: 0, equipment: 0, settlements: 18 }
@@ -237,13 +238,31 @@ test("bundled save matches the supplied stat sheet source values", () => {
     assert.equal(state.settlements.filter((settlement) => settlement.country_id === expected.countryId).length, expected.settlements);
   });
 
-  assert.equal(state.turnNumber, 3);
+  assert.equal(state.turnNumber, 4);
   assert.equal(state.settlements.find((settlement) => settlement.name === "Moras")?.is_capital, true);
   assert.equal(state.settlements.find((settlement) => settlement.name === "GaymerTown")?.tier, "large_city");
   assert.equal(state.settlements.find((settlement) => settlement.name === "Drumdorf")?.tier, "city");
   assert.equal(state.trades.length, 6);
   assert.equal(stockpileForCountry(state, "gaymer").food, 42);
   assert.equal(stockpileForCountry(state, "dew").wood, 10);
+  assert.equal(stockpileForCountry(state, "magnus").food, 4);
+  assert.equal(stockpileForCountry(state, "ed").iron, 12);
+  assert.deepEqual(state.factories.filter((factory) => factory.country_id === "magnus"), []);
+  assert.deepEqual(
+    state.factories.filter((factory) => factory.country_id === "ed").map((factory) => factory.type).sort(),
+    ["Bank", "Copper Parts Factory", "Electronics Factory", "Gold Factory", "Iron Parts Factory", "Sawmill"].sort()
+  );
+  assert.equal(
+    state.diplomacy.some(
+      (relation) =>
+        relation.active &&
+        (relation.country_a_id === "magnus" ||
+          relation.country_b_id === "magnus" ||
+          relation.country_a_id === "ed" ||
+          relation.country_b_id === "ed")
+    ),
+    false
+  );
 });
 
 test("bundled save arithmetic matches known manpower caps without overrides", () => {
@@ -254,7 +273,7 @@ test("bundled save arithmetic matches known manpower caps without overrides", ()
     { countryId: "pick", expectedCap: 72000, expectedGain: 18000 },
     { countryId: "magnus", expectedCap: 46000, expectedGain: 5000 },
     { countryId: "panguelle", expectedCap: 64000, expectedGain: 14000 },
-    { countryId: "ed", expectedCap: 58000, expectedGain: 11000 },
+    { countryId: "ed", expectedCap: 68000, expectedGain: 16000 },
     { countryId: "grisly", expectedCap: 58000, expectedGain: 11000 },
     { countryId: "elf", expectedCap: 100000, expectedGain: 29000 },
     { countryId: "dew", expectedCap: 76000, expectedGain: 20000 }
@@ -343,17 +362,17 @@ test("bundled save arithmetic matches the supplied stat sheet snapshot", () => {
     },
     {
       countryId: "ed",
-      goldDelta: 18500,
+      goldDelta: 23000,
       tradeGoldNet: 0,
       stabilityDelta: 25,
       stabilityAfter: 100,
-      manpowerGain: 11000,
-      manpowerAfter: 35000,
-      manpowerCapAfter: 58000,
+      manpowerGain: 16000,
+      manpowerAfter: 56000,
+      manpowerCapAfter: 68000,
       necessitiesRequired: 1,
-      necessitiesProduced: 1,
+      necessitiesProduced: 2,
       necessitiesMet: true,
-      rawDelta: { food: 2, wood: 0, coal: 0, iron: 4, bauxite: 0, copper: 0, gold_ore: 0 }
+      rawDelta: { food: 2, wood: 0, coal: 6, iron: 4, bauxite: 0, copper: 0, gold_ore: 0 }
     },
     {
       countryId: "panguelle",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "turnNumber": 3,
+  "turnNumber": 4,
   "rules": {
     "resources": [
       "food",
@@ -1414,7 +1414,7 @@
       "current_turn_created": 0,
       "at_war": false,
       "peace_turns_count": 0,
-      "notes": "Corrected Blueland statblock was not provided; existing non-Dalkina placeholder retained.",
+      "notes": "",
       "turn_preview_warnings": []
     },
     {
@@ -1424,10 +1424,10 @@
       "color": "#4c8fbd",
       "is_player_country": true,
       "ruling_party": "Democratic",
-      "gold": 15000,
+      "gold": 22500,
       "stability": 100,
-      "manpower": 24000,
-      "manpower_cap": 58000,
+      "manpower": 40000,
+      "manpower_cap": 68000,
       "manual_manpower_cap_override": null,
       "reserve": 0,
       "equipment": 0,
@@ -2607,186 +2607,6 @@
       "notes": ""
     },
     {
-      "id": "magnus-settlement-01-redland-hills",
-      "country_id": "magnus",
-      "name": "Redland Hills",
-      "tier": "village",
-      "is_capital": true,
-      "biome_or_resource_type": "plains",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "magnus-settlement-02-kolipakastean",
-      "country_id": "magnus",
-      "name": "Kolipakastean",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "coal_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "magnus-settlement-03-mashwedisa",
-      "country_id": "magnus",
-      "name": "Mashwedisa",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "copper_ore",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-01-deux-rivierre",
-      "country_id": "ed",
-      "name": "Deux-Rivierre",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_food",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-02-guiovre",
-      "country_id": "ed",
-      "name": "Guiovre",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_food",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-03-moselle",
-      "country_id": "ed",
-      "name": "Moselle",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_iron",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-04-pereire",
-      "country_id": "ed",
-      "name": "Pereire",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_iron",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-05-constantin",
-      "country_id": "ed",
-      "name": "Constantin",
-      "tier": "village",
-      "is_capital": true,
-      "biome_or_resource_type": "stat_iron",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-06-sint-avertin",
-      "country_id": "ed",
-      "name": "Sint-Avertin",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_iron",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-07-fessenheim",
-      "country_id": "ed",
-      "name": "Fessenheim",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_empty",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-08-raccoon-city",
-      "country_id": "ed",
-      "name": "Raccoon City",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_empty",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
-      "id": "ed-settlement-09-oleste",
-      "country_id": "ed",
-      "name": "Oleste",
-      "tier": "village",
-      "is_capital": false,
-      "biome_or_resource_type": "stat_empty",
-      "manual_resource_override": null,
-      "upkeep_option": "A",
-      "occupied_by_country_id": null,
-      "damaged": false,
-      "bombed": false,
-      "connected_for_upkeep": true,
-      "notes": ""
-    },
-    {
       "id": "panguelle-settlement-01-dreadvormis",
       "country_id": "panguelle",
       "name": "DreadVormis",
@@ -3415,6 +3235,261 @@
       "bombed": false,
       "connected_for_upkeep": true,
       "notes": ""
+    },
+    {
+      "id": "magnus-settlement-01-redland-hills",
+      "country_id": "magnus",
+      "name": "Redland Hills",
+      "tier": "village",
+      "is_capital": true,
+      "biome_or_resource_type": "plains",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "magnus-settlement-02-kolipakastean",
+      "country_id": "magnus",
+      "name": "Kolipakastean",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "magnus-settlement-03-mashwedisa",
+      "country_id": "magnus",
+      "name": "Mashwedisa",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "copper_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-01-deux-rivierre",
+      "country_id": "ed",
+      "name": "Deux-Rivierre",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "plains",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-02-guiovre",
+      "country_id": "ed",
+      "name": "Guiovre",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "forest",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-03-moselle",
+      "country_id": "ed",
+      "name": "Moselle",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-04-pereire",
+      "country_id": "ed",
+      "name": "Pereire",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-05-coaplans",
+      "country_id": "ed",
+      "name": "Coaplans",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-06-lontin",
+      "country_id": "ed",
+      "name": "Lontin",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-07-higlans",
+      "country_id": "ed",
+      "name": "Higlans",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "coal_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-08-constantin",
+      "country_id": "ed",
+      "name": "Constantin",
+      "tier": "village",
+      "is_capital": true,
+      "biome_or_resource_type": "iron_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-09-sint-avertin",
+      "country_id": "ed",
+      "name": "Sint-Avertin",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "iron_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-10-fessenheim",
+      "country_id": "ed",
+      "name": "Fessenheim",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "iron_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-11-raccoon-city",
+      "country_id": "ed",
+      "name": "Raccoon City",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "iron_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-12-hilron",
+      "country_id": "ed",
+      "name": "Hilron",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "iron_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-13-oleste",
+      "country_id": "ed",
+      "name": "Oleste",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "copper_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
+    },
+    {
+      "id": "ed-settlement-14-guldon",
+      "country_id": "ed",
+      "name": "Guldon",
+      "tier": "village",
+      "is_capital": false,
+      "biome_or_resource_type": "gold_ore",
+      "manual_resource_override": null,
+      "upkeep_option": "A",
+      "occupied_by_country_id": null,
+      "damaged": false,
+      "bombed": false,
+      "connected_for_upkeep": true,
+      "notes": ""
     }
   ],
   "factories": [
@@ -3575,6 +3650,60 @@
       "id": "elf-factory-11-large-equipment-factory",
       "country_id": "elf",
       "type": "Large Equipment Factory",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-01-sawmill",
+      "country_id": "ed",
+      "type": "Sawmill",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-02-copper-parts-factory",
+      "country_id": "ed",
+      "type": "Copper Parts Factory",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-03-electronics-factory",
+      "country_id": "ed",
+      "type": "Electronics Factory",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-04-gold-factory",
+      "country_id": "ed",
+      "type": "Gold Factory",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-05-bank",
+      "country_id": "ed",
+      "type": "Bank",
+      "active": true,
+      "damaged": false,
+      "bombed": false,
+      "notes": ""
+    },
+    {
+      "id": "ed-factory-06-iron-parts-factory",
+      "country_id": "ed",
+      "type": "Iron Parts Factory",
       "active": true,
       "damaged": false,
       "bombed": false,
@@ -4003,216 +4132,6 @@
       "amount": 0
     },
     {
-      "country_id": "magnus",
-      "resource_type": "food",
-      "amount": 4
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "wood",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "plank",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "coal",
-      "amount": 2
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "iron",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "iron_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "bauxite",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "aluminium",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "aluminium_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "copper",
-      "amount": 2
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "copper_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "gold_ore",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "gold_ingot",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "high_quality_equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "fine_machinery",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "tank_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "tank_electronics",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "tanks",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "necessities",
-      "amount": 0
-    },
-    {
-      "country_id": "magnus",
-      "resource_type": "supply",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "food",
-      "amount": 4
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "wood",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "plank",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "coal",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "iron",
-      "amount": 8
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "iron_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "bauxite",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "aluminium",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "aluminium_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "copper",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "copper_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "gold_ore",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "gold_ingot",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "high_quality_equipment",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "fine_machinery",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "tank_parts",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "tank_electronics",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "tanks",
-      "amount": 0
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "necessities",
-      "amount": 1
-    },
-    {
-      "country_id": "ed",
-      "resource_type": "supply",
-      "amount": 0
-    },
-    {
       "country_id": "panguelle",
       "resource_type": "food",
       "amount": 0
@@ -4524,6 +4443,216 @@
     },
     {
       "country_id": "elf",
+      "resource_type": "supply",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "food",
+      "amount": 4
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "wood",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "plank",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "coal",
+      "amount": 2
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "iron",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "iron_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "bauxite",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "aluminium",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "aluminium_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "copper",
+      "amount": 2
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "copper_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "gold_ore",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "gold_ingot",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "high_quality_equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "fine_machinery",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "tank_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "tank_electronics",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "tanks",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "necessities",
+      "amount": 0
+    },
+    {
+      "country_id": "magnus",
+      "resource_type": "supply",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "food",
+      "amount": 6
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "wood",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "plank",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "coal",
+      "amount": 1
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "iron",
+      "amount": 12
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "iron_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "bauxite",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "aluminium",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "aluminium_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "copper",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "copper_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "gold_ore",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "gold_ingot",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "high_quality_equipment",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "fine_machinery",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "tank_parts",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "tank_electronics",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "tanks",
+      "amount": 0
+    },
+    {
+      "country_id": "ed",
+      "resource_type": "necessities",
+      "amount": 1
+    },
+    {
+      "country_id": "ed",
       "resource_type": "supply",
       "amount": 0
     }
@@ -5030,7 +5159,7 @@
     {
       "country_id": "ed",
       "policy_category": "Economical Focus",
-      "selected_option": "Industrial",
+      "selected_option": "Agricultural",
       "last_changed_turn": -1
     },
     {
@@ -5436,14 +5565,6 @@
       "notes": ""
     },
     {
-      "id": "relation-guarantee-ed-explo",
-      "relation_type": "Guarantee",
-      "country_a_id": "explo",
-      "country_b_id": "ed",
-      "active": true,
-      "notes": ""
-    },
-    {
       "id": "relation-defensive-pact-elf-gaymer",
       "relation_type": "Defensive Pact",
       "country_a_id": "gaymer",
@@ -5492,26 +5613,10 @@
       "notes": ""
     },
     {
-      "id": "relation-guarantee-ed-gaymer",
-      "relation_type": "Guarantee",
-      "country_a_id": "gaymer",
-      "country_b_id": "ed",
-      "active": true,
-      "notes": ""
-    },
-    {
       "id": "relation-guarantee-gaymer-grisly",
       "relation_type": "Guarantee",
       "country_a_id": "gaymer",
       "country_b_id": "grisly",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-guarantee-gaymer-magnus",
-      "relation_type": "Guarantee",
-      "country_a_id": "gaymer",
-      "country_b_id": "magnus",
       "active": true,
       "notes": ""
     },
@@ -5536,14 +5641,6 @@
       "relation_type": "Non-Aggression Pact",
       "country_a_id": "panguelle",
       "country_b_id": "elf",
-      "active": true,
-      "notes": ""
-    },
-    {
-      "id": "relation-guarantee-ed-panguelle",
-      "relation_type": "Guarantee",
-      "country_a_id": "panguelle",
-      "country_b_id": "ed",
       "active": true,
       "notes": ""
     },
