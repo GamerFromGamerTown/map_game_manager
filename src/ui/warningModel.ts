@@ -20,8 +20,7 @@ export type WarningCountryTab =
   | "Policies"
   | "Trade/Diplomacy"
   | "Military"
-  | "Dice/History"
-  | "Notes";
+  | "Dice/History";
 
 export type WarningRulesSection =
   | "settings"

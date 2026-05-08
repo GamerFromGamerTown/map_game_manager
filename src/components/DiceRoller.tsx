@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Dice5, Swords } from "lucide-react";
 import { DiceRollLog, GameState } from "../types";
 import { createId, diceResultCategory } from "../engine/calculations";
-import { CheckboxField, NumberField, SelectField, TextField } from "../ui/fields";
+import { NumberField, SelectField, TextField } from "../ui/fields";
 import { countryName } from "../utils/names";
 import { labelFromKey } from "../utils/labels";
 
@@ -18,8 +18,6 @@ export function DiceRoller({
   const [mode, setMode] = useState("attack");
   const [troopType, setTroopType] = useState("normal");
   const [terrain, setTerrain] = useState("plain");
-  const [raw, setRaw] = useState(10);
-  const [manualRaw, setManualRaw] = useState(false);
   const [supplyRequired, setSupplyRequired] = useState(0);
   const [supplyAllocated, setSupplyAllocated] = useState(0);
   const [encirclement, setEncirclement] = useState("none");
@@ -72,8 +70,7 @@ export function DiceRoller({
     };
   };
 
-  const previewRoll = useMemo(() => calculate(raw), [
-    raw,
+  const previewRoll = useMemo(() => calculate(10), [
     supplyRequired,
     supplyAllocated,
     encirclement,
@@ -85,7 +82,7 @@ export function DiceRoller({
   ]);
 
   const doRoll = () => {
-    const attackerRoll = manualRaw ? raw : Math.floor(Math.random() * 20) + 1;
+    const attackerRoll = Math.floor(Math.random() * 20) + 1;
     const attacker = calculate(attackerRoll);
     let finalScore = attacker.final;
     let result = attacker.impassable ? "impassable" : diceResultCategory(state.rules, finalScore);
@@ -115,7 +112,6 @@ export function DiceRoller({
       notes
     };
     setLast(log);
-    setRaw(attackerRoll);
     patchState((current) => ({ ...current, diceRolls: [log, ...current.diceRolls] }));
   };
 
@@ -129,7 +125,13 @@ export function DiceRoller({
             </div>
             <div className="form-row two-wide">
               <SelectField label="Country" value={countryId} options={state.countries.map((country) => country.id)} optionLabel={(id) => countryName(state, id)} onChange={setCountryId} />
-              <SelectField label="Operation" value={operationId} options={["", ...state.operations.map((operation) => operation.id)]} optionLabel={(id) => id ? state.operations.find((operation) => operation.id)?.name ?? id : "None"} onChange={setOperationId} />
+              <SelectField
+                label="Linked operation"
+                value={operationId}
+                options={["", ...state.operations.map((operation) => operation.id)]}
+                optionLabel={(id) => id ? state.operations.find((operation) => operation.id)?.name ?? id : "No linked operation"}
+                onChange={setOperationId}
+              />
             </div>
           </div>
 
@@ -142,10 +144,6 @@ export function DiceRoller({
               <SelectField label="Troop type" value={troopType} options={["normal", "high_quality", "tank"]} optionLabel={labelFromKey} onChange={setTroopType} />
               <SelectField label="Terrain" value={terrain} options={terrainOptions} optionLabel={labelFromKey} onChange={setTerrain} />
             </div>
-            <div className="manual-roll-row">
-              <NumberField label="D20 value" value={raw} onChange={setRaw} />
-              <CheckboxField label="Use manual D20" checked={manualRaw} onChange={setManualRaw} />
-            </div>
           </div>
 
           <div className="form-section">
@@ -155,7 +153,7 @@ export function DiceRoller({
             <div className="form-row three-wide">
               <NumberField label="Supply required" value={supplyRequired} onChange={setSupplyRequired} />
               <NumberField label="Supply allocated" value={supplyAllocated} onChange={setSupplyAllocated} />
-              <NumberField label="GM custom modifier" value={custom} onChange={setCustom} />
+              <NumberField label="Extra attacker modifier" value={custom} onChange={setCustom} />
             </div>
             <div className="form-row two-wide">
               <SelectField label="Encirclement" value={encirclement} options={Object.keys(state.rules.dice.encirclement)} optionLabel={labelFromKey} onChange={setEncirclement} />
@@ -170,7 +168,7 @@ export function DiceRoller({
               </div>
               <div className="form-row two-wide compact-row">
                 <NumberField label="Defender D20" value={defenderRaw} onChange={setDefenderRaw} />
-                <NumberField label="Defender custom modifier" value={defenderCustom} onChange={setDefenderCustom} />
+                <NumberField label="Extra defender modifier" value={defenderCustom} onChange={setDefenderCustom} />
               </div>
             </div>
           )}
@@ -182,7 +180,7 @@ export function DiceRoller({
 
         <aside className="dice-summary">
           <Dice5 size={26} />
-          <span>Current Preview</span>
+          <span>Preview On A 10</span>
           <strong>{previewRoll.impassable ? "Impassable" : previewRoll.final}</strong>
           <p>
             {previewRoll.impassable

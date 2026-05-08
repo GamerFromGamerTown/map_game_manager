@@ -75,7 +75,7 @@ await test("created countries provide the full country workflow", async () => {
   await page.getByRole("button", { name: "Workflow", exact: true }).click();
   await assertVisibleHeading("Workflow Country");
 
-  const tabs = ["Overview", "Settlements +", "Production +", "Trade/Diplomacy +", "Military +", "Dice/History", "Notes", "Policies"];
+  const tabs = ["Overview", "Settlements +", "Production +", "Trade/Diplomacy +", "Military +", "Dice/History", "Policies"];
   for (const tab of tabs) {
     const tabButton = page.getByRole("tab", { name: tab, exact: true });
     await tabButton.click();

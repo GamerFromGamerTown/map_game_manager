@@ -353,15 +353,6 @@ export function TurnHistoryTab({ state, country }: { state: GameState; country: 
   return <JsonTable rows={rows.map((log) => ({ turn: log.turn_number, gold: `${log.gold_before} -> ${log.gold_after}`, stability: `${log.stability_before} -> ${log.stability_after}`, manpower: `${log.manpower_before} -> ${log.manpower_after}`, warnings: log.warnings_json, formula: log.formula_breakdown_json, notes: log.gm_notes }))} />;
 }
 
-export function NotesTab({ state, country, updateCountry }: { state: GameState; country: Country; updateCountry: (id: string, patch: Partial<Country>) => void }) {
-  return (
-    <div className="section-stack">
-      <textarea className="notes-area" value={country.notes} onChange={(event) => updateCountry(country.id, { notes: event.target.value })} />
-      <JsonTable rows={state.overrides.filter((override) => override.entity_id === country.id)} />
-    </div>
-  );
-}
-
 function CountrySelect({ state, value, exclude, onChange }: { state: GameState; value: string; exclude?: string; onChange: (id: string) => void }) {
   return (
     <select value={value} onChange={(event) => onChange(event.target.value)}>

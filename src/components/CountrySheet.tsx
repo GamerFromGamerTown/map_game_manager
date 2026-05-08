@@ -10,7 +10,6 @@ import {
   DiplomacyTab,
   DiceLogTab,
   MilitaryTab,
-  NotesTab,
   PuppetsTab,
   TradeTab,
   TurnHistoryTab
@@ -23,8 +22,7 @@ export type CountryTab =
   | "Policies"
   | "Trade/Diplomacy"
   | "Military"
-  | "Dice/History"
-  | "Notes";
+  | "Dice/History";
 
 export const countryTabs: CountryTab[] = [
   "Overview",
@@ -33,7 +31,6 @@ export const countryTabs: CountryTab[] = [
   "Trade/Diplomacy",
   "Military",
   "Dice/History",
-  "Notes",
   "Policies"
 ];
 
@@ -164,7 +161,6 @@ export function CountrySheet({
           </section>
         </div>
       )}
-      {activeTab === "Notes" && <NotesTab state={state} country={country} updateCountry={updateCountry} />}
     </section>
   );
 }

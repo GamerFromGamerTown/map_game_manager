@@ -42,7 +42,6 @@ try {
     "Trade/Diplomacy +",
     "Military +",
     "Dice/History",
-    "Notes",
     "Policies"
   ]);
 
