@@ -99,6 +99,14 @@ export interface DiplomaticRelation {
   country_b_id: string;
   active: boolean;
   notes: string;
+  graph_custom?: {
+    enabled: boolean;
+    line_type: "solid" | "dashed" | "dotted";
+    color: string;
+    hover_text: string;
+    directed?: boolean;
+    group_id?: string;
+  };
 }
 
 export interface PuppetRelation {

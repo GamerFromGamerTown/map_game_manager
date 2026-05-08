@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Country, GameState, OverrideLog, TurnPreview } from "../../types";
 import { createId } from "../../engine/calculations";
 import { CheckboxField, formatSigned, Metric, NumberField, SelectField, TextField } from "../../ui/fields";
+import { labelFromKey } from "../../utils/labels";
 
 export function OverviewTab({
   state,
@@ -69,7 +70,6 @@ export function OverviewTab({
         <section className="form-section identity-section">
           <div className="section-heading">
             <h2>Country Identity</h2>
-            <span>Name, color, and political status</span>
           </div>
           <div className="identity-color-row">
             <label className="country-color-field">
@@ -106,7 +106,6 @@ export function OverviewTab({
         <section className="form-section">
           <div className="section-heading">
             <h2>Core Numbers</h2>
-            <span>Values the turn processor will use</span>
           </div>
           <div className="core-number-grid">
             <NumberField
@@ -131,7 +130,6 @@ export function OverviewTab({
         <section className="form-section country-equipment-section">
           <div className="section-heading">
             <h2>Military Stock</h2>
-            <span>Equipment stockpiles stored on the country sheet</span>
           </div>
           <div className="form-row three-wide compact-row">
             <NumberField label="Equipment" value={country.equipment} onChange={(equipment) => updateCountry(country.id, { equipment })} />
@@ -142,8 +140,8 @@ export function OverviewTab({
       </div>
 
       <div className="override-bar">
-        <SelectField label="Field" value={overrideField} options={numericFields} onChange={setOverrideField} />
-        <SelectField label="Mode" value={overrideMode} options={["delta", "set"]} onChange={(value) => setOverrideMode(value as "set" | "delta")} />
+        <SelectField label="Field" value={overrideField} options={numericFields} optionLabel={labelFromKey} onChange={setOverrideField} />
+        <SelectField label="Mode" value={overrideMode} options={["delta", "set"]} optionLabel={(value) => value === "delta" ? "Add/subtract" : "Set"} onChange={(value) => setOverrideMode(value as "set" | "delta")} />
         <NumberField label="Value" value={overrideValue} onChange={setOverrideValue} />
         <TextField label="Reason" value={overrideReason} onChange={setOverrideReason} />
         <button className="primary" onClick={applyOverride}>Apply Override</button>

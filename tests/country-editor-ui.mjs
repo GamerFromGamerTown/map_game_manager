@@ -28,8 +28,9 @@ page.on("pageerror", (error) => errors.push(error.message));
 
 try {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Terria", exact: true }).click();
-  await page.locator("h1").filter({ hasText: "Terria Rosia" }).first().waitFor({ state: "visible" });
+  await createCountry("Editor Country", "Editor", "Editor Capital\nEditor Forest");
+  await page.getByRole("button", { name: "Editor", exact: true }).click();
+  await page.locator("h1").filter({ hasText: "Editor Country" }).first().waitFor({ state: "visible" });
 
   const tabLabels = await page.getByRole("tab").evaluateAll((tabs) =>
     tabs.map((tab) => tab.textContent?.trim().replace(/\s+/g, " ") ?? "")
@@ -54,9 +55,9 @@ try {
 
   await page.getByRole("tab", { name: "Settlements +", exact: true }).click();
   await page.locator(".settlement-card").first().waitFor({ state: "visible" });
-  assert.equal(await page.locator(".settlement-card").count() > 1, true);
+  assert.equal(await page.locator(".settlement-card").count(), 2);
   assert.equal(await page.locator(".settlement-card select option[value='calculated']").count(), 0);
-  assert.equal(await page.getByText("wood x1 / turn").first().isVisible(), true);
+  assert.equal(await page.getByText("food x1 / turn").first().isVisible(), true);
   assert.equal(await page.locator(".settlement-notes details").first().isVisible(), true);
 
   const settlementGridColumns = await page.locator(".settlement-card-grid").evaluate((grid) =>
@@ -72,8 +73,10 @@ try {
   await page.screenshot({ path: "artifacts/country-editor/settlements-desktop.png", fullPage: true });
 
   await page.getByRole("tab", { name: "Production +", exact: true }).click();
+  await page.getByRole("button", { name: "Add factory", exact: true }).click();
+  await page.locator(".modal-footer").getByRole("button", { name: "Create", exact: true }).click();
   await page.locator(".factory-card").first().waitFor({ state: "visible" });
-  assert.equal(await page.locator(".factory-card").count() > 1, true);
+  assert.equal(await page.locator(".factory-card").count(), 1);
   const productionLayout = await page.evaluate(() => ({
     bodyScrollWidth: document.body.scrollWidth,
     viewportWidth: window.innerWidth
@@ -100,4 +103,13 @@ try {
 } finally {
   await browser.close();
   await server.close();
+}
+
+async function createCountry(name, shortName, settlements) {
+  await page.getByRole("button", { name: "Country", exact: true }).click();
+  await page.getByLabel("Name", { exact: true }).fill(name);
+  await page.getByLabel("Short sidebar name", { exact: true }).fill(shortName);
+  await page.getByPlaceholder("One settlement name per line").fill(settlements);
+  await page.getByRole("button", { name: "Create Country", exact: true }).click();
+  await page.locator("h2").filter({ hasText: "Create Country" }).waitFor({ state: "detached" });
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Save } from "lucide-react";
 import { GameState } from "../types";
+import { isLegacySettlementType, labelFromKey } from "../utils/labels";
 
 type RuleValue = string | number | boolean | null | RuleValue[] | { [key: string]: RuleValue };
 type RuleObject = { [key: string]: RuleValue };
@@ -189,10 +190,6 @@ function RuleValueEditor({
   );
 }
 
-function humanizeKey(key: string): string {
-  return key.replace(/_/g, " ").replace(/\b\w/g, (match: string) => match.toUpperCase());
-}
-
 function arrayItemLabel(label: string, item: RuleValue, index: number): string {
   if (label === "Factory rules" && isRuleObject(item) && typeof item.type === "string") {
     return item.type;
@@ -212,11 +209,11 @@ function fieldLabel(parentLabel: string, key: string): string {
     inputs_per_turn: "Consumes each turn",
     outputs_per_turn: "Produces each turn"
   };
-  if (parentLabel === "Factory rules" || key in factoryLabels) return factoryLabels[key] ?? humanizeKey(key);
+  if (parentLabel === "Factory rules" || key in factoryLabels) return factoryLabels[key] ?? labelFromKey(key);
   if (key === "stabilityBands") return "Stability bands";
   if (key === "master_permissions") return "Master permissions";
 
-  return humanizeKey(key);
+  return labelFromKey(key);
 }
 
 function visibleObjectEntries(label: string, value: RuleObject): [string, RuleValue][] {
@@ -224,7 +221,7 @@ function visibleObjectEntries(label: string, value: RuleObject): [string, RuleVa
   if (isPuppetRule(value)) return entries.filter(([key]) => key !== "color_changes");
   if (label !== "Resource production") return entries;
 
-  return entries.filter(([, entry]) => !isEmptyRuleObject(entry));
+  return entries.filter(([key, entry]) => !isLegacySettlementType(key) && !isEmptyRuleObject(entry));
 }
 
 function permissionPresetFor(value: RuleValue[]): string {

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { GameState, RESOURCE_TYPES, ResourceType, SettlementTier } from "../../types";
 import { createId } from "../../engine/calculations";
 import { asNumber, CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
+import { biomeLabel, labelFromKey, resourceLabel, settlementTypeOptions } from "../../utils/labels";
 
 export function CountryOnboardingModal({
   state,
@@ -150,13 +151,13 @@ export function CountryOnboardingModal({
           placeholder="One settlement name per line"
         />
         <div className="form-grid">
-          <SelectField label="Tier" value={townTier} options={["village", "city", "large_city", "metropole"]} onChange={(value) => setTownTier(value as SettlementTier)} />
-          <SelectField label="Biome/resource" value={townBiome} options={Object.keys(state.rules.resourceProduction)} onChange={setTownBiome} />
+          <SelectField label="Tier" value={townTier} options={["village", "city", "large_city", "metropole"]} optionLabel={labelFromKey} onChange={(value) => setTownTier(value as SettlementTier)} />
+          <SelectField label="Biome/resource" value={townBiome} options={settlementTypeOptions(Object.keys(state.rules.resourceProduction))} optionLabel={biomeLabel} onChange={setTownBiome} />
           <CheckboxField label="First settlement is capital" checked={firstTownCapital} onChange={setFirstTownCapital} />
           <CheckboxField label="Override production" checked={useProductionOverride} onChange={setUseProductionOverride} />
           {useProductionOverride && (
             <>
-              <SelectField label="Produces" value={productionResource} options={[...RESOURCE_TYPES]} onChange={(value) => setProductionResource(value as ResourceType)} />
+              <SelectField label="Produces" value={productionResource} options={[...RESOURCE_TYPES]} optionLabel={resourceLabel} onChange={(value) => setProductionResource(value as ResourceType)} />
               <label>
                 <span>Override units produced each turn</span>
                 <input value={productionAmount} type="number" onChange={(event) => setProductionAmount(asNumber(event.target.value))} />

@@ -131,10 +131,10 @@ const normalizeGlobalWarning = (state: GameState, sourceMessage: string, index: 
   let entityType: WarningEntityType = "diplomacy";
   let fieldPath = "diplomacy";
   let message = sourceMessage;
-  let recommendedAction = "Open the diplomacy graph and resolve the conflicting relation or mark the exception in notes.";
+  let recommendedAction = "Open the relations graph and resolve the conflicting relation or mark the exception in notes.";
   let target: WarningTarget = {
     view: "graph",
-    label: "Open diplomacy graph"
+    label: "Open relations graph"
   };
 
   const routeMatch = sourceMessage.match(/Trade route ([^ ]+) appears affected by an embargo/i);
@@ -153,7 +153,7 @@ const normalizeGlobalWarning = (state: GameState, sourceMessage: string, index: 
           `trade-${route.id}`,
           route.id
         )
-      : { view: "graph", label: "Open diplomacy graph" };
+      : { view: "graph", label: "Open relations graph" };
   } else if (/non-aggression pact and war/i.test(sourceMessage)) {
     severity = "error";
     fieldPath = "diplomacy.relation_type";
@@ -383,4 +383,3 @@ export const sortWarnings = (warnings: NormalizedWarning[]): NormalizedWarning[]
     if (severity !== 0) return severity;
     return (a.countryName ?? "Global").localeCompare(b.countryName ?? "Global") || a.message.localeCompare(b.message);
   });
-

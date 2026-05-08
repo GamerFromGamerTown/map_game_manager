@@ -428,7 +428,7 @@ export const renderPolishedCountryStatSheet = (
     "",
     `**Current stockpile:** ${resources.stockpile}`,
     `**Settlement production:** ${resources.produced}`,
-    `**Net turn delta:** ${resources.net}`,
+    `**Turn total:** ${resources.net}`,
     "",
     "## Settlements and constructions",
     "",

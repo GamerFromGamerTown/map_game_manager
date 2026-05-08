@@ -3,6 +3,6 @@ import { normalizeLoadedState } from "./migrations";
 import { validateGameState } from "./validation";
 import type { GameState } from "../types";
 
-const bundledDefaultState = normalizeLoadedState(validateGameState(rawDefaultState));
+const emptySaveState = normalizeLoadedState(validateGameState(rawDefaultState));
 
-export const createBundledState = (): GameState => structuredClone(bundledDefaultState);
+export const createEmptyState = (): GameState => structuredClone(emptySaveState);

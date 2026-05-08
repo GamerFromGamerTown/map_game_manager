@@ -1,6 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import { GameState, TurnPreview } from "../types";
 import { formatSigned } from "../ui/fields";
+import { labelFromKey } from "../utils/labels";
 
 export function Dashboard({
   state,
@@ -125,7 +126,7 @@ function BreakdownList({ value }: { value: unknown }) {
     <dl className="breakdown-list">
       {entries.map(([key, entry]) => (
         <div key={key}>
-          <dt>{key}</dt>
+          <dt>{labelFromKey(key)}</dt>
           <dd>
             {entry && typeof entry === "object" ? (
               <BreakdownList value={entry} />

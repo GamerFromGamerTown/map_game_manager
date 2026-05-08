@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Country, DiplomaticRelation, GameState, MilitaryOperation, PuppetRelation, RESOURCE_TYPES, TradeRoute } from "../../types";
 import { createId } from "../../engine/calculations";
 import { asNumber, CheckboxField } from "../../ui/fields";
 import { countryName } from "../../utils/names";
+import { labelFromKey, resourceLabel, routeTypeLabel } from "../../utils/labels";
 
 export function DiplomacyTab({
   state,
@@ -160,7 +161,6 @@ function PuppetCreatePanel({
     <section className="form-section puppet-create-panel">
       <div className="section-heading">
         <h2>{mode === "master" ? "Add a puppet under this country" : "Make this country a puppet"}</h2>
-        <span>Creates an active puppet relation</span>
       </div>
       <div className="form-row three-wide">
         <label>
@@ -220,28 +220,42 @@ export function TradeTab({ state, country, patchState }: { state: GameState; cou
     <div className="section-stack">
       <button onClick={() => addTrade(state, country, patchState)}><Plus size={16} /> Trade Route</button>
       <div className="table-wrap">
-        <table>
-          <thead><tr><th>Sender</th><th>Receiver</th><th>Resource</th><th>Amount</th><th>Payment</th><th>Route</th><th>Sea cost</th><th>Flags</th><th>Notes</th><th></th></tr></thead>
+        <table className="trade-route-table">
+          <thead><tr><th>From</th><th>To</th><th>Sends</th><th>Amount sent</th><th>Gets gold</th><th>Route</th><th>Sea cost</th><th>Flags</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.id}>
-                <td>{countryName(state, row.sender_country_id)}</td>
-                <td><CountrySelect state={state} value={row.receiver_country_id} exclude={row.sender_country_id} onChange={(receiver_country_id) => update(row.id, { receiver_country_id })} /></td>
-                <td><select value={row.resource_type} onChange={(event) => update(row.id, { resource_type: event.target.value as TradeRoute["resource_type"] })}>{["gold", ...RESOURCE_TYPES].map((resource) => <option key={resource}>{resource}</option>)}</select></td>
-                <td><input type="number" value={row.amount_per_turn} onChange={(event) => update(row.id, { amount_per_turn: asNumber(event.target.value) })} /></td>
-                <td><input type="number" value={row.payment_gold_per_turn ?? 0} onChange={(event) => update(row.id, { payment_gold_per_turn: asNumber(event.target.value) })} /></td>
-                <td><select value={row.route_type} onChange={(event) => update(row.id, { route_type: event.target.value as TradeRoute["route_type"] })}>{["road", "railway", "sea", "abstract"].map((type) => <option key={type}>{type}</option>)}</select></td>
-                <td><input type="number" value={row.sea_transport_cost_per_unit} onChange={(event) => update(row.id, { sea_transport_cost_per_unit: asNumber(event.target.value) })} /></td>
-                <td className="inline-checks"><CheckboxField label="Valid" checked={row.route_valid} onChange={(route_valid) => update(row.id, { route_valid })} /><CheckboxField label="Blocked" checked={row.blocked_by_embargo} onChange={(blocked_by_embargo) => update(row.id, { blocked_by_embargo })} /><CheckboxField label="Active" checked={row.active} onChange={(active) => update(row.id, { active })} /></td>
-                <td><input value={row.notes} onChange={(event) => update(row.id, { notes: event.target.value })} /></td>
-                <td><DeleteButton onClick={() => patchState((current) => ({ ...current, trades: current.trades.filter((item) => item.id !== row.id) }))} /></td>
-              </tr>
+              <Fragment key={row.id}>
+                <tr>
+                  <td>{countryName(state, row.sender_country_id)}</td>
+                  <td><CountrySelect state={state} value={row.receiver_country_id} exclude={row.sender_country_id} onChange={(receiver_country_id) => update(row.id, { receiver_country_id })} /></td>
+                  <td><select value={row.resource_type} onChange={(event) => update(row.id, { resource_type: event.target.value as TradeRoute["resource_type"] })}>{["gold", ...RESOURCE_TYPES].map((resource) => <option value={resource} key={resource}>{resourceLabel(resource)}</option>)}</select></td>
+                  <td><input type="number" value={row.amount_per_turn} onChange={(event) => update(row.id, { amount_per_turn: asNumber(event.target.value) })} /></td>
+                  <td><input type="number" value={row.payment_gold_per_turn ?? 0} onChange={(event) => update(row.id, { payment_gold_per_turn: asNumber(event.target.value) })} /></td>
+                  <td><select value={row.route_type} onChange={(event) => update(row.id, { route_type: event.target.value as TradeRoute["route_type"] })}>{["road", "railway", "sea", "abstract"].map((type) => <option value={type} key={type}>{routeTypeLabel(type)}</option>)}</select></td>
+                  <td><input type="number" value={row.sea_transport_cost_per_unit} onChange={(event) => update(row.id, { sea_transport_cost_per_unit: asNumber(event.target.value) })} /></td>
+                  <td className="inline-checks"><CheckboxField label="Valid" checked={row.route_valid} onChange={(route_valid) => update(row.id, { route_valid })} /><CheckboxField label="Blocked" checked={row.blocked_by_embargo} onChange={(blocked_by_embargo) => update(row.id, { blocked_by_embargo })} /><CheckboxField label="Active" checked={row.active} onChange={(active) => update(row.id, { active })} /></td>
+                  <td><DeleteButton onClick={() => patchState((current) => ({ ...current, trades: current.trades.filter((item) => item.id !== row.id) }))} /></td>
+                </tr>
+                <tr className="trade-summary-row">
+                  <td colSpan={9}>
+                    <div className="trade-summary-line">{tradeSummary(state, row)}</div>
+                    <input value={row.notes} placeholder="Trade notes" onChange={(event) => update(row.id, { notes: event.target.value })} />
+                  </td>
+                </tr>
+              </Fragment>
             ))}
           </tbody>
         </table>
       </div>
     </div>
   );
+}
+
+function tradeSummary(state: GameState, row: TradeRoute): string {
+  const sender = countryName(state, row.sender_country_id);
+  const receiver = countryName(state, row.receiver_country_id);
+  const payment = Number(row.payment_gold_per_turn ?? 0);
+  return `${sender} sends ${row.amount_per_turn} ${resourceLabel(row.resource_type)} to ${receiver} for ${payment} Gold per turn.`;
 }
 
 function addTrade(state: GameState, country: Country, patchState: (updater: (current: GameState) => GameState) => void) {
@@ -367,7 +381,7 @@ function JsonTable({ rows }: { rows: object[] }) {
   return (
     <div className="table-wrap">
       <table>
-        <thead><tr>{columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
+        <thead><tr>{columns.map((column) => <th key={column}>{labelFromKey(column)}</th>)}</tr></thead>
         <tbody>
           {normalized.map((row, index) => (
             <tr key={index}>
@@ -404,7 +418,7 @@ function StructuredValue({ value }: { value: unknown }) {
       <dl className="compact-dl">
         {entries.map(([key, item]) => (
           <div key={key}>
-            <dt>{key}</dt>
+            <dt>{labelFromKey(key)}</dt>
             <dd>{item && typeof item === "object" ? <StructuredValue value={item} /> : String(item ?? "")}</dd>
           </div>
         ))}

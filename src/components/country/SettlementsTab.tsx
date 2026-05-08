@@ -3,13 +3,14 @@ import { Plus, Trash2 } from "lucide-react";
 import { Country, GameState, ResourceBag, Settlement, SettlementTier } from "../../types";
 import { createId, settlementProductionForCountry } from "../../engine/calculations";
 import { CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
+import { biomeLabel, labelFromKey, resourceLabel, settlementTypeOptions } from "../../utils/labels";
 
 const formatAmount = (amount: number): string => (Number.isInteger(amount) ? String(amount) : amount.toFixed(2));
 
 const productionSummary = (bag: ResourceBag): string => {
   const entries = Object.entries(bag).filter(([, amount]) => Number(amount) !== 0);
   if (entries.length === 0) return "No resource output";
-  return entries.map(([resource, amount]) => `${resource} x${formatAmount(Number(amount))} / turn`).join(", ");
+  return entries.map(([resource, amount]) => `${resourceLabel(resource)} x${formatAmount(Number(amount))} / turn`).join(", ");
 };
 
 export function SettlementsTab({
@@ -50,7 +51,7 @@ export function SettlementsTab({
                   onChange={(event) => updateSettlement(settlement.id, { tier: event.target.value as SettlementTier })}
                 >
                   {(["village", "city", "large_city", "metropole"] as SettlementTier[]).map((tier) => (
-                    <option key={tier}>{tier}</option>
+                    <option value={tier} key={tier}>{labelFromKey(tier)}</option>
                   ))}
                 </select>
               </label>
@@ -66,8 +67,8 @@ export function SettlementsTab({
                     })
                   }
                 >
-                  {Object.keys(state.rules.resourceProduction).map((option) => (
-                    <option key={option}>{option}</option>
+                  {settlementTypeOptions(Object.keys(state.rules.resourceProduction), settlement.biome_or_resource_type).map((option) => (
+                    <option value={option} key={option}>{biomeLabel(option)}</option>
                   ))}
                 </select>
               </label>
@@ -194,8 +195,8 @@ function SettlementCreateModal({
       <div className="form-grid">
         <NumberField label="How many" value={count} min={1} onChange={setCount} />
         <TextField label="Base name" value={baseName} onChange={setBaseName} />
-        <SelectField label="Tier" value={tier} options={["village", "city", "large_city", "metropole"]} onChange={(value) => setTier(value as SettlementTier)} />
-        <SelectField label="Biome/resource" value={biome} options={Object.keys(state.rules.resourceProduction)} onChange={setBiome} />
+        <SelectField label="Tier" value={tier} options={["village", "city", "large_city", "metropole"]} optionLabel={labelFromKey} onChange={(value) => setTier(value as SettlementTier)} />
+        <SelectField label="Biome/resource" value={biome} options={settlementTypeOptions(Object.keys(state.rules.resourceProduction))} optionLabel={biomeLabel} onChange={setBiome} />
         <CheckboxField label="First is capital" checked={firstCapital} onChange={setFirstCapital} />
       </div>
       <p className="quiet">Names: {names.join(", ")}</p>

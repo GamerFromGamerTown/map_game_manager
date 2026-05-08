@@ -1,3 +1,5 @@
+UNACCEPTABLE: game state data must never be embedded in code or any non-save file; named countries, settlements, trades, diplomacy, stockpiles, or other game entities are only allowed inside explicit JSON/SQLite save artifacts.
+
 # AGENTS.md
 
 ## Project Overview
@@ -33,6 +35,7 @@ There is currently no lint script. Do not claim lint has passed unless one is ad
 - Do not hardcode country names, settlement names, diplomacy pairs, stockpiles, or named game entities in application logic.
 - Seed scripts and seed-state modules are strictly prohibited. Do not add or use `seed.ts`, `createSeedState`, or any equivalent hardcoded state generator.
 - The only authoritative game-state data source is a JSON or SQLite save artifact. Runtime state must be loaded from saves, and country-specific setup belongs in save files or import/export fixtures derived from saves.
+- Do not import a populated save as the default runtime state. Fresh runtime state must be empty until a user loads or creates save-backed data.
 - Do not scatter rule constants through UI components. Add editable values to `RulesConfig` and `src/rules/defaultRules.ts`, then consume them through the rules object.
 - Keep JSON editing as an advanced option only. Prefer structured controls for GM-facing rules and state editing.
 - Use React text rendering for user-authored content. Do not use `dangerouslySetInnerHTML`, `innerHTML`, `eval`, `new Function`, or dynamic code execution.

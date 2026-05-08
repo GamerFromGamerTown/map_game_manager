@@ -11,6 +11,7 @@ import {
   TurnLog,
   TurnPreview
 } from "../types";
+import { biomeLabel, resourceLabel } from "../utils/labels";
 
 export const createId = (prefix: string): string =>
   `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -55,7 +56,7 @@ const hasResources = (stock: ResourceBag, cost: ResourceBag): boolean =>
 
 const missingResources = (stock: ResourceBag, cost: ResourceBag): string[] =>
   RESOURCE_TYPES.filter((resource) => Number(cost[resource] ?? 0) > Number(stock[resource] ?? 0)).map(
-    (resource) => `${resource} ${stock[resource] ?? 0}/${cost[resource]}`
+    (resource) => `${resourceLabel(resource)} ${stock[resource] ?? 0}/${cost[resource]}`
   );
 
 const diffBag = (after: ResourceBag, before: ResourceBag): ResourceBag => {
@@ -274,7 +275,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
 
       const resourceRule = state.rules.resourceProduction[settlement.biome_or_resource_type];
       if (resourceRule?.cannot_be_settled) {
-        item.preview.warnings.push(`${settlement.name} uses a biome marked cannot be settled.`);
+        item.preview.warnings.push(`${settlement.name} uses ${biomeLabel(settlement.biome_or_resource_type)}, which cannot be settled.`);
       }
 
       if (!settlementCanProduce(settlement)) {
@@ -334,7 +335,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
     const receiver = work.get(route.receiver_country_id);
     if (!sender || !receiver) return;
 
-    const label = `${route.resource_type} trade ${sender.country.name} -> ${receiver.country.name}`;
+    const label = `${resourceLabel(route.resource_type)} trade ${sender.country.name} -> ${receiver.country.name}`;
     if (!route.active) {
       sender.preview.warnings.push(`Inactive trade route: ${label}.`);
       return;

@@ -1,6 +1,7 @@
 import { Country, GameState, OverrideLog, RESOURCE_TYPES, ResourceType, TurnPreview } from "../../types";
 import { createId, stockpileForCountry } from "../../engine/calculations";
 import { asNumber, formatSigned } from "../../ui/fields";
+import { resourceLabel } from "../../utils/labels";
 
 export function ResourcesTab({
   state,
@@ -62,7 +63,7 @@ export function ResourcesTab({
             <th>Trade in</th>
             <th>Trade out</th>
             <th>Projected</th>
-            <th>Delta</th>
+            <th>Total</th>
           </tr>
         </thead>
         <tbody>
@@ -74,7 +75,7 @@ export function ResourcesTab({
               Number(preview?.factoryInputs[resource] ?? 0) + Number(preview?.settlementUpkeep[resource] ?? 0);
             return (
               <tr key={resource} id={`resource-row-${country.id}-${resource}`}>
-                <td>{resource}</td>
+                <td>{resourceLabel(resource)}</td>
                 <td>
                   <input
                     id={`resource-${country.id}-${resource}`}
@@ -97,4 +98,3 @@ export function ResourcesTab({
     </div>
   );
 }
-

@@ -71,9 +71,7 @@ export function CountrySheet({
       <div className="country-page-header">
         <div>
           <h2>{country.name}</h2>
-          <p className="quiet">
-            {activeTab} workflow. {warnings.length} active warnings for this country.
-          </p>
+          <p className="quiet">{warnings.length} active warnings for this country.</p>
         </div>
         {warnings.length > 0 && (
           <div className="country-warning-summary">
@@ -115,14 +113,12 @@ export function CountrySheet({
           <section className="workflow-section">
             <div className="section-heading">
               <h2>Resource stockpiles</h2>
-              <span>Editable current values and projected next-turn deltas</span>
             </div>
             <ResourcesTab state={state} country={country} preview={item} patchState={patchState} />
           </section>
           <section className="workflow-section">
             <div className="section-heading">
               <h2>Factories</h2>
-              <span>Production assets and rule-linked inputs/outputs</span>
             </div>
             <FactoriesTab state={state} country={country} updateFactory={updateFactory} patchState={patchState} />
           </section>
@@ -134,21 +130,18 @@ export function CountrySheet({
           <section className="workflow-section" id={`trades-${country.id}`} tabIndex={-1}>
             <div className="section-heading">
               <h2>Trade routes</h2>
-              <span>Imports, payments, embargo flags, and route validity</span>
             </div>
             <TradeTab state={state} country={country} patchState={patchState} />
           </section>
           <section className="workflow-section">
             <div className="section-heading">
               <h2>Diplomacy</h2>
-              <span>Country-pair relations that affect warnings and wars</span>
             </div>
             <DiplomacyTab state={state} country={country} patchState={patchState} />
           </section>
           <section className="workflow-section" id={`puppets-${country.id}`} tabIndex={-1}>
             <div className="section-heading">
               <h2>Puppets</h2>
-              <span>Tribute, autonomy type, and rebellion immunity</span>
             </div>
             <PuppetsTab state={state} country={country} patchState={patchState} />
           </section>
@@ -160,14 +153,12 @@ export function CountrySheet({
           <section className="workflow-section">
             <div className="section-heading">
               <h2>Dice rolls</h2>
-              <span>Logged combat and expansion rolls for this country</span>
             </div>
             <DiceLogTab state={state} country={country} />
           </section>
           <section className="workflow-section">
             <div className="section-heading">
               <h2>Turn history</h2>
-              <span>Committed previews, warnings, formulas, and notes</span>
             </div>
             <TurnHistoryTab state={state} country={country} />
           </section>

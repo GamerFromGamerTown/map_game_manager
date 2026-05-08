@@ -4,6 +4,7 @@ import { DiceRollLog, GameState } from "../types";
 import { createId, diceResultCategory } from "../engine/calculations";
 import { CheckboxField, NumberField, SelectField, TextField } from "../ui/fields";
 import { countryName } from "../utils/names";
+import { labelFromKey } from "../utils/labels";
 
 export function DiceRoller({
   state,
@@ -125,7 +126,6 @@ export function DiceRoller({
           <div className="form-section">
             <div className="section-heading">
               <h2>Roll Context</h2>
-              <span>Who this roll belongs to</span>
             </div>
             <div className="form-row two-wide">
               <SelectField label="Country" value={countryId} options={state.countries.map((country) => country.id)} optionLabel={(id) => countryName(state, id)} onChange={setCountryId} />
@@ -136,12 +136,11 @@ export function DiceRoller({
           <div className="form-section">
             <div className="section-heading">
               <h2>Roll Setup</h2>
-              <span>Core mode and troop assumptions</span>
             </div>
             <div className="form-row three-wide">
-              <SelectField label="Mode" value={mode} options={["attack", "defense", "expansion", "contested attack vs defense"]} onChange={setMode} />
-              <SelectField label="Troop type" value={troopType} options={["normal", "high_quality", "tank"]} onChange={setTroopType} />
-              <SelectField label="Terrain" value={terrain} options={terrainOptions} onChange={setTerrain} />
+              <SelectField label="Mode" value={mode} options={["attack", "defense", "expansion", "contested attack vs defense"]} optionLabel={labelFromKey} onChange={setMode} />
+              <SelectField label="Troop type" value={troopType} options={["normal", "high_quality", "tank"]} optionLabel={labelFromKey} onChange={setTroopType} />
+              <SelectField label="Terrain" value={terrain} options={terrainOptions} optionLabel={labelFromKey} onChange={setTerrain} />
             </div>
             <div className="manual-roll-row">
               <NumberField label="D20 value" value={raw} onChange={setRaw} />
@@ -152,7 +151,6 @@ export function DiceRoller({
           <div className="form-section">
             <div className="section-heading">
               <h2>Modifiers</h2>
-              <span>Supply and situational adjustments</span>
             </div>
             <div className="form-row three-wide">
               <NumberField label="Supply required" value={supplyRequired} onChange={setSupplyRequired} />
@@ -160,8 +158,8 @@ export function DiceRoller({
               <NumberField label="GM custom modifier" value={custom} onChange={setCustom} />
             </div>
             <div className="form-row two-wide">
-              <SelectField label="Encirclement" value={encirclement} options={Object.keys(state.rules.dice.encirclement)} onChange={setEncirclement} />
-              <SelectField label="Fortification" value={fortification} options={Object.keys(state.rules.dice.fortifications)} onChange={setFortification} />
+              <SelectField label="Encirclement" value={encirclement} options={Object.keys(state.rules.dice.encirclement)} optionLabel={labelFromKey} onChange={setEncirclement} />
+              <SelectField label="Fortification" value={fortification} options={Object.keys(state.rules.dice.fortifications)} optionLabel={labelFromKey} onChange={setFortification} />
             </div>
           </div>
 
@@ -169,7 +167,6 @@ export function DiceRoller({
             <div className="form-section">
               <div className="section-heading">
                 <h2>Defender Roll</h2>
-                <span>Only used for contested rolls</span>
               </div>
               <div className="form-row two-wide compact-row">
                 <NumberField label="Defender D20" value={defenderRaw} onChange={setDefenderRaw} />

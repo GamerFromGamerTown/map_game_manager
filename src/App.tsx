@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Database, Moon, Plus, RefreshCw, RotateCcw, Save, Sun } from "lucide-react";
 import { Country, Factory, GameState, Settlement } from "./types";
-import { createBundledState } from "./data/defaultState";
+import { createEmptyState } from "./data/defaultState";
 import { commitTurn, previewNextTurn } from "./engine/calculations";
 import { downloadBytes, exportStateAsSqlite } from "./db/sqlite";
 import { Dashboard } from "./components/Dashboard";
@@ -20,12 +20,12 @@ const THEME_KEY = "gm-economy-console-theme-v2";
 type View = "dashboard" | "country" | "dice" | "graph" | "rules";
 type Theme = "light" | "dark";
 
-const loadInitialState = (): GameState => createBundledState();
+const loadInitialState = (): GameState => createEmptyState();
 
 const titleForView = (view: View) => {
   if (view === "dashboard") return "Dashboard";
   if (view === "dice") return "Dice Roller";
-  if (view === "graph") return "Diplomacy Graph";
+  if (view === "graph") return "Relations Graph";
   return "Rules Editor";
 };
 
@@ -157,7 +157,7 @@ function App() {
         <nav>
           <button className={view === "dashboard" ? "active" : ""} onClick={() => setView("dashboard")}>Dashboard</button>
           <button className={view === "dice" ? "active" : ""} onClick={() => setView("dice")}>Dice Roller</button>
-          <button className={view === "graph" ? "active" : ""} onClick={() => setView("graph")}>Diplomacy Graph</button>
+          <button className={view === "graph" ? "active" : ""} onClick={() => setView("graph")}>Relations Graph</button>
           <button className={view === "rules" ? "active" : ""} onClick={() => setView("rules")}>Rules Editor</button>
         </nav>
         <div className="country-list">

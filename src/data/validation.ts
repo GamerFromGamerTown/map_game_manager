@@ -43,6 +43,12 @@ const requireBoolean = (value: unknown, label: string) => {
   }
 };
 
+const requireOptionalString = (value: unknown, label: string) => {
+  if (value !== undefined && typeof value !== "string") {
+    throw new Error(`${label} must be a string when provided.`);
+  }
+};
+
 const requireArray = (value: unknown, label: string): unknown[] => {
   if (!Array.isArray(value)) {
     throw new Error(`${label} is missing or is not an array.`);
@@ -152,6 +158,19 @@ export const validateGameState = (value: unknown): GameState => {
     requireString(relation.id, "diplomacy.id");
     requireCountryRef(countryIds, relation.country_a_id, "diplomacy.country_a_id");
     requireCountryRef(countryIds, relation.country_b_id, "diplomacy.country_b_id");
+    if (relation.graph_custom !== undefined) {
+      const graphCustom = requireRecord(relation.graph_custom, "diplomacy.graph_custom");
+      requireBoolean(graphCustom.enabled, "diplomacy.graph_custom.enabled");
+      if (!["solid", "dashed", "dotted"].includes(String(graphCustom.line_type))) {
+        throw new Error("diplomacy.graph_custom.line_type must be solid, dashed, or dotted.");
+      }
+      requireString(graphCustom.color, "diplomacy.graph_custom.color");
+      requireOptionalString(graphCustom.hover_text, "diplomacy.graph_custom.hover_text");
+      if (graphCustom.directed !== undefined) {
+        requireBoolean(graphCustom.directed, "diplomacy.graph_custom.directed");
+      }
+      requireOptionalString(graphCustom.group_id, "diplomacy.graph_custom.group_id");
+    }
   });
 
   requireArray(state.puppets, "puppets").forEach((value) => {

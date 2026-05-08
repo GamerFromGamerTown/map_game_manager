@@ -565,6 +565,55 @@ h2 {
   font-size: 0.82rem;
 }
 
+.trade-summary-line {
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.trade-route-table {
+  min-width: 1040px;
+}
+
+.trade-route-table th:nth-child(1),
+.trade-route-table td:nth-child(1) {
+  min-width: 150px;
+}
+
+.trade-route-table th:nth-child(2),
+.trade-route-table td:nth-child(2) {
+  min-width: 230px;
+}
+
+.trade-route-table th:nth-child(3),
+.trade-route-table td:nth-child(3) {
+  min-width: 150px;
+}
+
+.trade-route-table th:nth-child(4),
+.trade-route-table td:nth-child(4),
+.trade-route-table th:nth-child(5),
+.trade-route-table td:nth-child(5),
+.trade-route-table th:nth-child(7),
+.trade-route-table td:nth-child(7) {
+  min-width: 90px;
+}
+
+.trade-route-table th:nth-child(6),
+.trade-route-table td:nth-child(6) {
+  min-width: 105px;
+}
+
+.trade-summary-row td {
+  background: color-mix(in srgb, var(--panel-strong) 86%, var(--panel));
+  padding-top: 8px;
+}
+
+.trade-summary-row input {
+  max-width: 720px;
+}
+
 .form-row {
   display: grid;
   gap: 10px;
@@ -906,6 +955,7 @@ label span {
   display: grid;
   gap: 10px;
   min-width: 0;
+  align-content: start;
 }
 
 .graph-toolbar {
@@ -927,7 +977,12 @@ label span {
   font-size: 0.92rem;
 }
 
-.graph-canvas-wrap > svg {
+.graph-stage {
+  position: relative;
+  min-width: 0;
+}
+
+.graph-stage > svg {
   width: 100%;
   min-height: 560px;
   border: 1px solid var(--line);
@@ -936,7 +991,7 @@ label span {
   touch-action: none;
 }
 
-.theme-dark .graph-canvas-wrap > svg {
+.theme-dark .graph-stage > svg {
   background: #111b27;
 }
 
@@ -956,6 +1011,11 @@ label span {
   fill: none;
   stroke: #596b7c;
   stroke-width: 2;
+}
+
+.graph-pan-surface {
+  fill: transparent;
+  cursor: move;
 }
 
 .edge-war path {
@@ -1041,6 +1101,37 @@ label span {
 .graph-filter-list {
   display: grid;
   gap: 8px;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.graph-corner-controls {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.graph-corner-controls button,
+.graph-custom-form button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.graph-custom-form {
+  display: grid;
+  gap: 10px;
+}
+
+.country-check-list {
+  max-height: 180px;
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .dice-panel {

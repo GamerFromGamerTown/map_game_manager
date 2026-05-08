@@ -3,6 +3,7 @@ import { formatSigned } from "../ui/fields";
 import { TurnTransactionSummary } from "../ui/turnTransaction";
 import { WarningQueue } from "./WarningQueue";
 import { GameState } from "../types";
+import { resourceLabel } from "../utils/labels";
 
 export function TurnPreviewDiff({
   summary,
@@ -51,8 +52,7 @@ export function TurnPreviewDiff({
 
       <section className="review-section">
         <div className="section-heading">
-          <h2>Country deltas</h2>
-          <span>Projected values that commit will persist</span>
+          <h2>Country totals</h2>
         </div>
         <div className="table-wrap">
           <table className="data-table transaction-table sticky-first-column">
@@ -88,8 +88,7 @@ export function TurnPreviewDiff({
 
       <section className="review-section">
         <div className="section-heading">
-          <h2>Resource deltas</h2>
-          <span>Largest non-zero stockpile changes</span>
+          <h2>Resource totals</h2>
         </div>
         {topResourceDeltas.length === 0 ? (
           <p className="quiet">No resource stockpile changes.</p>
@@ -102,14 +101,14 @@ export function TurnPreviewDiff({
                   <th>Resource</th>
                   <th>Before</th>
                   <th>After</th>
-                  <th>Delta</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>
                 {topResourceDeltas.map((row) => (
                   <tr key={`${row.countryId}-${row.resource}`}>
                     <td title={row.countryName}>{row.countryName}</td>
-                    <td>{row.resource}</td>
+                    <td>{resourceLabel(row.resource)}</td>
                     <td className="numeric">{Math.round(row.before)}</td>
                     <td className="numeric">{Math.round(row.after)}</td>
                     <td className={row.delta < 0 ? "numeric bad" : "numeric good"}>{formatSigned(row.delta)}</td>
@@ -124,7 +123,6 @@ export function TurnPreviewDiff({
       <section className="review-section">
         <div className="section-heading">
           <h2>Warning movement</h2>
-          <span>Compared with the latest committed turn log</span>
         </div>
         <div className="warning-movement-grid">
           <div>

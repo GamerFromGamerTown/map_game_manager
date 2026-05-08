@@ -1,4 +1,5 @@
 import { RESOURCE_TYPES, ResourceBag } from "../types";
+import { resourceLabel } from "../utils/labels";
 
 export function ResourceBagView({ bag, empty = "None" }: { bag?: ResourceBag | Record<string, number>; empty?: string }) {
   const entries = Object.entries(bag ?? {}).filter(([, value]) => Number(value) !== 0);
@@ -8,7 +9,7 @@ export function ResourceBagView({ bag, empty = "None" }: { bag?: ResourceBag | R
     <div className="resource-chips">
       {entries.map(([resource, value]) => (
         <span className="resource-chip" key={resource}>
-          {resource}: {Number(value)}
+          {resourceLabel(resource)}: {Number(value)}
         </span>
       ))}
     </div>
@@ -28,7 +29,7 @@ export function ResourceBagEditor({
     <div className={compact ? "resource-editor compact" : "resource-editor"}>
       {RESOURCE_TYPES.map((resource) => (
         <label key={resource}>
-          <span>{resource}</span>
+          <span>{resourceLabel(resource)}</span>
           <input
             type="number"
             value={Number(bag[resource] ?? 0)}
