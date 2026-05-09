@@ -9,12 +9,14 @@ export function NumberField({
   value,
   onChange,
   min,
+  max,
   id
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
   min?: number;
+  max?: number;
   id?: string;
 }) {
   return (
@@ -24,6 +26,7 @@ export function NumberField({
         id={id}
         type="number"
         min={min}
+        max={max}
         value={Number.isFinite(value) ? value : 0}
         onChange={(event) => onChange(asNumber(event.target.value))}
       />

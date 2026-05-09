@@ -1,7 +1,7 @@
 import { GameState, TurnPreview } from "../types";
 
 export type WarningSeverity = "error" | "warning" | "info";
-export type WarningEntityType =
+type WarningEntityType =
   | "country"
   | "settlement"
   | "factory"
@@ -13,7 +13,7 @@ export type WarningEntityType =
   | "rules"
   | "global";
 
-export type WarningCountryTab =
+type WarningCountryTab =
   | "Overview"
   | "Settlements"
   | "Production"
@@ -22,7 +22,7 @@ export type WarningCountryTab =
   | "Military"
   | "Dice/History";
 
-export type WarningRulesSection =
+type WarningRulesSection =
   | "settings"
   | "settlementTiers"
   | "resourceProduction"
@@ -34,7 +34,7 @@ export type WarningRulesSection =
   | "puppetTypes"
   | "dice";
 
-export interface WarningTarget {
+interface WarningTarget {
   view: "dashboard" | "country" | "rules" | "graph" | "dice";
   label: string;
   countryId?: string;
@@ -75,12 +75,12 @@ const warningId = (
   index: number
 ): string => [countryId ?? "global", entityType, slug(fieldPath), slug(message), index].filter(Boolean).join(":");
 
-export const focusIdForResource = (countryId: string, resource: string): string =>
+const focusIdForResource = (countryId: string, resource: string): string =>
   `resource-${countryId}-${resource}`;
 
-export const focusIdForSettlement = (settlementId: string): string => `settlement-${settlementId}`;
+const focusIdForSettlement = (settlementId: string): string => `settlement-${settlementId}`;
 
-export const focusIdForFactory = (factoryId: string): string => `factory-${factoryId}`;
+const focusIdForFactory = (factoryId: string): string => `factory-${factoryId}`;
 
 const countryTarget = (
   label: string,
@@ -370,7 +370,7 @@ export const normalizePreviewWarnings = (state: GameState, preview: TurnPreview)
   )
 ];
 
-export const severityRank = (severity: WarningSeverity): number => {
+const severityRank = (severity: WarningSeverity): number => {
   if (severity === "error") return 0;
   if (severity === "warning") return 1;
   return 2;

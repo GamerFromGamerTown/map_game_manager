@@ -26,7 +26,13 @@ export type ResourceType = (typeof RESOURCE_TYPES)[number];
 export type TradableType = ResourceType | "gold";
 export type ResourceBag = Partial<Record<ResourceType, number>>;
 export type SettlementTier = "village" | "city" | "large_city" | "metropole";
-export type RouteType = "road" | "railway" | "sea" | "abstract";
+type RouteType = "road" | "railway" | "sea" | "abstract";
+
+export interface TurnTrackedEntity {
+  created_turn?: number;
+  updated_turn?: number;
+  updated_fields?: string[];
+}
 
 export interface Country {
   id: string;
@@ -53,7 +59,7 @@ export interface Country {
   notes: string;
 }
 
-export interface Settlement {
+export interface Settlement extends TurnTrackedEntity {
   id: string;
   country_id: string;
   name: string;
@@ -69,7 +75,7 @@ export interface Settlement {
   notes: string;
 }
 
-export interface Factory {
+export interface Factory extends TurnTrackedEntity {
   id: string;
   country_id: string;
   type: string;
@@ -92,7 +98,7 @@ export interface PolicySelection {
   last_changed_turn: number;
 }
 
-export interface DiplomaticRelation {
+export interface DiplomaticRelation extends TurnTrackedEntity {
   id: string;
   relation_type: string;
   country_a_id: string;
@@ -109,7 +115,7 @@ export interface DiplomaticRelation {
   };
 }
 
-export interface PuppetRelation {
+export interface PuppetRelation extends TurnTrackedEntity {
   id: string;
   master_country_id: string;
   puppet_country_id: string;
@@ -120,7 +126,7 @@ export interface PuppetRelation {
   notes: string;
 }
 
-export interface TradeRoute {
+export interface TradeRoute extends TurnTrackedEntity {
   id: string;
   sender_country_id: string;
   receiver_country_id: string;
@@ -137,7 +143,7 @@ export interface TradeRoute {
   notes: string;
 }
 
-export interface MilitaryOperation {
+export interface MilitaryOperation extends TurnTrackedEntity {
   id: string;
   name: string;
   attacker_country_id: string;
@@ -194,7 +200,7 @@ export interface OverrideLog {
   timestamp: string;
 }
 
-export interface SettlementTierRule {
+interface SettlementTierRule {
   creation_gold_cost?: number;
   creation_stability_cost?: number;
   gold_per_turn: number;
@@ -209,7 +215,7 @@ export interface SettlementTierRule {
   };
 }
 
-export interface FactoryRule {
+interface FactoryRule {
   type: string;
   build_gold_cost: number;
   inputs_per_turn: ResourceBag;
@@ -222,7 +228,10 @@ export interface PolicyOptionRule {
   gold_per_turn?: number;
   stability_per_turn?: number;
   special?: string;
+  custom_effects?: CustomRuleEffects;
 }
+
+export type CustomRuleEffects = Record<string, string | number>;
 
 export interface PolicyCategoryRule {
   category: string;
@@ -235,9 +244,10 @@ export interface PolicyCategoryRule {
   forced_cost_halved?: boolean;
   base_option: string;
   options: PolicyOptionRule[];
+  custom_effects?: CustomRuleEffects;
 }
 
-export interface RulingPartyRule {
+interface RulingPartyRule {
   stability_per_turn?: number;
   stability_per_turn_at_peace?: number;
   stability_per_turn_at_war?: number;
@@ -252,14 +262,14 @@ export interface RulingPartyRule {
   notes?: string;
 }
 
-export interface StabilityBandRule {
+interface StabilityBandRule {
   min: number;
   max: number;
   gold_per_turn: number;
   revolt_risk: string;
 }
 
-export interface PuppetTypeRule {
+interface PuppetTypeRule {
   tribute_percent: number | "custom";
   rounded_up: boolean;
   diplomacy_inherited_from_master: string | boolean;
@@ -267,7 +277,7 @@ export interface PuppetTypeRule {
   master_permissions: string[];
 }
 
-export interface OperationRule {
+interface OperationRule {
   abbreviation: string;
   base_supply_tier: string;
   supply_required: number;
@@ -327,6 +337,7 @@ export interface RulesConfig {
     operations: Record<string, OperationRule>;
   };
   dice: {
+    expansion_roll_gold_cost: number;
     resultBands: Array<{ min: number; max: number; category: string }>;
     attackTerrainNormal: Record<string, number | "impassable">;
     attackTerrainTank: Record<string, number | "impassable">;
@@ -336,7 +347,7 @@ export interface RulesConfig {
   };
 }
 
-export interface GraphPosition {
+interface GraphPosition {
   x: number;
   y: number;
 }

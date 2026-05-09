@@ -289,7 +289,7 @@ const buildManpowerCapFormula = (state: GameState, country: Country, preview: Co
   return `${settlementFormula.formula ? `( ${settlementFormula.formula} = ${formatNumber(settlementFormula.total)} ) ` : ""}+${formatNumber(state.rules.settings.base_manpower_cap)}(base) = ${formatNumber(preview.manpowerCapAfter)}`;
 };
 
-const buildStabilityFormula = (state: GameState, country: Country, preview: CountryPreview): string => {
+const buildStabilityFormula = (state: GameState, preview: CountryPreview): string => {
   const breakdown = preview.formulaBreakdown.stability as Record<string, number> | undefined;
   return compactParts([
     `${formatSignedNumber(breakdown?.base ?? state.rules.stabilityRules.base_stability_gain_per_turn)}(base)`,
@@ -369,7 +369,7 @@ export const renderVerbatimCountryStatSheet = (
     "## Main Statistics",
     "",
     `**Gold:** ${formatNumber(countryPreview.goldAfter)} (Income: ${buildGoldFormula(state, country, countryPreview)})`,
-    `**Stability:** ${formatNumber(countryPreview.stabilityAfter)}/${formatNumber(countryPreview.stabilityCap)} ${buildStabilityFormula(state, country, countryPreview)}`,
+    `**Stability:** ${formatNumber(countryPreview.stabilityAfter)}/${formatNumber(countryPreview.stabilityCap)} ${buildStabilityFormula(state, countryPreview)}`,
     `**Ruling Party:** ${rulePartyName(country.ruling_party)}`,
     "",
     `**Reserve:** ${formatNumber(country.reserve)}/${formatNumber(countryPreview.reserveCap)} (Cap: manpower cap X ${formatNumber(state.rules.settings.reserve_cap_multiplier)})`,
@@ -396,7 +396,7 @@ export const renderVerbatimCountryStatSheet = (
   return lines.join("\n").trim();
 };
 
-export const renderPolishedCountryStatSheet = (
+const renderPolishedCountryStatSheet = (
   state: GameState,
   country: Country,
   preview: TurnPreview = previewNextTurn(state)
@@ -422,7 +422,7 @@ export const renderPolishedCountryStatSheet = (
     "",
     "## Stability breakdown",
     "",
-    `**Formula:** ${buildStabilityFormula(state, country, countryPreview)} = ${formatSignedNumber(countryPreview.stabilityDelta)}`,
+    `**Formula:** ${buildStabilityFormula(state, countryPreview)} = ${formatSignedNumber(countryPreview.stabilityDelta)}`,
     "",
     "## Resources",
     "",

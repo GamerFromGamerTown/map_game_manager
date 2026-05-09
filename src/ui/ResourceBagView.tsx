@@ -1,4 +1,4 @@
-import { RESOURCE_TYPES, ResourceBag } from "../types";
+import { ResourceBag } from "../types";
 import { resourceLabel } from "../utils/labels";
 
 export function ResourceBagView({ bag, empty = "None" }: { bag?: ResourceBag | Record<string, number>; empty?: string }) {
@@ -11,31 +11,6 @@ export function ResourceBagView({ bag, empty = "None" }: { bag?: ResourceBag | R
         <span className="resource-chip" key={resource}>
           {resourceLabel(resource)}: {Number(value)}
         </span>
-      ))}
-    </div>
-  );
-}
-
-export function ResourceBagEditor({
-  bag,
-  onChange,
-  compact = false
-}: {
-  bag: ResourceBag;
-  onChange: (bag: ResourceBag) => void;
-  compact?: boolean;
-}) {
-  return (
-    <div className={compact ? "resource-editor compact" : "resource-editor"}>
-      {RESOURCE_TYPES.map((resource) => (
-        <label key={resource}>
-          <span>{resourceLabel(resource)}</span>
-          <input
-            type="number"
-            value={Number(bag[resource] ?? 0)}
-            onChange={(event) => onChange({ ...bag, [resource]: Number(event.target.value || 0) })}
-          />
-        </label>
       ))}
     </div>
   );

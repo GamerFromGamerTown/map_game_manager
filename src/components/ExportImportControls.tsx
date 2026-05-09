@@ -1,31 +1,34 @@
 import { useRef } from "react";
-import { DatabaseBackup, Download, FileJson, ScrollText, Upload } from "lucide-react";
+import { DatabaseBackup, FileJson, FolderOpen, ScrollText, Upload } from "lucide-react";
 import { GameState } from "../types";
-import { downloadJson, downloadText, importStateFromSqliteFile } from "../db/sqlite";
-import { normalizeLoadedState } from "../data/migrations";
-import { parseGameStateJson } from "../data/validation";
+import { downloadJson, downloadText } from "../data/downloads";
+import { loadGameStateFromFile } from "../data/saveFiles";
 import { renderAllCountryStatSheets } from "../export/statSheets";
 
 export function ExportImportControls({
   state,
   setState,
-  exportSqlite
+  canRememberSave,
+  rememberedSaveName,
+  rememberedSaveStatus,
+  onRememberAndImport,
+  onReloadRememberedSave,
+  onForgetRememberedSave
 }: {
   state: GameState;
   setState: (state: GameState) => void;
-  exportSqlite: () => Promise<void>;
+  canRememberSave: boolean;
+  rememberedSaveName: string;
+  rememberedSaveStatus: string;
+  onRememberAndImport: () => Promise<void>;
+  onReloadRememberedSave: () => Promise<void>;
+  onForgetRememberedSave: () => Promise<void>;
 }) {
-  const sqliteInputRef = useRef<HTMLInputElement>(null);
   const jsonInputRef = useRef<HTMLInputElement>(null);
 
   const importJson = async (file?: File) => {
     if (!file) return;
-    setState(normalizeLoadedState(parseGameStateJson(await file.text())));
-  };
-
-  const importSqlite = async (file?: File) => {
-    if (!file) return;
-    setState(normalizeLoadedState(await importStateFromSqliteFile(file)));
+    setState(await loadGameStateFromFile(file));
   };
 
   return (
@@ -34,9 +37,6 @@ export function ExportImportControls({
         <DatabaseBackup size={16} /> Import / Export
       </summary>
       <div className="menu-panel">
-        <button onClick={exportSqlite}>
-          <Download size={16} /> Export SQLite save
-        </button>
         <button onClick={() => downloadJson(state, `gm-game-turn-${state.turnNumber}.json`)}>
           <FileJson size={16} /> Export JSON backup
         </button>
@@ -60,20 +60,21 @@ export function ExportImportControls({
         >
           <ScrollText size={16} /> Export verbatim stat sheets
         </button>
-        <button onClick={() => sqliteInputRef.current?.click()}>
-          <Upload size={16} /> Import SQLite save
-        </button>
-        <button onClick={() => jsonInputRef.current?.click()}>
+        <button onClick={() => (canRememberSave ? onRememberAndImport() : jsonInputRef.current?.click())}>
           <Upload size={16} /> Import JSON backup
         </button>
+        {canRememberSave && (
+          <>
+            <button onClick={onReloadRememberedSave} disabled={!rememberedSaveName}>
+              <FolderOpen size={16} /> Reload remembered save
+            </button>
+            <button onClick={onForgetRememberedSave} disabled={!rememberedSaveName}>
+              <FolderOpen size={16} /> Forget remembered save
+            </button>
+          </>
+        )}
+        {rememberedSaveStatus && <p className="menu-note">{rememberedSaveStatus}</p>}
       </div>
-      <input
-        ref={sqliteInputRef}
-        hidden
-        type="file"
-        accept=".sqlite,.db,application/x-sqlite3"
-        onChange={(event) => importSqlite(event.target.files?.[0])}
-      />
       <input
         ref={jsonInputRef}
         hidden

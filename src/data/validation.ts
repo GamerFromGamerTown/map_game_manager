@@ -49,6 +49,20 @@ const requireOptionalString = (value: unknown, label: string) => {
   }
 };
 
+const validateTurnTracking = (value: Record<string, unknown>, label: string) => {
+  if (value.created_turn !== undefined) {
+    requireNumber(value.created_turn, `${label}.created_turn`);
+  }
+  if (value.updated_turn !== undefined) {
+    requireNumber(value.updated_turn, `${label}.updated_turn`);
+  }
+  if (value.updated_fields !== undefined) {
+    requireArray(value.updated_fields, `${label}.updated_fields`).forEach((field) =>
+      requireString(field, `${label}.updated_fields[]`)
+    );
+  }
+};
+
 const requireArray = (value: unknown, label: string): unknown[] => {
   if (!Array.isArray(value)) {
     throw new Error(`${label} is missing or is not an array.`);
@@ -121,6 +135,7 @@ export const validateGameState = (value: unknown): GameState => {
     const settlement = requireRecord(value, "settlement");
     requireString(settlement.id, "settlement.id");
     requireString(settlement.country_id, "settlement.country_id");
+    validateTurnTracking(settlement, "settlement");
     const countryId = settlement.country_id as string;
     if (!countryIds.has(countryId)) {
       throw new Error(`settlement ${settlement.id} references unknown country ${settlement.country_id}.`);
@@ -144,6 +159,7 @@ export const validateGameState = (value: unknown): GameState => {
     const factory = requireRecord(value, "factory");
     requireString(factory.id, "factory.id");
     requireCountryRef(countryIds, factory.country_id, "factory.country_id");
+    validateTurnTracking(factory, "factory");
   });
 
   requireArray(state.policies, "policies").forEach((value) => {
@@ -158,6 +174,7 @@ export const validateGameState = (value: unknown): GameState => {
     requireString(relation.id, "diplomacy.id");
     requireCountryRef(countryIds, relation.country_a_id, "diplomacy.country_a_id");
     requireCountryRef(countryIds, relation.country_b_id, "diplomacy.country_b_id");
+    validateTurnTracking(relation, "diplomacy");
     if (relation.graph_custom !== undefined) {
       const graphCustom = requireRecord(relation.graph_custom, "diplomacy.graph_custom");
       requireBoolean(graphCustom.enabled, "diplomacy.graph_custom.enabled");
@@ -178,6 +195,7 @@ export const validateGameState = (value: unknown): GameState => {
     requireString(puppet.id, "puppet.id");
     requireCountryRef(countryIds, puppet.master_country_id, "puppet.master_country_id");
     requireCountryRef(countryIds, puppet.puppet_country_id, "puppet.puppet_country_id");
+    validateTurnTracking(puppet, "puppet");
   });
 
   requireArray(state.trades, "trades").forEach((value) => {
@@ -185,6 +203,7 @@ export const validateGameState = (value: unknown): GameState => {
     requireString(trade.id, "trade.id");
     requireCountryRef(countryIds, trade.sender_country_id, "trade.sender_country_id");
     requireCountryRef(countryIds, trade.receiver_country_id, "trade.receiver_country_id");
+    validateTurnTracking(trade, "trade");
   });
 
   requireArray(state.operations, "operations").forEach((value) => {
@@ -192,6 +211,7 @@ export const validateGameState = (value: unknown): GameState => {
     requireString(operation.id, "operation.id");
     requireCountryRef(countryIds, operation.attacker_country_id, "operation.attacker_country_id");
     requireCountryRef(countryIds, operation.defender_country_id, "operation.defender_country_id");
+    validateTurnTracking(operation, "operation");
   });
 
   requireArray(state.diceRolls, "diceRolls").forEach((value) => {

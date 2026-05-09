@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { GameState, RESOURCE_TYPES, ResourceType, SettlementTier } from "../../types";
 import { createId } from "../../engine/calculations";
+import { withCreatedTurn } from "../../data/turnTracking";
 import { asNumber, CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
 import { biomeLabel, labelFromKey, resourceLabel, settlementTypeOptions } from "../../utils/labels";
 
@@ -51,21 +52,26 @@ export function CountryOnboardingModal({
       last_changed_turn: -1
     }));
     const manual_resource_override = useProductionOverride ? { [productionResource]: productionAmount } : null;
-    const settlements = towns.map((townName, index) => ({
-      id: createId("town"),
-      country_id: id,
-      name: townName,
-      tier: townTier,
-      is_capital: firstTownCapital && index === 0,
-      biome_or_resource_type: townBiome,
-      manual_resource_override,
-      upkeep_option: "A" as const,
-      occupied_by_country_id: null,
-      damaged: false,
-      bombed: false,
-      connected_for_upkeep: true,
-      notes: ""
-    }));
+    const settlements = towns.map((townName, index) =>
+      withCreatedTurn(
+        {
+          id: createId("town"),
+          country_id: id,
+          name: townName,
+          tier: townTier,
+          is_capital: firstTownCapital && index === 0,
+          biome_or_resource_type: townBiome,
+          manual_resource_override,
+          upkeep_option: "A" as const,
+          occupied_by_country_id: null,
+          damaged: false,
+          bombed: false,
+          connected_for_upkeep: true,
+          notes: ""
+        },
+        state.turnNumber
+      )
+    );
 
     onCreate(
       {

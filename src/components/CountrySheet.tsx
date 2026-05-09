@@ -24,7 +24,7 @@ export type CountryTab =
   | "Military"
   | "Dice/History";
 
-export const countryTabs: CountryTab[] = [
+const countryTabs: CountryTab[] = [
   "Overview",
   "Settlements",
   "Production",

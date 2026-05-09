@@ -2,6 +2,7 @@ import { Fragment, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Country, DiplomaticRelation, GameState, MilitaryOperation, PuppetRelation, RESOURCE_TYPES, TradeRoute } from "../../types";
 import { createId } from "../../engine/calculations";
+import { withCreatedTurn, withUpdatedTurn } from "../../data/turnTracking";
 import { asNumber, CheckboxField } from "../../ui/fields";
 import { countryName } from "../../utils/names";
 import { labelFromKey, resourceLabel, routeTypeLabel } from "../../utils/labels";
@@ -22,7 +23,9 @@ export function DiplomacyTab({
   const update = (id: string, patch: Partial<DiplomaticRelation>) =>
     patchState((current) => ({
       ...current,
-      diplomacy: current.diplomacy.map((relation) => (relation.id === id ? { ...relation, ...patch } : relation))
+      diplomacy: current.diplomacy.map((relation) =>
+        relation.id === id ? withUpdatedTurn(relation, patch, current.turnNumber) : relation
+      )
     }));
 
   return (
@@ -35,14 +38,17 @@ export function DiplomacyTab({
             ...current,
             diplomacy: [
               ...current.diplomacy,
-              {
-                id: createId("relation"),
-                relation_type: current.rules.diplomacyRelationTypes[0],
-                country_a_id: country.id,
-                country_b_id: other.id,
-                active: true,
-                notes: ""
-              }
+              withCreatedTurn(
+                {
+                  id: createId("relation"),
+                  relation_type: current.rules.diplomacyRelationTypes[0],
+                  country_a_id: country.id,
+                  country_b_id: other.id,
+                  active: true,
+                  notes: ""
+                },
+                current.turnNumber
+              )
             ]
           }))
         }
@@ -87,7 +93,10 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
   const rows = state.puppets.filter((row) => row.master_country_id === country.id || row.puppet_country_id === country.id);
   const typeOptions = Object.keys(state.rules.puppetTypes);
   const update = (id: string, patch: Partial<PuppetRelation>) =>
-    patchState((current) => ({ ...current, puppets: current.puppets.map((row) => (row.id === id ? { ...row, ...patch } : row)) }));
+    patchState((current) => ({
+      ...current,
+      puppets: current.puppets.map((row) => (row.id === id ? withUpdatedTurn(row, patch, current.turnNumber) : row))
+    }));
 
   return (
     <div className="section-stack">
@@ -197,16 +206,19 @@ function addPuppet(state: GameState, masterId: string, subjectId: string, type: 
     ...current,
     puppets: [
       ...current.puppets,
-      {
-        id: createId("puppet"),
-        master_country_id: masterId,
-        puppet_country_id: subjectId,
-        puppet_type: type,
-        tribute_percent: rule?.tribute_percent === "custom" ? 50 : Number(rule?.tribute_percent ?? 50),
-        rebellion_immunity_turns_remaining: current.rules.settings.puppet_rebellion_immunity_turns,
-        active: true,
-        notes: ""
-      }
+      withCreatedTurn(
+        {
+          id: createId("puppet"),
+          master_country_id: masterId,
+          puppet_country_id: subjectId,
+          puppet_type: type,
+          tribute_percent: rule?.tribute_percent === "custom" ? 50 : Number(rule?.tribute_percent ?? 50),
+          rebellion_immunity_turns_remaining: current.rules.settings.puppet_rebellion_immunity_turns,
+          active: true,
+          notes: ""
+        },
+        current.turnNumber
+      )
     ]
   }));
 }
@@ -214,7 +226,10 @@ function addPuppet(state: GameState, masterId: string, subjectId: string, type: 
 export function TradeTab({ state, country, patchState }: { state: GameState; country: Country; patchState: (updater: (current: GameState) => GameState) => void }) {
   const rows = state.trades.filter((trade) => trade.sender_country_id === country.id || trade.receiver_country_id === country.id);
   const update = (id: string, patch: Partial<TradeRoute>) =>
-    patchState((current) => ({ ...current, trades: current.trades.map((trade) => (trade.id === id ? { ...trade, ...patch } : trade)) }));
+    patchState((current) => ({
+      ...current,
+      trades: current.trades.map((trade) => (trade.id === id ? withUpdatedTurn(trade, patch, current.turnNumber) : trade))
+    }));
 
   return (
     <div className="section-stack">
@@ -265,22 +280,25 @@ function addTrade(state: GameState, country: Country, patchState: (updater: (cur
     ...current,
     trades: [
       ...current.trades,
-      {
-        id: createId("trade"),
-        sender_country_id: country.id,
-        receiver_country_id: receiver.id,
-        resource_type: "food",
-        amount_per_turn: 1,
-        payment_gold_per_turn: 0,
-        recurring: true,
-        route_type: "abstract",
-        sea_transport_cost_per_unit: current.rules.settings.sea_transport_cost_per_unit_resource,
-        sea_cost_payer: "sender",
-        route_valid: true,
-        blocked_by_embargo: false,
-        active: true,
-        notes: ""
-      }
+      withCreatedTurn(
+        {
+          id: createId("trade"),
+          sender_country_id: country.id,
+          receiver_country_id: receiver.id,
+          resource_type: "food",
+          amount_per_turn: 1,
+          payment_gold_per_turn: 0,
+          recurring: true,
+          route_type: "abstract",
+          sea_transport_cost_per_unit: current.rules.settings.sea_transport_cost_per_unit_resource,
+          sea_cost_payer: "sender",
+          route_valid: true,
+          blocked_by_embargo: false,
+          active: true,
+          notes: ""
+        },
+        current.turnNumber
+      )
     ]
   }));
 }
@@ -288,7 +306,10 @@ function addTrade(state: GameState, country: Country, patchState: (updater: (cur
 export function MilitaryTab({ state, country, patchState }: { state: GameState; country: Country; patchState: (updater: (current: GameState) => GameState) => void }) {
   const rows = state.operations.filter((operation) => operation.attacker_country_id === country.id || operation.defender_country_id === country.id);
   const update = (id: string, patch: Partial<MilitaryOperation>) =>
-    patchState((current) => ({ ...current, operations: current.operations.map((row) => (row.id === id ? { ...row, ...patch } : row)) }));
+    patchState((current) => ({
+      ...current,
+      operations: current.operations.map((row) => (row.id === id ? withUpdatedTurn(row, patch, current.turnNumber) : row))
+    }));
 
   return (
     <div className="section-stack">
@@ -325,20 +346,23 @@ function addOperation(state: GameState, country: Country, patchState: (updater: 
     ...current,
     operations: [
       ...current.operations,
-      {
-        id: createId("operation"),
-        name: "New Operation",
-        attacker_country_id: country.id,
-        defender_country_id: defender.id,
-        operation_type,
-        troops_normal: 0,
-        troops_high_quality: 0,
-        troops_tank: 0,
-        supply_required: state.rules.military.operations[operation_type]?.supply_required ?? 1,
-        supply_allocated: 0,
-        status: "planned",
-        notes: ""
-      }
+      withCreatedTurn(
+        {
+          id: createId("operation"),
+          name: "New Operation",
+          attacker_country_id: country.id,
+          defender_country_id: defender.id,
+          operation_type,
+          troops_normal: 0,
+          troops_high_quality: 0,
+          troops_tank: 0,
+          supply_required: state.rules.military.operations[operation_type]?.supply_required ?? 1,
+          supply_allocated: 0,
+          status: "planned",
+          notes: ""
+        },
+        current.turnNumber
+      )
     ]
   }));
 }

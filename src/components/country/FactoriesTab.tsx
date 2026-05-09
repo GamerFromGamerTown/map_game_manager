@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Country, Factory, GameState } from "../../types";
 import { createId } from "../../engine/calculations";
+import { withCreatedTurn } from "../../data/turnTracking";
 import { CheckboxField, Modal, NumberField, SelectField } from "../../ui/fields";
 import { ResourceBagView } from "../../ui/ResourceBagView";
 
@@ -126,15 +127,20 @@ function FactoryCreateModal({
             className="primary"
             onClick={() =>
               onCreate(
-                Array.from({ length: Math.max(1, count) }, () => ({
-                  id: createId("factory"),
-                  country_id: country.id,
-                  type,
-                  active,
-                  damaged,
-                  bombed,
-                  notes: ""
-                }))
+                Array.from({ length: Math.max(1, count) }, () =>
+                  withCreatedTurn(
+                    {
+                      id: createId("factory"),
+                      country_id: country.id,
+                      type,
+                      active,
+                      damaged,
+                      bombed,
+                      notes: ""
+                    },
+                    state.turnNumber
+                  )
+                )
               )
             }
           >

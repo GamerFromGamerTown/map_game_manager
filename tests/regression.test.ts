@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { commitTurn, previewNextTurn, settlementProductionForCountry } from "../src/engine/calculations";
 import { createEmptyState } from "../src/data/defaultState";
 import { normalizeLoadedState } from "../src/data/migrations";
+import { inferSaveFileKind } from "../src/data/saveFiles";
 import { validateGameState } from "../src/data/validation";
 import { policyChangeStabilityCost } from "../src/engine/policies";
 import { buildRelationsGraphEdges, countryNodeRadius, createDefaultGraphPositions } from "../src/components/DiplomacyGraph";
 import { renderAllCountryStatSheets, renderVerbatimCountryStatSheet } from "../src/export/statSheets";
-import { RESOURCE_TYPES, Country, GameState, ResourceBag, ResourceStockpile, Settlement } from "../src/types";
+import { buildTurnActionPreview } from "../src/ui/turnActionPreview";
+import { RESOURCE_TYPES, Country, DiceRollLog, Factory, GameState, MilitaryOperation, ResourceBag, ResourceStockpile, Settlement, TradeRoute } from "../src/types";
 
 const test = (name: string, run: () => void) => {
   try {
@@ -120,6 +122,15 @@ test("validation accepts the empty default save and rejects malformed imports", 
     }
   ];
   assert.throws(() => validateGameState(invalidCustomRelation), /graph_custom/i);
+});
+
+test("save file detection only accepts JSON backups", () => {
+  assert.equal(inferSaveFileKind(new File(["{}"], "backup.json", { type: "application/json" })), "json");
+  assert.throws(
+    () => inferSaveFileKind(new File([""], "backup.sqlite", { type: "application/x-sqlite3" })),
+    /unsupported save file type/i
+  );
+  assert.throws(() => inferSaveFileKind(new File([""], "backup.db")), /unsupported save file type/i);
 });
 
 test("normalization fills newly-added rule defaults without country data", () => {
@@ -520,4 +531,172 @@ test("application logic does not special-case arbitrary country names", () => {
     ),
     false
   );
+});
+
+test("turn action preview summarizes current-turn actions with specific details", () => {
+  const state = stateWithCountries(["a", "b"]);
+  state.turnNumber = 4;
+  state.policies = [
+    {
+      country_id: "a",
+      policy_category: "Healthcare",
+      selected_option: "Public Healthcare",
+      last_changed_turn: 4
+    }
+  ];
+  state.settlements = [
+    { ...makeSettlement("a", "food-a", { biome_or_resource_type: "plains" }), created_turn: 4 } as Settlement,
+    { ...makeSettlement("a", "food-b", { biome_or_resource_type: "savannah" }), created_turn: 4 } as Settlement,
+    { ...makeSettlement("a", "wood-a", { biome_or_resource_type: "forest" }), created_turn: 4 } as Settlement,
+    {
+      ...makeSettlement("a", "edited-settlement", { biome_or_resource_type: "iron_ore" }),
+      updated_turn: 4,
+      updated_fields: ["tier", "connected_for_upkeep"]
+    } as Settlement
+  ];
+  state.factories = [
+    {
+      id: "factory-gold-a",
+      country_id: "a",
+      type: "Gold Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: "",
+      created_turn: 4
+    } as Factory,
+    {
+      id: "factory-gold-b",
+      country_id: "a",
+      type: "Gold Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: "",
+      created_turn: 4
+    } as Factory,
+    {
+      id: "factory-iron",
+      country_id: "a",
+      type: "Iron Parts Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: "",
+      created_turn: 4
+    } as Factory,
+    {
+      id: "factory-edited",
+      country_id: "a",
+      type: "Sawmill",
+      active: false,
+      damaged: true,
+      bombed: false,
+      notes: "",
+      updated_turn: 4,
+      updated_fields: ["active", "damaged"]
+    } as Factory
+  ];
+  state.trades = [
+    {
+      id: "trade-current",
+      sender_country_id: "a",
+      receiver_country_id: "b",
+      resource_type: "food",
+      amount_per_turn: 5,
+      payment_gold_per_turn: 2,
+      recurring: true,
+      route_type: "sea",
+      sea_transport_cost_per_unit: 1,
+      route_valid: true,
+      blocked_by_embargo: false,
+      active: true,
+      notes: "",
+      created_turn: 4
+    } as TradeRoute
+  ];
+  state.operations = [
+    {
+      id: "operation-current",
+      name: "Operation Current",
+      attacker_country_id: "a",
+      defender_country_id: "b",
+      operation_type: "General Push Offensive",
+      troops_normal: 2000,
+      troops_high_quality: 1000,
+      troops_tank: 0,
+      supply_required: 3,
+      supply_allocated: 2,
+      status: "planned",
+      notes: "",
+      created_turn: 4
+    } as MilitaryOperation
+  ];
+  state.diceRolls = [
+    {
+      id: "expansion-one",
+      turn_number: 4,
+      country_id: "a",
+      operation_id: null,
+      roll_type: "expansion",
+      raw_d20: 12,
+      modifiers_json: JSON.stringify({ attacker: { terrain: "plain", expansionGoldCost: 500 } }),
+      final_score: 12,
+      result_category: "success",
+      notes: ""
+    },
+    {
+      id: "expansion-two",
+      turn_number: 4,
+      country_id: "a",
+      operation_id: null,
+      roll_type: "expansion",
+      raw_d20: 4,
+      modifiers_json: JSON.stringify({ attacker: { terrain: "forest", expansionGoldCost: 500 } }),
+      final_score: 2,
+      result_category: "failed",
+      notes: ""
+    },
+    {
+      id: "expansion-old",
+      turn_number: 3,
+      country_id: "a",
+      operation_id: null,
+      roll_type: "expansion",
+      raw_d20: 20,
+      modifiers_json: JSON.stringify({ attacker: { terrain: "plain", expansionGoldCost: 500 } }),
+      final_score: 20,
+      result_category: "success",
+      notes: ""
+    }
+  ] as DiceRollLog[];
+
+  const actionPreview = buildTurnActionPreview(state, previewNextTurn(state));
+  const textFor = (sectionId: string) =>
+    actionPreview.sections
+      .find((section) => section.id === sectionId)
+      ?.cards.flatMap((card) => [card.title, ...card.details])
+      .join(" ") ?? "";
+
+  assert.match(textFor("expansion"), /Expanded 2 times/);
+  assert.match(textFor("expansion"), /Plain x1/);
+  assert.match(textFor("expansion"), /Forest x1/);
+  assert.doesNotMatch(textFor("expansion"), /3 times/);
+  assert.match(textFor("settlements"), /Created 3 settlements/);
+  assert.match(textFor("settlements"), /Food x2/);
+  assert.match(textFor("settlements"), /Wood x1/);
+  assert.match(textFor("settlements"), /Edited 1 settlement/);
+  assert.match(textFor("factories"), /Built 3 factories/);
+  assert.match(textFor("factories"), /Gold Factory x2/);
+  assert.match(textFor("factories"), /Iron Parts Factory x1/);
+  assert.match(textFor("factories"), /Gold Ingot x2/);
+  assert.match(textFor("factories"), /Iron Parts x1/);
+  assert.match(textFor("factories"), /Coal x3/);
+  assert.match(textFor("policies"), /Healthcare -> Public Healthcare/);
+  assert.match(textFor("trade"), /Food x5/);
+  assert.match(textFor("trade"), /2 Gold payment/);
+  assert.match(textFor("military"), /General Push Offensive/);
+  assert.match(textFor("military"), /Normal 2,000/);
+  assert.match(textFor("military"), /Supply 2\/3/);
+  assert.equal(actionPreview.activeEffects.openByDefault, false);
 });

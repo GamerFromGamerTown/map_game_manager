@@ -29,6 +29,21 @@ await server.listen();
 const baseUrl = server.resolvedUrls?.local?.[0] ?? "http://127.0.0.1:5197/";
 const browser = await firefox.launch({ headless: true });
 const context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+await context.addInitScript(() => {
+  window.__jsonPickerCalls = 0;
+  window.showOpenFilePicker = async () => {
+    window.__jsonPickerCalls += 1;
+    return [
+      {
+        kind: "file",
+        name: "remembered-save.json",
+        getFile: async () => new File(["{}"], "remembered-save.json", { type: "application/json" }),
+        queryPermission: async () => "granted",
+        requestPermission: async () => "granted"
+      }
+    ];
+  };
+});
 const page = await context.newPage();
 const errors = [];
 
@@ -63,11 +78,20 @@ await test("primary navigation and dialogs are reachable without runtime errors"
   await page.getByLabel("Close").click();
 
   await page.locator("summary").filter({ hasText: "Import / Export" }).click();
-  await assertVisibleButton("Export SQLite save");
+  assert.equal(await page.getByRole("button", { name: "Export SQLite save", exact: true }).count(), 0);
+  assert.equal(await page.getByRole("button", { name: "Import SQLite save", exact: true }).count(), 0);
+  await assertVisibleButton("Export JSON backup");
   await assertVisibleButton("Import JSON backup");
   await page.locator("summary").filter({ hasText: "Import / Export" }).click();
 
   assert.deepEqual(errors, []);
+});
+
+await test("JSON import uses the rememberable file picker when available", async () => {
+  await page.locator("summary").filter({ hasText: "Import / Export" }).click();
+  await page.getByRole("button", { name: "Import JSON backup", exact: true }).click();
+  assert.equal(await page.evaluate(() => window.__jsonPickerCalls), 1);
+  await page.locator("summary").filter({ hasText: "Import / Export" }).click();
 });
 
 await test("created countries provide the full country workflow", async () => {
@@ -154,6 +178,97 @@ await test("rules editor uses searchable table sections without horizontal tab s
   }
 });
 
+await test("dice modifiers use a focused subnav editor without horizontal overflow", async () => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Rules Editor", exact: true }).click();
+  await page.getByRole("button", { name: "Dice modifiers", exact: true }).click();
+  await page.getByRole("button", { name: "Attack terrain", exact: true }).waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Fortifications", exact: true }).click();
+  await page.locator("h3").filter({ hasText: "Fortifications" }).waitFor({ state: "visible" });
+
+  for (const width of [1440, 1024, 768]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.waitForTimeout(100);
+    const layout = await page.evaluate(() => ({
+      bodyScrollWidth: document.body.scrollWidth,
+      viewportWidth: window.innerWidth,
+      editorCount: document.querySelectorAll(".dice-rules-editor").length,
+      subnavOverflow: Array.from(document.querySelectorAll(".dice-rules-subnav button")).some(
+        (button) => button.scrollWidth > button.clientWidth + 1
+      )
+    }));
+    assert.ok(layout.bodyScrollWidth <= layout.viewportWidth + 1);
+    assert.equal(layout.editorCount, 1);
+    assert.equal(layout.subnavOverflow, false);
+  }
+});
+
+await test("policy rules use an ordered tier editor with add and reorder controls", async () => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Rules Editor", exact: true }).click();
+  await page.getByRole("button", { name: "Policy rules", exact: true }).click();
+  await page.getByRole("button", { name: "Population Growth", exact: true }).waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add policy", exact: true }).click();
+  await page.locator('input[value="New Policy"]').waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add tier", exact: true }).click();
+  await page.locator('input[value="New Tier 2"]').waitFor({ state: "visible" });
+  await page.getByLabel("Move New Tier 2 up").click();
+
+  for (const width of [1440, 1024, 768]) {
+    await page.setViewportSize({ width, height: 950 });
+    await page.waitForTimeout(100);
+    const layout = await page.evaluate(() => ({
+      bodyScrollWidth: document.body.scrollWidth,
+      viewportWidth: window.innerWidth,
+      editorCount: document.querySelectorAll(".policy-rules-editor").length,
+      subnavOverflow: Array.from(document.querySelectorAll(".policy-rules-subnav button")).some(
+        (button) => button.scrollWidth > button.clientWidth + 1
+      )
+    }));
+    assert.ok(layout.bodyScrollWidth <= layout.viewportWidth + 1);
+    assert.equal(layout.editorCount, 1);
+    assert.equal(layout.subnavOverflow, false);
+  }
+});
+
+await test("rule sections use focused side editors and custom effect controls", async () => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.getByRole("button", { name: "Rules Editor", exact: true }).click();
+
+  await page.getByRole("button", { name: "Policy rules", exact: true }).click();
+  await page.getByRole("button", { name: "Add policy custom effect", exact: true }).click();
+  await page.locator('input[value="custom_effect"]').waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add tier custom effect", exact: true }).first().click();
+  await page.locator('input[value="tier_effect"]').waitFor({ state: "visible" });
+
+  await page.getByRole("button", { name: "Factory rules", exact: true }).click();
+  await page.locator(".factory-rules-editor").waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add factory rule", exact: true }).click();
+  await page.locator('input[value="New Factory"]').waitFor({ state: "visible" });
+
+  await page.getByRole("button", { name: "Ruling parties", exact: true }).click();
+  await page.locator(".ruling-party-rules-editor").waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add ruling party", exact: true }).click();
+  await page.locator('input[value="New Party"]').waitFor({ state: "visible" });
+
+  await page.getByRole("button", { name: "Stability rules", exact: true }).click();
+  await page.locator(".stability-rules-editor").waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Stability bands", exact: true }).click();
+  await page.getByRole("button", { name: "Add stability band", exact: true }).click();
+  await page.locator('input[value="custom revolt risk"]').waitFor({ state: "visible" });
+
+  await page.getByRole("button", { name: "Puppet rules", exact: true }).click();
+  await page.locator(".puppet-rules-editor").waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Add puppet type", exact: true }).click();
+  await page.locator('input[value="New Puppet Type"]').waitFor({ state: "visible" });
+
+  const layout = await page.evaluate(() => ({
+    bodyScrollWidth: document.body.scrollWidth,
+    viewportWidth: window.innerWidth
+  }));
+  assert.ok(layout.bodyScrollWidth <= layout.viewportWidth + 1);
+});
+
 await test("normal workflows use page scroll instead of nested warning or preview scroll traps", async () => {
   await page.getByRole("button", { name: "Dashboard", exact: true }).click();
   await page.getByRole("button", { name: "Preview", exact: true }).click();
@@ -175,6 +290,30 @@ await test("normal workflows use page scroll instead of nested warning or previe
   assert.notEqual(layout.warningOverflowY, "auto");
   assert.notEqual(layout.warningOverflowY, "scroll");
   assert.deepEqual(errors, []);
+});
+
+await test("browsers without reusable file handles persist imported JSON across reload", async () => {
+  const fallbackContext = await browser.newContext({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+  await fallbackContext.addInitScript(() => {
+    Object.defineProperty(window, "showOpenFilePicker", {
+      configurable: true,
+      value: undefined
+    });
+  });
+
+  const fallbackPage = await fallbackContext.newPage();
+  await fallbackPage.goto(baseUrl, { waitUntil: "networkidle" });
+  await fallbackPage.locator("summary").filter({ hasText: "Import / Export" }).click();
+  const chooserPromise = fallbackPage.waitForEvent("filechooser");
+  await fallbackPage.getByRole("button", { name: "Import JSON backup", exact: true }).click();
+  const chooser = await chooserPromise;
+  await chooser.setFiles("src/data/starter_game.json");
+  await fallbackPage.getByText("9 records").waitFor({ state: "visible" });
+  await fallbackPage.reload({ waitUntil: "networkidle" });
+  await fallbackPage.getByText("9 records").waitFor({ state: "visible" });
+  assert.equal(await fallbackPage.locator(".country-chip").count(), 9);
+  assert.equal(await fallbackPage.getByRole("button", { name: "Reload remembered save", exact: true }).count(), 0);
+  await fallbackContext.close();
 });
 
 await browser.close();

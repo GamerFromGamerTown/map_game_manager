@@ -16,10 +16,10 @@ import { biomeLabel, resourceLabel } from "../utils/labels";
 export const createId = (prefix: string): string =>
   `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
-export const emptyBag = (): ResourceBag =>
+const emptyBag = (): ResourceBag =>
   Object.fromEntries(RESOURCE_TYPES.map((resource) => [resource, 0])) as ResourceBag;
 
-export const normalizeBag = (bag: ResourceBag = {}): ResourceBag => {
+const normalizeBag = (bag: ResourceBag = {}): ResourceBag => {
   const normalized = emptyBag();
   RESOURCE_TYPES.forEach((resource) => {
     normalized[resource] = Number(bag[resource] ?? 0);

@@ -1,6 +1,7 @@
 import { AlertTriangle } from "lucide-react";
 import { GameState, TurnPreview } from "../types";
 import { formatSigned } from "../ui/fields";
+import { buildTurnActionPreview, TurnActionCard } from "../ui/turnActionPreview";
 import { labelFromKey } from "../utils/labels";
 
 export function Dashboard({
@@ -13,6 +14,7 @@ export function Dashboard({
   onOpenCountry: (id: string) => void;
 }) {
   const previewById = new Map(preview.countries.map((item) => [item.countryId, item]));
+  const actionPreview = buildTurnActionPreview(state, preview);
 
   return (
     <div className="page-grid">
@@ -91,19 +93,60 @@ export function Dashboard({
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel turn-preview-panel">
         <div className="panel-title">
           <h2>Turn Preview</h2>
           <span>Next turn {preview.nextTurnNumber}</span>
         </div>
-        {preview.countries.map((item) => (
-          <details key={item.countryId} open={item.warnings.length > 0}>
-            <summary>
-              {item.countryName}: {formatSigned(item.goldDelta)} gold, {formatSigned(item.stabilityDelta)} stability
-            </summary>
-            <BreakdownList value={item.formulaBreakdown} />
+        <details className="active-effects-summary">
+          <summary>
+            <span>Resource balance and active effects</span>
+            <span>{actionPreview.activeEffects.warningCount} warnings</span>
+          </summary>
+          <div className="active-effects-grid">
+            {actionPreview.activeEffects.cards.map((card) => (
+              <article className="active-effect-card" key={card.id}>
+                <h3>{card.title}</h3>
+                <ul>
+                  {card.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+          <details className="formula-audit-details">
+            <summary>Formula audit</summary>
+            {preview.countries.map((item) => (
+              <details key={item.countryId}>
+                <summary>
+                  {item.countryName}: {formatSigned(item.goldDelta)} gold, {formatSigned(item.stabilityDelta)} stability
+                </summary>
+                <BreakdownList value={item.formulaBreakdown} />
+              </details>
+            ))}
           </details>
-        ))}
+        </details>
+
+        {actionPreview.sections.length === 0 ? (
+          <p className="quiet">No recorded current-turn actions.</p>
+        ) : (
+          <div className="turn-action-section-list">
+            {actionPreview.sections.map((section) => (
+              <section className="turn-action-section" key={section.id}>
+                <div className="turn-action-section-title">
+                  <h3>{section.title}</h3>
+                  <span>{section.cards.length} {section.cards.length === 1 ? "card" : "cards"}</span>
+                </div>
+                <div className="turn-action-card-list">
+                  {section.cards.map((card) => (
+                    <ActionCard card={card} showCountry={section.showCountryLabels} key={card.id} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="panel">
@@ -114,6 +157,22 @@ export function Dashboard({
         <WarningList preview={preview} />
       </section>
     </div>
+  );
+}
+
+function ActionCard({ card, showCountry }: { card: TurnActionCard; showCountry: boolean }) {
+  return (
+    <article className="turn-action-card">
+      <div className="turn-action-card-title">
+        <h4>{card.title}</h4>
+        {showCountry && card.countryName && <span>{card.countryName}</span>}
+      </div>
+      <ul>
+        {card.details.map((detail) => (
+          <li key={detail}>{detail}</li>
+        ))}
+      </ul>
+    </article>
   );
 }
 
@@ -140,7 +199,7 @@ function BreakdownList({ value }: { value: unknown }) {
   );
 }
 
-export function WarningList({ preview }: { preview: TurnPreview }) {
+function WarningList({ preview }: { preview: TurnPreview }) {
   const warnings = [
     ...preview.globalWarnings.map((warning) => ({ key: `global-${warning}`, text: warning })),
     ...preview.countries.flatMap((country) =>

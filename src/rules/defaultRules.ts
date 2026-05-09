@@ -460,6 +460,7 @@ export const defaultRules: RulesConfig = {
     }
   },
   dice: {
+    expansion_roll_gold_cost: 500,
     resultBands: [
       { min: -999, max: 5, category: "fail" },
       { min: 6, max: 9, category: "minor victory" },

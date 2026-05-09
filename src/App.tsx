@@ -2,8 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { Database, Moon, Plus, RefreshCw, RotateCcw, Save, Sun } from "lucide-react";
 import { Country, Factory, GameState, Settlement } from "./types";
 import { createEmptyState } from "./data/defaultState";
+import { loadBrowserSaveCache, writeBrowserSaveCache } from "./data/browserSaveCache";
 import { commitTurn, previewNextTurn } from "./engine/calculations";
-import { downloadBytes, exportStateAsSqlite } from "./db/sqlite";
+import {
+  canRememberSaveFiles,
+  clearRememberedSave,
+  getRememberedSave,
+  hasRememberedSaveReadPermission,
+  pickRememberedSave,
+  requestRememberedSaveReadPermission,
+  setRememberedSave
+} from "./data/rememberedSave";
+import type { RememberedSave } from "./data/rememberedSave";
+import { loadGameStateFromFile } from "./data/saveFiles";
+import { withUpdatedTurn } from "./data/turnTracking";
 import { Dashboard } from "./components/Dashboard";
 import { CountrySheet, CountryTab } from "./components/CountrySheet";
 import { RulesEditor } from "./components/RulesEditor";
@@ -20,7 +32,8 @@ const THEME_KEY = "gm-economy-console-theme-v2";
 type View = "dashboard" | "country" | "dice" | "graph" | "rules";
 type Theme = "light" | "dark";
 
-const loadInitialState = (): GameState => createEmptyState();
+const loadInitialState = (): GameState => loadBrowserSaveCache() ?? createEmptyState();
+const rememberSaveSupported = canRememberSaveFiles();
 
 const titleForView = (view: View) => {
   if (view === "dashboard") return "Dashboard";
@@ -39,11 +52,51 @@ function App() {
   const [gmNotes, setGmNotes] = useState("");
   const [creatingCountry, setCreatingCountry] = useState(false);
   const [focusTargetId, setFocusTargetId] = useState("");
+  const [rememberedSave, setRememberedSaveState] = useState<RememberedSave | null>(null);
+  const [rememberedSaveStatus, setRememberedSaveStatus] = useState("");
+  const [visibleDiceRollIds, setVisibleDiceRollIds] = useState<string[]>([]);
   const preview = useMemo(() => previewNextTurn(state), [state]);
   const warnings = useMemo(() => normalizePreviewWarnings(state, preview), [state, preview]);
   const selectedCountry = state.countries.find((country) => country.id === selectedCountryId) ?? state.countries[0];
 
   useEffect(() => localStorage.setItem(THEME_KEY, theme), [theme]);
+  useEffect(() => writeBrowserSaveCache(state), [state]);
+
+  useEffect(() => {
+    if (!rememberSaveSupported) return;
+
+    let cancelled = false;
+
+    const loadRememberedSave = async () => {
+      try {
+        const saved = await getRememberedSave();
+        if (cancelled || !saved) return;
+
+        setRememberedSaveState(saved);
+
+        if (!(await hasRememberedSaveReadPermission(saved.handle))) {
+          setRememberedSaveStatus(`Remembered ${saved.name}. Use Import / Export -> Reload remembered save to grant access.`);
+          return;
+        }
+
+        const next = await loadGameStateFromFile(await saved.handle.getFile());
+        if (cancelled) return;
+        setState(next);
+        setHistory([]);
+        setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+      } catch (error) {
+        if (!cancelled) {
+          setRememberedSaveStatus(error instanceof Error ? error.message : "Could not load the remembered save file.");
+        }
+      }
+    };
+
+    void loadRememberedSave();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (selectedCountryId && state.countries.some((country) => country.id === selectedCountryId)) return;
@@ -106,14 +159,16 @@ function App() {
     patchState((current) => ({
       ...current,
       settlements: current.settlements.map((settlement) =>
-        settlement.id === id ? { ...settlement, ...patch } : settlement
+        settlement.id === id ? withUpdatedTurn(settlement, patch, current.turnNumber) : settlement
       )
     }));
 
   const updateFactory = (id: string, patch: Partial<Factory>) =>
     patchState((current) => ({
       ...current,
-      factories: current.factories.map((factory) => (factory.id === id ? { ...factory, ...patch } : factory))
+      factories: current.factories.map((factory) =>
+        factory.id === id ? withUpdatedTurn(factory, patch, current.turnNumber) : factory
+      )
     }));
 
   const openWarning = (warning: NormalizedWarning) => {
@@ -139,9 +194,55 @@ function App() {
     setGmNotes("");
   };
 
-  const exportSqlite = async () => {
-    const bytes = await exportStateAsSqlite(state);
-    downloadBytes(bytes, `gm-game-turn-${state.turnNumber}.sqlite`, "application/x-sqlite3");
+  const loadRememberedSave = async (saved: RememberedSave, requestPermission: boolean) => {
+    const canRead = requestPermission
+      ? await requestRememberedSaveReadPermission(saved.handle)
+      : await hasRememberedSaveReadPermission(saved.handle);
+
+    if (!canRead) {
+      setRememberedSaveStatus(`Browser permission is needed to reload ${saved.name}.`);
+      return;
+    }
+
+    setTrackedState(await loadGameStateFromFile(await saved.handle.getFile()));
+    setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+  };
+
+  const rememberAndImportSave = async () => {
+    try {
+      const picked = await pickRememberedSave();
+      if (!picked) return;
+
+      const saved: RememberedSave = { ...picked, key: "remembered-save" };
+      const next = await loadGameStateFromFile(await saved.handle.getFile());
+      await setRememberedSave(picked);
+      setRememberedSaveState(saved);
+      setTrackedState(next);
+      setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setRememberedSaveStatus(error instanceof Error ? error.message : "Could not remember and import that save file.");
+    }
+  };
+
+  const reloadRememberedSave = async () => {
+    if (!rememberedSave) return;
+
+    try {
+      await loadRememberedSave(rememberedSave, true);
+    } catch (error) {
+      setRememberedSaveStatus(error instanceof Error ? error.message : "Could not reload the remembered save file.");
+    }
+  };
+
+  const forgetRememberedSave = async () => {
+    try {
+      await clearRememberedSave();
+      setRememberedSaveState(null);
+      setRememberedSaveStatus("Forgot remembered save file.");
+    } catch (error) {
+      setRememberedSaveStatus(error instanceof Error ? error.message : "Could not forget the remembered save file.");
+    }
   };
 
   return (
@@ -191,7 +292,16 @@ function App() {
               {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />} Theme
             </button>
             <button onClick={() => setView("dashboard")}><RefreshCw size={16} /> Preview</button>
-            <ExportImportControls state={state} setState={setTrackedState} exportSqlite={exportSqlite} />
+            <ExportImportControls
+              state={state}
+              setState={setTrackedState}
+              canRememberSave={rememberSaveSupported}
+              rememberedSaveName={rememberedSave?.name ?? ""}
+              rememberedSaveStatus={rememberedSaveStatus}
+              onRememberAndImport={rememberAndImportSave}
+              onReloadRememberedSave={reloadRememberedSave}
+              onForgetRememberedSave={forgetRememberedSave}
+            />
           </div>
           <button className="primary commit-button" onClick={commit}><Save size={16} /> Commit Turn</button>
         </header>
@@ -225,7 +335,14 @@ function App() {
             onOpenWarning={openWarning}
           />
         )}
-        {view === "dice" && <DiceRoller state={state} patchState={patchState} />}
+        {view === "dice" && (
+          <DiceRoller
+            state={state}
+            patchState={patchState}
+            visibleRollIds={visibleDiceRollIds}
+            setVisibleRollIds={setVisibleDiceRollIds}
+          />
+        )}
         {view === "graph" && (
           <DiplomacyGraph
             state={state}

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Country, GameState, ResourceBag, Settlement, SettlementTier } from "../../types";
 import { createId, settlementProductionForCountry } from "../../engine/calculations";
+import { withCreatedTurn } from "../../data/turnTracking";
 import { CheckboxField, Modal, NumberField, SelectField, TextField } from "../../ui/fields";
 import { biomeLabel, labelFromKey, resourceLabel, settlementTypeOptions } from "../../utils/labels";
 
@@ -169,21 +170,26 @@ function SettlementCreateModal({
             className="primary"
             onClick={() =>
               onCreate(
-                names.map((name, index) => ({
-                  id: createId("town"),
-                  country_id: country.id,
-                  name,
-                  tier,
-                  is_capital: firstCapital && index === 0,
-                  biome_or_resource_type: biome,
-                  manual_resource_override: null,
-                  upkeep_option: "A",
-                  occupied_by_country_id: null,
-                  damaged: false,
-                  bombed: false,
-                  connected_for_upkeep: true,
-                  notes: ""
-                }))
+                names.map((name, index) =>
+                  withCreatedTurn(
+                    {
+                      id: createId("town"),
+                      country_id: country.id,
+                      name,
+                      tier,
+                      is_capital: firstCapital && index === 0,
+                      biome_or_resource_type: biome,
+                      manual_resource_override: null,
+                      upkeep_option: "A",
+                      occupied_by_country_id: null,
+                      damaged: false,
+                      bombed: false,
+                      connected_for_upkeep: true,
+                      notes: ""
+                    },
+                    state.turnNumber
+                  )
+                )
               )
             }
           >
