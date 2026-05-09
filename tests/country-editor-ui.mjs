@@ -38,7 +38,8 @@ try {
   assert.deepEqual(tabLabels, [
     "Overview",
     "Settlements +",
-    "Production +",
+    "Production",
+    "Factories +",
     "Trade/Diplomacy +",
     "Military +",
     "Dice/History",
@@ -56,8 +57,14 @@ try {
   await page.locator(".settlement-card").first().waitFor({ state: "visible" });
   assert.equal(await page.locator(".settlement-card").count(), 2);
   assert.equal(await page.locator(".settlement-card select option[value='calculated']").count(), 0);
-  assert.equal(await page.getByText("food x1 / turn").first().isVisible(), true);
+  assert.equal(await page.locator(".derived-output").first().isVisible(), true);
   assert.equal(await page.locator(".settlement-notes details").first().isVisible(), true);
+  await page.locator(".settlement-card").first().locator("select").first().selectOption("city");
+  assert.equal(await page.locator(".upkeep-route-toggle").first().isVisible(), true);
+  assert.equal(
+    await page.locator(".upkeep-route-toggle").first().getByRole("button", { name: "Aluminium", exact: true }).getAttribute("aria-pressed"),
+    "true"
+  );
 
   const settlementGridColumns = await page.locator(".settlement-card-grid").evaluate((grid) =>
     getComputedStyle(grid).gridTemplateColumns.split(" ").length
@@ -71,7 +78,11 @@ try {
 
   await page.screenshot({ path: "artifacts/country-editor/settlements-desktop.png", fullPage: true });
 
-  await page.getByRole("tab", { name: "Production +", exact: true }).click();
+  await page.getByRole("tab", { name: "Production", exact: true }).click();
+  await page.locator(".resource-table").first().waitFor({ state: "visible" });
+  assert.equal(await page.getByRole("button", { name: "Add factory", exact: true }).count(), 0);
+
+  await page.getByRole("tab", { name: "Factories +", exact: true }).click();
   await page.getByRole("button", { name: "Add factory", exact: true }).click();
   await page.locator(".modal-footer").getByRole("button", { name: "Create", exact: true }).click();
   await page.locator(".factory-card").first().waitFor({ state: "visible" });

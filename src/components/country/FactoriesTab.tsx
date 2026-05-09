@@ -5,6 +5,7 @@ import { createId } from "../../engine/calculations";
 import { withCreatedTurn } from "../../data/turnTracking";
 import { CheckboxField, Modal, NumberField, SelectField } from "../../ui/fields";
 import { ResourceBagView } from "../../ui/ResourceBagView";
+import { findFactoryRule } from "../../rules/factoryRules";
 
 export function FactoriesTab({
   state,
@@ -28,7 +29,7 @@ export function FactoriesTab({
       </button>
       <div className="factory-card-grid">
         {factories.map((factory) => {
-          const rule = state.rules.factoryRules.find((item) => item.type === factory.type);
+          const rule = findFactoryRule(state.rules, factory.type);
           return (
             <article className="factory-card" key={factory.id} id={`factory-${factory.id}`} tabIndex={-1}>
               <div className="factory-main-grid">
@@ -114,7 +115,7 @@ function FactoryCreateModal({
   const [active, setActive] = useState(true);
   const [damaged, setDamaged] = useState(false);
   const [bombed, setBombed] = useState(false);
-  const rule = useMemo(() => state.rules.factoryRules.find((item) => item.type === type), [state.rules.factoryRules, type]);
+  const rule = useMemo(() => findFactoryRule(state.rules, type), [state.rules, type]);
 
   return (
     <Modal

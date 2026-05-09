@@ -38,6 +38,7 @@ export interface Country {
   id: string;
   name: string;
   short_name?: string;
+  aliases?: string[];
   color: string;
   is_player_country: boolean;
   ruling_party: string;
@@ -217,6 +218,7 @@ interface SettlementTierRule {
 
 interface FactoryRule {
   type: string;
+  aliases?: string[];
   build_gold_cost: number;
   inputs_per_turn: ResourceBag;
   outputs_per_turn: ResourceBag & { gold?: number };

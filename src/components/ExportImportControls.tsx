@@ -1,13 +1,17 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { DatabaseBackup, FileJson, FolderOpen, ScrollText, Upload } from "lucide-react";
 import { GameState } from "../types";
 import { downloadJson, downloadText } from "../data/downloads";
 import { loadGameStateFromFile } from "../data/saveFiles";
 import { renderAllCountryStatSheets } from "../export/statSheets";
+import { applyStatSheetImport } from "../import/statSheetImport";
+
+const DISCORD_STAT_SHEET_ENDPOINT = "/api/import/discord-stat-sheets";
 
 export function ExportImportControls({
   state,
   setState,
+  replaceState,
   canRememberSave,
   rememberedSaveName,
   rememberedSaveStatus,
@@ -17,6 +21,7 @@ export function ExportImportControls({
 }: {
   state: GameState;
   setState: (state: GameState) => void;
+  replaceState: (state: GameState) => void;
   canRememberSave: boolean;
   rememberedSaveName: string;
   rememberedSaveStatus: string;
@@ -25,10 +30,77 @@ export function ExportImportControls({
   onForgetRememberedSave: () => Promise<void>;
 }) {
   const jsonInputRef = useRef<HTMLInputElement>(null);
+  const [statSheetStatus, setStatSheetStatus] = useState("");
 
   const importJson = async (file?: File) => {
     if (!file) return;
     setState(await loadGameStateFromFile(file));
+  };
+
+  const importDiscordStatSheets = async () => {
+    const confirmed = window.confirm(
+      "Importing Discord stat sheets will reset your current state, turn/action tracking, and unsaved edits. This import is not undo-able. Continue?"
+    );
+    if (!confirmed) return;
+
+    setStatSheetStatus("Fetching Discord stat sheets through the local dev server...");
+    try {
+      const response = await fetch(DISCORD_STAT_SHEET_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" }
+      });
+      const text = await response.text();
+      let payload: unknown;
+      try {
+        payload = text ? (JSON.parse(text) as unknown) : undefined;
+      } catch {
+        setStatSheetStatus(
+          !response.ok || response.status === 404
+            ? "Local Discord import endpoint is unavailable. Start the app with npm run dev and use the Vite dev server."
+            : "Discord stat-sheet import failed: the local endpoint returned malformed JSON."
+        );
+        return;
+      }
+
+      if (!response.ok) {
+        const serverMessage =
+          typeof payload === "object" &&
+          payload !== null &&
+          "error" in payload &&
+          typeof payload.error === "string"
+            ? payload.error
+            : "";
+        const fallback =
+          response.status === 404
+            ? "Local Discord import endpoint is unavailable. Start the app with npm run dev and use the Vite dev server."
+            : "Discord stat-sheet import failed on the local dev server.";
+        setStatSheetStatus(serverMessage || fallback);
+        return;
+      }
+
+      const result = applyStatSheetImport(state, payload);
+      const firstError = result.report.errors[0];
+      if (!result.applied) {
+        setStatSheetStatus(
+          firstError
+            ? `Discord stat-sheet parsing blocked: ${firstError.message} Fix: ${firstError.suggestedFix}`
+            : "Discord stat-sheet parsing blocked: the fetched bundle could not be applied."
+        );
+        return;
+      }
+
+      replaceState(result.state);
+      const warningCount = result.report.warnings.length;
+      setStatSheetStatus(
+        warningCount > 0
+          ? `Imported Discord stat sheets for ${result.state.countries.length} countries with ${warningCount} parser warnings.`
+          : `Imported Discord stat sheets for ${result.state.countries.length} countries.`
+      );
+    } catch {
+      setStatSheetStatus(
+        "Local Discord import endpoint is unavailable. Start the app with npm run dev and check the dev server console."
+      );
+    }
   };
 
   return (
@@ -63,6 +135,9 @@ export function ExportImportControls({
         <button onClick={() => (canRememberSave ? onRememberAndImport() : jsonInputRef.current?.click())}>
           <Upload size={16} /> Import JSON backup
         </button>
+        <button onClick={() => void importDiscordStatSheets()}>
+          <Upload size={16} /> Import from Discord stat sheets
+        </button>
         {canRememberSave && (
           <>
             <button onClick={onReloadRememberedSave} disabled={!rememberedSaveName}>
@@ -74,13 +149,17 @@ export function ExportImportControls({
           </>
         )}
         {rememberedSaveStatus && <p className="menu-note">{rememberedSaveStatus}</p>}
+        {statSheetStatus && <p className="menu-note">{statSheetStatus}</p>}
       </div>
       <input
         ref={jsonInputRef}
         hidden
         type="file"
         accept=".json,application/json"
-        onChange={(event) => importJson(event.target.files?.[0])}
+        onChange={(event) => {
+          void importJson(event.target.files?.[0]);
+          event.currentTarget.value = "";
+        }}
       />
     </details>
   );

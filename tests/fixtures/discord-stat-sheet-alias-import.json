@@ -1,0 +1,33 @@
+{
+  "kind": "gm-stat-sheet-text-fixture",
+  "version": 1,
+  "countryAliases": [
+    {
+      "country_name": "Shukea",
+      "aliases": ["Elf", "Elf-rice"]
+    },
+    {
+      "country_name": "The New Eruyios Empire",
+      "aliases": ["Grisly", "GrislyT"]
+    },
+    {
+      "country_name": "Odradian Republic",
+      "aliases": ["Ed", "Edward"]
+    }
+  ],
+  "sources": [
+    {
+      "threadId": "fixture-elf",
+      "content": "Below if the stat block of @Elf\nGold: 100\nResources stockpiled: 5 food\n## Diplomatics\n**Guarantee:** Grisly\n## Settlements:\n### Villages:\nFood:\n1 (+500) River Village: +1 food"
+    },
+    {
+      "threadId": "fixture-grisly",
+      "content": "Below is the stat block of @GrislyT\nGold: 200\nResources stockpiled: 5 food, 2 iron parts\n## Diplomatics\n**Defensive pacts:** Elf\n## Settlements:\n### Cities:\nGold:\n1 (+3.000) Erympus: +2 gold, -5 food, -2 iron parts (Capital)"
+    },
+    {
+      "threadId": "fixture-odradian",
+      "threadName": "Second Odradian Republic",
+      "content": "Below is the stat block of @edwarider\nGold: 300\n## Diplomatics\n**Guarantee:** Elf"
+    }
+  ]
+}

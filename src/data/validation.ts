@@ -74,6 +74,9 @@ const validateCountry = (value: unknown) => {
   const country = requireRecord(value, "country");
   requireString(country.id, "country.id");
   requireString(country.name, "country.name");
+  if (country.aliases !== undefined) {
+    requireArray(country.aliases, "country.aliases").forEach((alias) => requireString(alias, "country.aliases[]"));
+  }
   requireString(country.color, "country.color");
   requireString(country.ruling_party, "country.ruling_party");
   requireBoolean(country.is_player_country, "country.is_player_country");

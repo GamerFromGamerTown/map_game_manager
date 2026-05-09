@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { commitTurn, previewNextTurn, settlementProductionForCountry } from "../src/engine/calculations";
 import { createEmptyState } from "../src/data/defaultState";
 import { normalizeLoadedState } from "../src/data/migrations";
@@ -7,6 +8,8 @@ import { validateGameState } from "../src/data/validation";
 import { policyChangeStabilityCost } from "../src/engine/policies";
 import { buildRelationsGraphEdges, countryNodeRadius, createDefaultGraphPositions } from "../src/components/DiplomacyGraph";
 import { renderAllCountryStatSheets, renderVerbatimCountryStatSheet } from "../src/export/statSheets";
+import { applyStatSheetImport } from "../src/import/statSheetImport";
+import { buildStatSheetBundleFromTexts, parseStatSheetText } from "../src/import/statSheetParser";
 import { buildTurnActionPreview } from "../src/ui/turnActionPreview";
 import { RESOURCE_TYPES, Country, DiceRollLog, Factory, GameState, MilitaryOperation, ResourceBag, ResourceStockpile, Settlement, TradeRoute } from "../src/types";
 
@@ -94,6 +97,14 @@ const stateWithCountries = (countryIds: string[]): GameState => {
 
 const nonZeroBag = (bag: ResourceBag): Record<string, number> =>
   Object.fromEntries(Object.entries(bag).filter(([, value]) => Number(value) !== 0));
+
+interface StatSheetTextFixture {
+  countryAliases: Array<{ country_name: string; aliases: string[] }>;
+  sources: Array<{ threadId: string; threadName?: string; content: string }>;
+}
+
+const loadStatSheetTextFixture = (path: string): StatSheetTextFixture =>
+  JSON.parse(readFileSync(path, "utf8")) as StatSheetTextFixture;
 
 test("validation accepts the empty default save and rejects malformed imports", () => {
   const initialState = createEmptyState();
@@ -301,6 +312,52 @@ test("factory inputs can be paid from existing stockpiles", () => {
 
   assert.equal(preview.warnings.some((warning) => warning.includes("missing inputs")), false);
   assert.equal(preview.factoryOutputs.gold_ingot, 1);
+});
+
+test("factory aliases resolve plural and spelling variants", () => {
+  const state = stateWithCountries(["a"]);
+  state.stockpiles = zeroStockpiles("a").map((stockpile) => {
+    if (["coal", "iron", "aluminium", "copper_parts"].includes(stockpile.resource_type)) {
+      return { ...stockpile, amount: 5 };
+    }
+    return stockpile;
+  });
+  state.factories = [
+    {
+      id: "factory-variant-a",
+      country_id: "a",
+      type: "Iron Part Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: ""
+    },
+    {
+      id: "factory-variant-b",
+      country_id: "a",
+      type: "Alumnium Parts Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: ""
+    },
+    {
+      id: "factory-variant-c",
+      country_id: "a",
+      type: "Electronic Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: ""
+    }
+  ];
+
+  const preview = previewForCountry(state, "a");
+
+  assert.equal(preview.warnings.some((warning) => warning.includes("missing from rules")), false);
+  assert.equal(preview.factoryOutputs.iron_parts, 1);
+  assert.equal(preview.factoryOutputs.aluminium_parts, 1);
+  assert.equal(preview.factoryOutputs.necessities, 1);
 });
 
 test("incoming resource trades can satisfy factory inputs", () => {
@@ -516,6 +573,367 @@ test("stat sheet exports include Discord-formatted country sheets in both styles
   assert.match(verbatim, /## Main Statistics/);
   assert.match(singleVerbatim, /\*\*Necessities:\*\*/);
   assert.match(singleVerbatim, /### Constructions:\nNone/);
+});
+
+test("stat sheet parser accepts loose markdown and reports recoverable issues", () => {
+  const parsed = parseStatSheetText(
+    [
+      "# Country A",
+      "**Gold:** 1.250 (Income: +250",
+      "Stability: 62/100",
+      "Ruling Party Democratic",
+      "Reserve 500/2.000",
+      "Equipment Stockpile: +1,200",
+      "Manpower: 4 000",
+      "Manpower cap 12.000",
+      "### Villages:",
+      "Food:",
+      "1 (+500) Capital A: +1 food (Capital)",
+      "Wood:",
+      "1 (+500) Forest A: +1 wood",
+      "### Constructions:",
+      "1 (0) Sawmill: -1 wood, +1 plank",
+      "## Resources:",
+      "Resources stockpiled: 3 food, 4 wood, 5 iron parts",
+      "Gold gain/loss: +5.000(M) = +5.000",
+      "Stability gain/loss: +1(L) = +1",
+      "## Ideology policies:",
+      "Healthcare [HE]: Public Healthcare: +1 stability per turn"
+    ].join("\n"),
+    { threadId: "thread-a" }
+  );
+
+  assert.equal(parsed.sheet.country.name, "Country A");
+  assert.equal(parsed.sheet.country.gold, 1250);
+  assert.equal(parsed.sheet.country.ruling_party, "Democratic");
+  assert.equal(parsed.sheet.settlements.length, 2);
+  assert.equal(parsed.sheet.settlements[0].is_capital, true);
+  assert.equal(parsed.sheet.settlements[1].biome_or_resource_type, "stat_wood");
+  assert.equal(parsed.sheet.factories[0].type, "Sawmill");
+  assert.equal(parsed.sheet.stockpiles.iron_parts, 5);
+  assert.equal(parsed.sheet.policies[0].policy_category, "Healthcare");
+  assert.equal(parsed.report.errors.length, 0);
+  assert.ok(parsed.report.warnings.some((warning) => /missing closing/i.test(warning.message)));
+});
+
+test("stat sheet parser gives actionable blocking errors for irreconcilable sheets", () => {
+  const parsed = parseStatSheetText("Gold: 500\nStability: 20", { threadId: "thread-b" });
+
+  assert.equal(parsed.report.errors.length, 1);
+  assert.match(parsed.report.errors[0].message, /country name/i);
+  assert.match(parsed.report.errors[0].suggestedFix, /heading/i);
+  assert.equal(parsed.report.errors[0].threadId, "thread-b");
+});
+
+test("stat sheet parser can fall back to Discord thread title as country name", () => {
+  const parsed = parseStatSheetText(
+    [
+      "Below is the stat block of <@123>",
+      "## Main Statistics",
+      "**Gold:** 10.500"
+    ].join("\n"),
+    { threadId: "thread-c", threadName: "Country C" }
+  );
+
+  assert.equal(parsed.sheet.country.name, "Country C");
+  assert.equal(parsed.report.errors.length, 0);
+  assert.ok(
+    parsed.report.warnings.some((warning) => /thread title/i.test(warning.message) || /thread name/i.test(warning.message))
+  );
+});
+
+test("stat sheet parser keeps Discord thread title when a late heading appears after the stat block", () => {
+  const parsed = parseStatSheetText(
+    [
+      "Below is the stat block of <@123>",
+      "## Main Statistics",
+      "**Gold:** 10.500",
+      "## Settlements:",
+      "### Villages:",
+      "Food:",
+      "1 (+500) Capital A: +1 food (Capital)",
+      "## Diplomatics",
+      "Country display name",
+      "# Ledger heading that is not the country"
+    ].join("\n"),
+    { threadId: "thread-title", threadName: "Country From Thread" }
+  );
+
+  assert.equal(parsed.sheet.country.name, "Country From Thread");
+  assert.equal(parsed.sheet.settlements.length, 1);
+  assert.equal(parsed.report.errors.length, 0);
+});
+
+test("stat sheet parser accepts noisy and misspelled settlement tier headings", () => {
+  const parsed = parseStatSheetText(
+    [
+      "# Country A",
+      "## Settlements:",
+      "### Cities:",
+      "Food:",
+      "### Villages: 14",
+      "Food:",
+      "1 (+500) Village A: +1 food",
+      "### Vilages:",
+      "Wood:",
+      "1 (+500) Village B: +1 wood"
+    ].join("\n"),
+    { threadId: "thread-tier" }
+  );
+
+  assert.deepEqual(
+    parsed.sheet.settlements.map((settlement) => [settlement.name, settlement.tier]),
+    [
+      ["Village A", "village"],
+      ["Village B", "village"]
+    ]
+  );
+});
+
+test("stat sheet parser keeps settlement category separate from upkeep and gold formula text", () => {
+  const parsed = parseStatSheetText(
+    [
+      "# Country A",
+      "## Settlements:",
+      "### Cities:",
+      "Gold:",
+      "1 (+3.000) Gold City: +2 gold, -5 food, -2 iron parts (Capital)"
+    ].join("\n")
+  );
+
+  assert.equal(parsed.report.errors.length, 0);
+  assert.equal(parsed.sheet.settlements.length, 1);
+  assert.equal(parsed.sheet.settlements[0].biome_or_resource_type, "stat_gold");
+  assert.equal(parsed.sheet.settlements[0].upkeep_option, "B");
+});
+
+test("stat sheet import preserves rules and turn metadata while merging countries", () => {
+  const state = stateWithCountries(["a"]);
+  state.turnNumber = 7;
+  state.rules.settings.base_manpower_cap = 123456;
+  state.turnLogs = [
+    {
+      id: "log-a",
+      turn_number: 6,
+      country_id: "a",
+      gold_before: 0,
+      gold_after: 1,
+      stability_before: 0,
+      stability_after: 1,
+      manpower_before: 0,
+      manpower_after: 1,
+      resources_before_json: "{}",
+      resources_after_json: "{}",
+      formula_breakdown_json: "{}",
+      warnings_json: "[]",
+      gm_notes: "keep"
+    }
+  ];
+
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      threadId: "thread-a",
+      content: [
+        "# Country A",
+        "Gold: 2,000",
+        "Stability: 75",
+        "Ruling Party: Monarchy",
+        "Manpower: 10,000",
+        "Manpower cap: 50,000",
+        "Resources stockpiled: 2 food, 3 wood",
+        "### Villages:",
+        "Food:",
+        "1 (+500) Capital A: +1 food (Capital)"
+      ].join("\n")
+    }
+  ]);
+
+  const result = applyStatSheetImport(state, bundle);
+
+  assert.equal(result.applied, true);
+  assert.equal(result.state.turnNumber, 7);
+  assert.equal(result.state.rules.settings.base_manpower_cap, 123456);
+  assert.equal(result.state.turnLogs.length, 1);
+  assert.equal(result.state.countries.length, 1);
+  assert.equal(result.state.countries[0].gold, 2000);
+  assert.equal(result.state.countries[0].ruling_party, "Monarchy");
+  assert.equal(result.state.settlements.length, 1);
+  assert.equal(result.state.stockpiles.find((row) => row.resource_type === "food")?.amount, 2);
+});
+
+test("stat sheet import preserves city iron upkeep route from parsed settlement formulas", () => {
+  const state = stateWithCountries(["a"]);
+  state.stockpiles = [
+    ...zeroStockpiles("a").filter((stockpile) => stockpile.resource_type !== "food" && stockpile.resource_type !== "iron_parts"),
+    { country_id: "a", resource_type: "food", amount: 5 },
+    { country_id: "a", resource_type: "iron_parts", amount: 2 }
+  ];
+
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Country A",
+        "Resources stockpiled: 5 food, 2 iron parts",
+        "## Settlements:",
+        "### Cities:",
+        "Gold:",
+        "1 (+3.000) Gold City: +2 gold, -5 food, -2 iron parts (Capital)"
+      ].join("\n")
+    }
+  ]);
+
+  const result = applyStatSheetImport(state, bundle);
+  assert.equal(result.applied, true);
+  assert.equal(result.state.settlements[0].upkeep_option, "B");
+  assert.equal(result.state.settlements[0].biome_or_resource_type, "stat_gold");
+
+  const preview = previewForCountry(result.state, "a");
+  assert.equal(preview.settlementUpkeep.iron_parts, 2);
+  assert.equal(preview.settlementUpkeep.aluminium_parts, 0);
+  assert.equal(preview.warnings.some((warning) => /Aluminium Parts/i.test(warning)), false);
+});
+
+test("stat sheet import resolves player aliases and preserves explicit iron upkeep from fixture artifacts", () => {
+  const fixture = loadStatSheetTextFixture("tests/fixtures/discord-stat-sheet-alias-import.json");
+  const bundle = buildStatSheetBundleFromTexts(fixture.sources);
+  (bundle as typeof bundle & { countryAliases?: StatSheetTextFixture["countryAliases"] }).countryAliases =
+    fixture.countryAliases;
+
+  const result = applyStatSheetImport(createEmptyState(), bundle);
+
+  assert.equal(
+    result.applied,
+    true,
+    result.report.errors.map((error) => `${error.message} ${error.suggestedFix}`).join("\n")
+  );
+
+  const firstCountryName = fixture.countryAliases[0].country_name;
+  const secondCountryName = fixture.countryAliases[1].country_name;
+  const thirdCountryName = fixture.sources[2].threadName ?? "";
+  const firstCountry = result.state.countries.find((country) => country.name === firstCountryName);
+  const secondCountry = result.state.countries.find((country) => country.name === secondCountryName);
+  const thirdCountry = result.state.countries.find((country) => country.name === thirdCountryName);
+  assert.ok(firstCountry);
+  assert.ok(secondCountry);
+  assert.ok(thirdCountry);
+
+  const firstCountryAliases = (firstCountry as Country & { aliases?: string[] }).aliases ?? [];
+  const secondCountryAliases = (secondCountry as Country & { aliases?: string[] }).aliases ?? [];
+  const thirdCountryAliases = (thirdCountry as Country & { aliases?: string[] }).aliases ?? [];
+  assert.ok(firstCountryAliases.includes(fixture.countryAliases[0].aliases[0]));
+  assert.ok(secondCountryAliases.includes(fixture.countryAliases[1].aliases[1]));
+  assert.ok(thirdCountryAliases.includes(fixture.countryAliases[2].aliases[0]));
+
+  assert.ok(
+    result.state.diplomacy.some(
+      (relation) =>
+        relation.relation_type === "Guarantee" &&
+        relation.country_a_id === firstCountry.id &&
+        relation.country_b_id === secondCountry.id
+    )
+  );
+  assert.ok(
+    result.state.diplomacy.some(
+      (relation) =>
+        relation.relation_type === "Defensive Pact" &&
+        [relation.country_a_id, relation.country_b_id].includes(firstCountry.id) &&
+        [relation.country_a_id, relation.country_b_id].includes(secondCountry.id)
+    )
+  );
+  assert.ok(
+    result.state.diplomacy.some(
+      (relation) =>
+        relation.relation_type === "Guarantee" &&
+        relation.country_a_id === thirdCountry.id &&
+        relation.country_b_id === firstCountry.id
+    )
+  );
+
+  const villagePreview = previewForCountry(result.state, firstCountry.id);
+  assert.equal(villagePreview.warnings.some((warning) => /Aluminium Parts|missing upkeep/i.test(warning)), false);
+
+  const ironRouteSettlement = result.state.settlements.find(
+    (settlement) => settlement.country_id === secondCountry.id && /iron parts/i.test(settlement.notes)
+  );
+  assert.ok(ironRouteSettlement);
+  assert.equal(ironRouteSettlement.tier, "city");
+  assert.equal(ironRouteSettlement.upkeep_option, "B");
+
+  const ironRoutePreview = previewForCountry(result.state, secondCountry.id);
+  assert.equal(ironRoutePreview.settlementUpkeep.iron_parts, 2);
+  assert.equal(ironRoutePreview.settlementUpkeep.aluminium_parts, 0);
+  assert.equal(ironRoutePreview.warnings.some((warning) => /Aluminium Parts/i.test(warning)), false);
+});
+
+test("stat sheet import creates directional trades and guarantees from stat sheet text", () => {
+  const state = stateWithCountries(["a", "b", "c"]);
+
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Country A",
+        "## Resources:",
+        "**Trades to (imports) and amount:** 2 iron parts from Country B",
+        "**Trades to (exports) and amount:** 1 food to Country C",
+        "## Diplomatics",
+        "**Guarantee:** Country B",
+        "**Non aggression pacts:** Country C"
+      ].join("\n")
+    }
+  ]);
+
+  const result = applyStatSheetImport(state, bundle);
+
+  assert.equal(result.applied, true);
+  assert.equal(result.state.trades.length, 2);
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === "b" &&
+        trade.receiver_country_id === "a" &&
+        trade.resource_type === "iron_parts" &&
+        trade.amount_per_turn === 2
+    )
+  );
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === "a" &&
+        trade.receiver_country_id === "c" &&
+        trade.resource_type === "food" &&
+        trade.amount_per_turn === 1
+    )
+  );
+  const guarantee = result.state.diplomacy.find((relation) => relation.relation_type === "Guarantee");
+  assert.equal(guarantee?.country_a_id, "a");
+  assert.equal(guarantee?.country_b_id, "b");
+  assert.equal(guarantee?.graph_custom?.directed, true);
+  const pact = result.state.diplomacy.find((relation) => relation.relation_type === "Non-Aggression Pact");
+  assert.equal(pact?.country_a_id, "a");
+  assert.equal(pact?.country_b_id, "c");
+});
+
+test("stat sheet import refuses malformed bundles with suggested fixes", () => {
+  const result = applyStatSheetImport(stateWithCountries(["a"]), {
+    kind: "gm-stat-sheet-import",
+    version: 1,
+    source: { generatedAt: new Date(0).toISOString(), threads: [] },
+    sheets: [],
+    report: {
+      warnings: [],
+      errors: [
+        {
+          severity: "error",
+          message: "Missing country name.",
+          suggestedFix: "Add a '# Country Name' heading.",
+          threadId: "thread-a"
+        }
+      ]
+    }
+  });
+
+  assert.equal(result.applied, false);
+  assert.match(result.report.errors[0].suggestedFix, /Country Name/i);
 });
 
 test("application logic does not special-case arbitrary country names", () => {

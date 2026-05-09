@@ -1,10 +1,32 @@
 import { GameState, RulesConfig } from "../types";
 import { defaultRules } from "../rules/defaultRules";
+import { normalizeFactoryTypeName } from "../rules/factoryRules";
 
 const mergeRuleRecords = <T extends Record<string, unknown>>(defaults: T, current: T | undefined): T => ({
   ...structuredClone(defaults),
   ...(current ?? {})
 });
+
+const mergeFactoryRules = (
+  defaults: RulesConfig["factoryRules"],
+  current: RulesConfig["factoryRules"] | undefined
+): RulesConfig["factoryRules"] => {
+  const currentByKey = new Map((current ?? []).map((rule) => [normalizeFactoryTypeName(rule.type), rule]));
+  const merged = defaults.map((defaultRule) => {
+    const currentRule = currentByKey.get(normalizeFactoryTypeName(defaultRule.type));
+    if (!currentRule) return structuredClone(defaultRule);
+    return {
+      ...structuredClone(defaultRule),
+      ...currentRule,
+      aliases: Array.from(new Set([...(defaultRule.aliases ?? []), ...(currentRule.aliases ?? [])]))
+    };
+  });
+  const defaultKeys = new Set(defaults.map((rule) => normalizeFactoryTypeName(rule.type)));
+  return [
+    ...merged,
+    ...(current ?? []).filter((rule) => !defaultKeys.has(normalizeFactoryTypeName(rule.type))).map((rule) => structuredClone(rule))
+  ];
+};
 
 const normalizeRules = (rules: RulesConfig): RulesConfig => ({
   ...structuredClone(defaultRules),
@@ -15,6 +37,7 @@ const normalizeRules = (rules: RulesConfig): RulesConfig => ({
   },
   settlementTiers: mergeRuleRecords(defaultRules.settlementTiers, rules.settlementTiers),
   resourceProduction: mergeRuleRecords(defaultRules.resourceProduction, rules.resourceProduction),
+  factoryRules: mergeFactoryRules(defaultRules.factoryRules, rules.factoryRules),
   factoryRepair: {
     ...defaultRules.factoryRepair,
     ...rules.factoryRepair

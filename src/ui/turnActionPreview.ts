@@ -15,6 +15,7 @@ import {
   TurnTrackedEntity
 } from "../types";
 import { settlementProductionForCountry } from "../engine/calculations";
+import { findFactoryRule } from "../rules/factoryRules";
 import { countryName } from "../utils/names";
 import { labelFromKey, resourceLabel, routeTypeLabel } from "../utils/labels";
 
@@ -221,7 +222,7 @@ const buildSettlementSection = (state: GameState): TurnActionSection | null => {
 };
 
 const factoryRuleFor = (state: GameState, factory: Factory) =>
-  state.rules.factoryRules.find((rule) => rule.type === factory.type);
+  findFactoryRule(state.rules, factory.type);
 
 const buildFactorySection = (state: GameState): TurnActionSection | null => {
   const cards: TurnActionCard[] = [];

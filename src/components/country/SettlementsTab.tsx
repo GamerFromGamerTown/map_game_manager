@@ -14,6 +14,8 @@ const productionSummary = (bag: ResourceBag): string => {
   return entries.map(([resource, amount]) => `${resourceLabel(resource)} x${formatAmount(Number(amount))} / turn`).join(", ");
 };
 
+const hasUpkeepRoute = (tier: SettlementTier): boolean => tier === "city" || tier === "large_city" || tier === "metropole";
+
 export function SettlementsTab({
   state,
   country,
@@ -101,6 +103,27 @@ export function SettlementsTab({
               />
               <CheckboxField label="Damaged" checked={settlement.damaged} onChange={(damaged) => updateSettlement(settlement.id, { damaged })} />
               <CheckboxField label="Bombed" checked={settlement.bombed} onChange={(bombed) => updateSettlement(settlement.id, { bombed })} />
+              {hasUpkeepRoute(settlement.tier) && (
+                <div className="upkeep-route-toggle" role="group" aria-label={`${settlement.name} upkeep route`}>
+                  <span>Upkeep</span>
+                  <button
+                    type="button"
+                    className={(settlement.upkeep_option ?? "A") === "A" ? "active" : ""}
+                    onClick={() => updateSettlement(settlement.id, { upkeep_option: "A" })}
+                    aria-pressed={(settlement.upkeep_option ?? "A") === "A"}
+                  >
+                    Aluminium
+                  </button>
+                  <button
+                    type="button"
+                    className={settlement.upkeep_option === "B" ? "active" : ""}
+                    onClick={() => updateSettlement(settlement.id, { upkeep_option: "B" })}
+                    aria-pressed={settlement.upkeep_option === "B"}
+                  >
+                    Iron
+                  </button>
+                </div>
+              )}
               <button
                 className="icon danger settlement-delete"
                 onClick={() =>

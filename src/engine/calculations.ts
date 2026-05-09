@@ -12,6 +12,7 @@ import {
   TurnPreview
 } from "../types";
 import { biomeLabel, resourceLabel } from "../utils/labels";
+import { findFactoryRule } from "../rules/factoryRules";
 
 export const createId = (prefix: string): string =>
   `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -415,7 +416,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
       return;
     }
 
-    const rule = state.rules.factoryRules.find((candidate) => candidate.type === factory.type);
+    const rule = findFactoryRule(state.rules, factory.type);
     if (!rule) {
       item.preview.warnings.push(`Factory type "${factory.type}" is missing from rules.`);
       return;
@@ -446,6 +447,7 @@ export const previewNextTurn = (state: GameState): TurnPreview => {
   state.settlements.forEach((settlement) => {
     const item = work.get(settlement.country_id);
     if (!item) return;
+    if (settlement.tier === "village") return;
     const tierRule = state.rules.settlementTiers[settlement.tier];
     const upkeep = tierRule.upkeep[settlement.upkeep_option ?? "A"];
     if (!upkeep || Object.keys(upkeep).length === 0) {

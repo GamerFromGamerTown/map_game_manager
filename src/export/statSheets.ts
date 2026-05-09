@@ -13,6 +13,7 @@ import {
   TurnPreview
 } from "../types";
 import { previewNextTurn, stockpileForCountry } from "../engine/calculations";
+import { findFactoryRule } from "../rules/factoryRules";
 import { countryShortName } from "../utils/names";
 
 type SheetFormat = "polished" | "verbatim";
@@ -227,7 +228,7 @@ const tradeLines = (state: GameState, country: Country, direction: "imports" | "
 };
 
 const constructionLine = (state: GameState, factory: Factory, index: number): string => {
-  const rule = state.rules.factoryRules.find((item) => item.type === factory.type);
+  const rule = findFactoryRule(state.rules, factory.type);
   const inputs = rule ? formatBag(negateBag(rule.inputs_per_turn)) : "unknown inputs";
   const outputs = rule ? formatBag(rule.outputs_per_turn as ResourceBag) : "unknown outputs";
   const flags = [factory.active ? "" : "inactive", factory.damaged ? "damaged" : "", factory.bombed ? "bombed" : ""].filter(Boolean);

@@ -184,12 +184,92 @@
     },
     "factoryRules": [
       {
+        "type": "Coastal Fort",
+        "aliases": [
+          "Coastal Forts"
+        ],
+        "build_gold_cost": 2000,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Fortification",
+        "aliases": [
+          "Fortifications"
+        ],
+        "build_gold_cost": 2000,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Trenchline",
+        "aliases": [
+          "Trenchlines"
+        ],
+        "build_gold_cost": 500,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Canal",
+        "aliases": [
+          "Canals"
+        ],
+        "build_gold_cost": 15000,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Wall",
+        "aliases": [
+          "Walls"
+        ],
+        "build_gold_cost": 10000,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
         "type": "Harbour",
-        "build_gold_cost": 0,
+        "aliases": [
+          "Harbor",
+          "Harbours",
+          "Harbors"
+        ],
+        "build_gold_cost": 4000,
         "inputs_per_turn": {},
         "outputs_per_turn": {
           "food": 1
         }
+      },
+      {
+        "type": "Railway",
+        "aliases": [
+          "Railways"
+        ],
+        "build_gold_cost": 500,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Bridge",
+        "aliases": [
+          "Bridges"
+        ],
+        "build_gold_cost": 2000,
+        "inputs_per_turn": {},
+        "outputs_per_turn": {}
+      },
+      {
+        "type": "Large Static Artillery Piece",
+        "aliases": [
+          "Large Static Artillery",
+          "Static Artillery Piece"
+        ],
+        "build_gold_cost": 10000,
+        "inputs_per_turn": {
+          "coal": 1
+        },
+        "outputs_per_turn": {}
       },
       {
         "type": "Sawmill",
@@ -203,6 +283,10 @@
       },
       {
         "type": "Iron Parts Factory",
+        "aliases": [
+          "Iron Part Factory",
+          "Iron parts factory"
+        ],
         "build_gold_cost": 2000,
         "inputs_per_turn": {
           "coal": 1,
@@ -214,6 +298,10 @@
       },
       {
         "type": "Troop Equipment Factory",
+        "aliases": [
+          "Equipment Factory",
+          "Troop Equipment factory"
+        ],
         "build_gold_cost": 2000,
         "inputs_per_turn": {
           "coal": 1,
@@ -236,6 +324,10 @@
       },
       {
         "type": "Copper Parts Factory",
+        "aliases": [
+          "Copper Part Factory",
+          "Copper Parts factory"
+        ],
         "build_gold_cost": 2000,
         "inputs_per_turn": {
           "coal": 1,
@@ -247,6 +339,9 @@
       },
       {
         "type": "Electronics Factory",
+        "aliases": [
+          "Electronic Factory"
+        ],
         "build_gold_cost": 2000,
         "inputs_per_turn": {
           "coal": 1,
@@ -281,6 +376,13 @@
       },
       {
         "type": "Aluminium Parts Factory",
+        "aliases": [
+          "Aluminium Part Factory",
+          "Aluminum Parts Factory",
+          "Aluminum Part Factory",
+          "Alluminum Parts Factory",
+          "Alumnium Parts Factory"
+        ],
         "build_gold_cost": 2000,
         "inputs_per_turn": {
           "coal": 1,

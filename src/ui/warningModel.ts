@@ -270,7 +270,7 @@ const normalizeCountryWarning = (
       entityId = type;
       fieldPath = "rules.factoryRules";
       message = `${type} is used by a country but has no factory rule.`;
-      recommendedAction = "Open Factory rules and add the missing rule or change the factory type.";
+      recommendedAction = "Open Factory rules and add an alias, add the missing rule, or change the factory type.";
       target = rulesTarget("Open factory rules", "factoryRules", `rule-factory-${slug(type)}`);
     } else if (/No capital selected/i.test(sourceMessage) || /Multiple capitals/i.test(sourceMessage)) {
       severity = "error";

@@ -531,7 +531,7 @@ function FactoryRulesEditor({
     onChange(value.map((factory, index) => (index === activeIndex ? { ...factory, ...patch } : factory)));
   };
   const addFactory = () => {
-    const next = [...value, { type: "New Factory", build_gold_cost: 0, inputs_per_turn: {}, outputs_per_turn: {} }];
+    const next = [...value, { type: "New Factory", aliases: [], build_gold_cost: 0, inputs_per_turn: {}, outputs_per_turn: {} }];
     onChange(next);
     setActiveIndex(next.length - 1);
   };
@@ -557,6 +557,22 @@ function FactoryRulesEditor({
             <label className="rule-field">
               <span>Build cost (gold)</span>
               <input type="number" value={activeFactory.build_gold_cost} onChange={(event) => updateFactory({ build_gold_cost: Number(event.target.value || 0) })} />
+            </label>
+            <label className="rule-field">
+              <span>Aliases</span>
+              <textarea
+                aria-label={`Aliases for ${activeFactory.type}`}
+                value={(activeFactory.aliases ?? []).join("\n")}
+                onChange={(event) =>
+                  updateFactory({
+                    aliases: event.target.value
+                      .split(/\r?\n|,/)
+                      .map((alias) => alias.trim())
+                      .filter(Boolean)
+                  })
+                }
+                placeholder="One accepted spelling per line"
+              />
             </label>
           </div>
           <div className="rule-grid">

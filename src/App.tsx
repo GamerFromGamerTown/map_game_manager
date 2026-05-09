@@ -133,6 +133,11 @@ function App() {
     setState(next);
   };
 
+  const replaceState = (next: GameState) => {
+    setHistory([]);
+    setState(next);
+  };
+
   const patchState = (updater: (current: GameState) => GameState) => {
     const next = updater(state);
     if (next !== state) {
@@ -295,6 +300,7 @@ function App() {
             <ExportImportControls
               state={state}
               setState={setTrackedState}
+              replaceState={replaceState}
               canRememberSave={rememberSaveSupported}
               rememberedSaveName={rememberedSave?.name ?? ""}
               rememberedSaveStatus={rememberedSaveStatus}

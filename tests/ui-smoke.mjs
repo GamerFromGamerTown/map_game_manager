@@ -82,9 +82,86 @@ await test("primary navigation and dialogs are reachable without runtime errors"
   assert.equal(await page.getByRole("button", { name: "Import SQLite save", exact: true }).count(), 0);
   await assertVisibleButton("Export JSON backup");
   await assertVisibleButton("Import JSON backup");
+  await assertVisibleButton("Import from Discord stat sheets");
+  assert.equal(await page.getByRole("button", { name: "Import stat sheets from JSON file", exact: true }).count(), 0);
   await page.locator("summary").filter({ hasText: "Import / Export" }).click();
 
   assert.deepEqual(errors, []);
+});
+
+await test("Discord stat-sheet import calls the local endpoint instead of opening a file picker", async () => {
+  let discordImportCalls = 0;
+  await page.route("**/api/import/discord-stat-sheets", async (route) => {
+    discordImportCalls += 1;
+    assert.equal(route.request().method(), "POST");
+
+    if (discordImportCalls === 1) {
+      await route.fulfill({
+        status: 503,
+        contentType: "application/json",
+        body: JSON.stringify({ error: "Local Discord import endpoint is unavailable. Start the app with npm run dev." })
+      });
+      return;
+    }
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        kind: "gm-stat-sheet-import",
+        version: 1,
+        source: { generatedAt: new Date(0).toISOString(), threads: [] },
+        sheets: [
+          {
+            country: { name: "UI Imported Country", gold: 123, stability: 44 },
+            settlements: [
+              {
+                name: "UI Imported Capital",
+                tier: "village",
+                is_capital: true,
+                biome_or_resource_type: "food"
+              }
+            ],
+            factories: [],
+            stockpiles: {},
+            policies: [],
+            rawText: "",
+            threadId: "ui-thread"
+          }
+        ],
+        report: { warnings: [], errors: [] }
+      })
+    });
+  });
+
+  await page.locator("summary").filter({ hasText: "Import / Export" }).click();
+  page.once("dialog", async (dialog) => {
+    assert.match(dialog.message(), /reset your current state/i);
+    assert.match(dialog.message(), /not undo-able/i);
+    await dialog.dismiss();
+  });
+  await page.getByRole("button", { name: "Import from Discord stat sheets", exact: true }).click();
+  assert.equal(discordImportCalls, 0);
+
+  const noChooserOnError = page.waitForEvent("filechooser", { timeout: 250 }).then(() => false, () => true);
+  page.once("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+  await page.getByRole("button", { name: "Import from Discord stat sheets", exact: true }).click();
+  assert.equal(await noChooserOnError, true);
+  await page.getByText("Local Discord import endpoint is unavailable").waitFor({ state: "visible" });
+
+  const noChooserOnSuccess = page.waitForEvent("filechooser", { timeout: 250 }).then(() => false, () => true);
+  page.once("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+  await page.getByRole("button", { name: "Import from Discord stat sheets", exact: true }).click();
+  assert.equal(await noChooserOnSuccess, true);
+  await page.getByRole("button", { name: "UI Imported Country", exact: true }).waitFor({ state: "visible" });
+  await page.getByRole("button", { name: "Preview", exact: true }).click();
+  await page.getByText("No recorded current-turn actions.").waitFor({ state: "visible" });
+  assert.equal(discordImportCalls, 2);
+  await page.locator("summary").filter({ hasText: "Import / Export" }).click();
 });
 
 await test("JSON import uses the rememberable file picker when available", async () => {
@@ -99,7 +176,7 @@ await test("created countries provide the full country workflow", async () => {
   await page.getByRole("button", { name: "Workflow", exact: true }).click();
   await assertVisibleHeading("Workflow Country");
 
-  const tabs = ["Overview", "Settlements +", "Production +", "Trade/Diplomacy +", "Military +", "Dice/History", "Policies"];
+  const tabs = ["Overview", "Settlements +", "Production", "Factories +", "Trade/Diplomacy +", "Military +", "Dice/History", "Policies"];
   for (const tab of tabs) {
     const tabButton = page.getByRole("tab", { name: tab, exact: true });
     await tabButton.click();
@@ -245,6 +322,7 @@ await test("rule sections use focused side editors and custom effect controls", 
   await page.locator(".factory-rules-editor").waitFor({ state: "visible" });
   await page.getByRole("button", { name: "Add factory rule", exact: true }).click();
   await page.locator('input[value="New Factory"]').waitFor({ state: "visible" });
+  await page.getByLabel("Aliases for New Factory").fill("Alternate Factory\nTypo Factory");
 
   await page.getByRole("button", { name: "Ruling parties", exact: true }).click();
   await page.locator(".ruling-party-rules-editor").waitFor({ state: "visible" });

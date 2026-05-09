@@ -19,6 +19,7 @@ export type CountryTab =
   | "Overview"
   | "Settlements"
   | "Production"
+  | "Factories"
   | "Policies"
   | "Trade/Diplomacy"
   | "Military"
@@ -28,13 +29,14 @@ const countryTabs: CountryTab[] = [
   "Overview",
   "Settlements",
   "Production",
+  "Factories",
   "Trade/Diplomacy",
   "Military",
   "Dice/History",
   "Policies"
 ];
 
-const tabsWithAddActions = new Set<CountryTab>(["Settlements", "Production", "Trade/Diplomacy", "Military"]);
+const tabsWithAddActions = new Set<CountryTab>(["Settlements", "Factories", "Trade/Diplomacy", "Military"]);
 
 export function CountrySheet({
   state,
@@ -106,20 +108,20 @@ export function CountrySheet({
         <SettlementsTab state={state} country={country} updateSettlement={updateSettlement} patchState={patchState} />
       )}
       {activeTab === "Production" && (
-        <div className="section-stack">
-          <section className="workflow-section">
-            <div className="section-heading">
-              <h2>Resource stockpiles</h2>
-            </div>
-            <ResourcesTab state={state} country={country} preview={item} patchState={patchState} />
-          </section>
-          <section className="workflow-section">
-            <div className="section-heading">
-              <h2>Factories</h2>
-            </div>
-            <FactoriesTab state={state} country={country} updateFactory={updateFactory} patchState={patchState} />
-          </section>
-        </div>
+        <section className="workflow-section">
+          <div className="section-heading">
+            <h2>Resource stockpiles</h2>
+          </div>
+          <ResourcesTab state={state} country={country} preview={item} patchState={patchState} />
+        </section>
+      )}
+      {activeTab === "Factories" && (
+        <section className="workflow-section">
+          <div className="section-heading">
+            <h2>Factories</h2>
+          </div>
+          <FactoriesTab state={state} country={country} updateFactory={updateFactory} patchState={patchState} />
+        </section>
       )}
       {activeTab === "Policies" && <PoliciesTab state={state} country={country} patchState={patchState} />}
       {activeTab === "Trade/Diplomacy" && (
