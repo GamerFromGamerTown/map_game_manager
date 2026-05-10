@@ -98,7 +98,7 @@ export const buildRelationsGraphEdges = (
         targetCountryId: relation.country_b_id,
         kind: custom ? "custom" : "relation",
         label: relationAbbreviation(relation.relation_type),
-        hoverText: custom?.hover_text.trim() || relation.notes.trim() || relation.relation_type,
+        hoverText: custom?.hover_text.trim() || relation.relation_type,
         directed: relation.relation_type === "Non-Aggression Pact" || Boolean(custom?.directed),
         stroke: custom?.color || relationStroke(relation.relation_type),
         strokeWidth: relation.relation_type === "War" ? 3 : 2.4,
@@ -122,7 +122,7 @@ export const buildRelationsGraphEdges = (
         targetCountryId: trade.receiver_country_id,
         kind: "trade",
         label: materialAbbreviation(trade.resource_type),
-        hoverText: `${countryName(state, trade.sender_country_id)} -> ${countryName(state, trade.receiver_country_id)}: ${numberText(amount)} ${resourceLabel(trade.resource_type)}${paymentText}${status}${trade.notes ? ` - ${trade.notes}` : ""}`,
+        hoverText: `${countryName(state, trade.sender_country_id)} -> ${countryName(state, trade.receiver_country_id)}: ${numberText(amount)} ${resourceLabel(trade.resource_type)}${paymentText}${status}`,
         directed: true,
         stroke: "var(--violet)",
         strokeWidth,
@@ -595,11 +595,10 @@ export function DiplomacyGraph({
               onChange={(relation_type) => updateRelation({ relation_type })}
             />
             <CheckboxField label="Active" checked={relation.active} onChange={(active) => updateRelation({ active })} />
-            <TextField label="Notes" value={relation.notes} onChange={(notes) => updateRelation({ notes })} />
             <CheckboxField
               label="Custom relation styling"
               checked={Boolean(relation.graph_custom?.enabled)}
-              onChange={(enabled) => updateRelation({ graph_custom: enabled ? { enabled, line_type: "solid", color: customColor, hover_text: relation.notes, directed: false } : undefined })}
+              onChange={(enabled) => updateRelation({ graph_custom: enabled ? { enabled, line_type: "solid", color: customColor, hover_text: relation.relation_type, directed: false } : undefined })}
             />
             {relation.graph_custom?.enabled && (
               <>

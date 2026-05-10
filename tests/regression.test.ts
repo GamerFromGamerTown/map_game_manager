@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import { commitTurn, previewNextTurn, settlementProductionForCountry } from "../src/engine/calculations";
 import { createEmptyState } from "../src/data/defaultState";
 import { normalizeLoadedState } from "../src/data/migrations";
-import { inferSaveFileKind } from "../src/data/saveFiles";
+import { exportGameStateArchiveBytes, importGameStateArchiveBytes } from "../src/data/saveArchive";
+import { inferSaveFileKind, loadGameSaveFromBytes } from "../src/data/saveFiles";
 import { validateGameState } from "../src/data/validation";
 import { policyChangeStabilityCost } from "../src/engine/policies";
 import { buildRelationsGraphEdges, countryNodeRadius, createDefaultGraphPositions } from "../src/components/DiplomacyGraph";
@@ -135,13 +136,237 @@ test("validation accepts the empty default save and rejects malformed imports", 
   assert.throws(() => validateGameState(invalidCustomRelation), /graph_custom/i);
 });
 
-test("save file detection only accepts JSON backups", () => {
-  assert.equal(inferSaveFileKind(new File(["{}"], "backup.json", { type: "application/json" })), "json");
+test("save file detection accepts structured archives and legacy JSON backups", () => {
+  assert.equal(inferSaveFileKind(new File(["{}"], "backup.json", { type: "application/json" })), "legacy-json");
+  assert.equal(inferSaveFileKind(new File([""], "backup.gm-save.zip", { type: "application/zip" })), "archive");
+  assert.equal(inferSaveFileKind(new File([""], "backup.zip", { type: "application/zip" })), "archive");
   assert.throws(
     () => inferSaveFileKind(new File([""], "backup.sqlite", { type: "application/x-sqlite3" })),
     /unsupported save file type/i
   );
   assert.throws(() => inferSaveFileKind(new File([""], "backup.db")), /unsupported save file type/i);
+});
+
+const stateWithAllSaveDomains = (): GameState => {
+  const state = stateWithCountries(["a", "b"]);
+  state.turnNumber = 5;
+  state.countries[0].aliases = ["Player A"];
+  state.countries[1].aliases = ["Player B", "Diplomacy Alias"];
+  state.graphPositions = {
+    a: { x: 120, y: 220 },
+    b: { x: 420, y: 220 }
+  };
+  state.rules.settings.partial_trade_transfer = true;
+  state.settlements = [
+    makeSettlement("a", "capital", {
+      tier: "city",
+      is_capital: true,
+      upkeep_option: "B",
+      biome_or_resource_type: "stat_gold"
+    })
+  ];
+  state.factories = [
+    {
+      id: "factory-a",
+      country_id: "a",
+      type: "Iron Parts Factory",
+      active: true,
+      damaged: false,
+      bombed: false,
+      notes: "factory note"
+    }
+  ];
+  state.stockpiles = state.stockpiles.map((stockpile) =>
+    stockpile.country_id === "a" && stockpile.resource_type === "iron_parts"
+      ? { ...stockpile, amount: 7 }
+      : stockpile
+  );
+  state.diplomacy = [
+    {
+      id: "relation-a-b",
+      relation_type: "Guarantee",
+      country_a_id: "a",
+      country_b_id: "b",
+      active: true,
+      notes: "directional relation"
+    }
+  ];
+  state.trades = [
+    {
+      id: "trade-a-b-food",
+      sender_country_id: "a",
+      receiver_country_id: "b",
+      resource_type: "food",
+      amount_per_turn: 2,
+      payment_gold_per_turn: 0,
+      recurring: true,
+      route_type: "abstract",
+      sea_transport_cost_per_unit: 0,
+      route_valid: true,
+      blocked_by_embargo: false,
+      active: true,
+      notes: "trade note"
+    }
+  ];
+  state.puppets = [
+    {
+      id: "puppet-a-b",
+      master_country_id: "a",
+      puppet_country_id: "b",
+      puppet_type: Object.keys(state.rules.puppetTypes)[0] ?? "Protectorate",
+      tribute_percent: 10,
+      rebellion_immunity_turns_remaining: 1,
+      active: true,
+      notes: "puppet note"
+    }
+  ];
+  state.operations = [
+    {
+      id: "operation-a-b",
+      name: "Operation Save Test",
+      attacker_country_id: "a",
+      defender_country_id: "b",
+      operation_type: Object.keys(state.rules.military.operations)[0] ?? "General Push Offensive",
+      troops_normal: 1000,
+      troops_high_quality: 0,
+      troops_tank: 0,
+      supply_required: 1,
+      supply_allocated: 1,
+      status: "planned",
+      notes: "operation note"
+    }
+  ];
+  state.diceRolls = [
+    {
+      id: "dice-a",
+      turn_number: 5,
+      country_id: "a",
+      roll_type: "attack",
+      raw_d20: 12,
+      modifiers_json: "{}",
+      final_score: 12,
+      result_category: "success",
+      notes: "roll note"
+    }
+  ];
+  state.turnLogs = [
+    {
+      id: "turn-log-a",
+      turn_number: 4,
+      country_id: "a",
+      gold_before: 1,
+      gold_after: 2,
+      stability_before: 3,
+      stability_after: 4,
+      manpower_before: 5,
+      manpower_after: 6,
+      resources_before_json: "{}",
+      resources_after_json: "{}",
+      formula_breakdown_json: "{}",
+      warnings_json: "[]",
+      gm_notes: "log note"
+    }
+  ];
+  state.overrides = [
+    {
+      id: "override-a",
+      turn_number: 5,
+      entity_type: "country",
+      entity_id: "a",
+      field_name: "gold",
+      old_value: "1",
+      new_value: "2",
+      reason: "test override",
+      timestamp: "2026-05-09T00:00:00.000Z"
+    }
+  ];
+  return state;
+};
+
+test("structured save archive round-trips every saved domain without data loss", () => {
+  const state = stateWithAllSaveDomains();
+
+  const archive = exportGameStateArchiveBytes(state);
+  const loaded = importGameStateArchiveBytes(archive);
+
+  assert.equal(loaded.format, "archive");
+  assert.equal(loaded.warnings.length, 0);
+  assert.deepEqual(loaded.state, normalizeLoadedState(state));
+});
+
+test("legacy monolithic JSON saves migrate through the archive-aware loader", () => {
+  const state = stateWithAllSaveDomains();
+
+  const loaded = loadGameSaveFromBytes(new TextEncoder().encode(JSON.stringify(state)), "legacy-backup.json");
+
+  assert.equal(loaded.format, "legacy-json");
+  assert.ok(loaded.warnings.some((warning) => /legacy monolithic JSON/i.test(warning)));
+  assert.deepEqual(loaded.state, normalizeLoadedState(state));
+});
+
+test("saved archive aliases resolve Discord diplomacy and trade references without a bundle alias map", () => {
+  const state = stateWithCountries(["current", "counterpart"]);
+  state.countries[1].aliases = ["Saved Alias"];
+  const archive = exportGameStateArchiveBytes(state);
+  const loaded = importGameStateArchiveBytes(archive);
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Country CURRENT",
+        "## Resources:",
+        "**Trades to (imports) and amount:** 2 iron parts (Saved Alias)",
+        "## Diplomatics",
+        "**Guarantee:** Saved Alias"
+      ].join("\n")
+    },
+    { content: "# Country COUNTERPART" }
+  ]);
+
+  const result = applyStatSheetImport(loaded.state, bundle);
+
+  assert.equal(
+    result.applied,
+    true,
+    result.report.errors.map((error) => error.message).join("\n")
+  );
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === "counterpart" &&
+        trade.receiver_country_id === "current" &&
+        trade.resource_type === "iron_parts"
+    )
+  );
+  assert.ok(
+    result.state.diplomacy.some(
+      (relation) =>
+        relation.relation_type === "Guarantee" &&
+        relation.country_a_id === "current" &&
+        relation.country_b_id === "counterpart"
+    )
+  );
+});
+
+test("unknown saved-alias references block with the source stat-sheet line", () => {
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Country A",
+        "## Diplomatics",
+        "**Guarantee:** Missing Alias"
+      ].join("\n")
+    },
+    { content: "# Country B" }
+  ]);
+
+  const result = applyStatSheetImport(createEmptyState(), bundle);
+
+  assert.equal(result.applied, false);
+  const error = result.report.errors.find((item) => /Missing Alias/i.test(item.message));
+  assert.ok(error);
+  assert.equal(error.sourceLine, "**Guarantee:** Missing Alias");
+  assert.equal(error.lineNumber, 3);
+  assert.match(error.suggestedFix, /save archive aliases/i);
 });
 
 test("normalization fills newly-added rule defaults without country data", () => {
@@ -151,7 +376,7 @@ test("normalization fills newly-added rule defaults without country data", () =>
 
   const normalized = normalizeLoadedState(state);
 
-  assert.equal(normalized.rules.settings.base_capital_gold_per_turn, 2000);
+  assert.equal(normalized.rules.settings.base_capital_gold_per_turn, 0);
   assert.equal(normalized.rules.rulingParties.Democratic.stability_per_turn_at_peace, 10);
   assert.equal(previewNextTurn(normalized).countries.length, 0);
 });
@@ -690,21 +915,44 @@ test("stat sheet parser accepts noisy and misspelled settlement tier headings", 
   );
 });
 
-test("stat sheet parser keeps settlement category separate from upkeep and gold formula text", () => {
+test("stat sheet parser keeps Erympus city upkeep separate from settlement category", () => {
   const parsed = parseStatSheetText(
     [
-      "# Country A",
+      "# The New Eruyios Empire",
       "## Settlements:",
       "### Cities:",
       "Gold:",
-      "1 (+3.000) Gold City: +2 gold, -5 food, -2 iron parts (Capital)"
+      "1 (+3.000) Erympus: +2 gold, -5 food, -2 iron parts (Capital)"
     ].join("\n")
   );
 
   assert.equal(parsed.report.errors.length, 0);
   assert.equal(parsed.sheet.settlements.length, 1);
-  assert.equal(parsed.sheet.settlements[0].biome_or_resource_type, "stat_gold");
-  assert.equal(parsed.sheet.settlements[0].upkeep_option, "B");
+  const settlement = parsed.sheet.settlements[0];
+  assert.equal(settlement.name, "Erympus");
+  assert.equal(settlement.tier, "city");
+  assert.equal(settlement.is_capital, true);
+  assert.equal(settlement.biome_or_resource_type, "stat_gold");
+  assert.notEqual(settlement.biome_or_resource_type, "stat_food_gold");
+  assert.equal(settlement.upkeep_option, "B");
+  assert.match(settlement.notes ?? "", /\+2 gold/);
+  assert.match(settlement.notes ?? "", /-5 food/);
+  assert.match(settlement.notes ?? "", /-2 iron parts/);
+});
+
+test("stat sheet parser does not invent combo settlement categories from resource output", () => {
+  const parsed = parseStatSheetText(
+    [
+      "# Country A",
+      "## Settlements:",
+      "### Villages:",
+      "1 (+500) Mixed Output: +1 food, +1 gold"
+    ].join("\n")
+  );
+
+  assert.equal(parsed.report.errors.length, 0);
+  assert.equal(parsed.sheet.settlements.length, 1);
+  assert.notEqual(parsed.sheet.settlements[0].biome_or_resource_type, "stat_food_gold");
 });
 
 test("stat sheet import preserves rules and turn metadata while merging countries", () => {
@@ -793,6 +1041,48 @@ test("stat sheet import preserves city iron upkeep route from parsed settlement 
   assert.equal(preview.warnings.some((warning) => /Aluminium Parts/i.test(warning)), false);
 });
 
+test("iron-route city preview checks food and iron parts only", () => {
+  const state = stateWithCountries(["a"]);
+  state.stockpiles = [
+    ...zeroStockpiles("a").filter(
+      (stockpile) =>
+        stockpile.resource_type !== "food" &&
+        stockpile.resource_type !== "iron_parts" &&
+        stockpile.resource_type !== "aluminium_parts"
+    ),
+    { country_id: "a", resource_type: "food", amount: 5 },
+    { country_id: "a", resource_type: "iron_parts", amount: 2 },
+    { country_id: "a", resource_type: "aluminium_parts", amount: 0 }
+  ];
+  state.settlements = [
+    makeSettlement("a", "iron-city", {
+      name: "Iron Route City",
+      tier: "city",
+      upkeep_option: "B"
+    })
+  ];
+
+  const preview = previewForCountry(state, "a");
+
+  assert.equal(preview.settlementUpkeep.food, 5);
+  assert.equal(preview.settlementUpkeep.iron_parts, 2);
+  assert.equal(preview.settlementUpkeep.aluminium_parts ?? 0, 0);
+  assert.equal(preview.warnings.some((warning) => /Aluminium Parts/i.test(warning)), false);
+});
+
+test("default settlement capital bonuses match city-tier rules", () => {
+  const state = stateWithCountries(["a"]);
+
+  state.settlements = [makeSettlement("a", "city-capital", { tier: "city", is_capital: true })];
+  assert.equal(previewForCountry(state, "a").capitalGold, 1000);
+
+  state.settlements = [makeSettlement("a", "large-city-capital", { tier: "large_city", is_capital: true })];
+  assert.equal(previewForCountry(state, "a").capitalGold, 3000);
+
+  state.settlements = [makeSettlement("a", "metropole-capital", { tier: "metropole", is_capital: true })];
+  assert.equal(previewForCountry(state, "a").capitalGold, 5000);
+});
+
 test("stat sheet import resolves player aliases and preserves explicit iron upkeep from fixture artifacts", () => {
   const fixture = loadStatSheetTextFixture("tests/fixtures/discord-stat-sheet-alias-import.json");
   const bundle = buildStatSheetBundleFromTexts(fixture.sources);
@@ -865,6 +1155,32 @@ test("stat sheet import resolves player aliases and preserves explicit iron upke
   assert.equal(ironRoutePreview.warnings.some((warning) => /Aluminium Parts/i.test(warning)), false);
 });
 
+test("stat sheet import blocks ambiguous player aliases", () => {
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Country A",
+        "## Diplomatics",
+        "**Guarantee:** Shared"
+      ].join("\n")
+    },
+    { content: "# Country B" },
+    { content: "# Country C" }
+  ]);
+  (bundle as typeof bundle & { countryAliases: StatSheetTextFixture["countryAliases"] }).countryAliases = [
+    { country_name: "Country B", aliases: ["Shared"] },
+    { country_name: "Country C", aliases: ["Shared"] }
+  ];
+
+  const result = applyStatSheetImport(createEmptyState(), bundle);
+
+  assert.equal(result.applied, false);
+  assert.ok(
+    result.report.errors.some((error) => /Shared matches more than one country/i.test(error.message)),
+    result.report.errors.map((error) => error.message).join("\n")
+  );
+});
+
 test("stat sheet import creates directional trades and guarantees from stat sheet text", () => {
   const state = stateWithCountries(["a", "b", "c"]);
 
@@ -911,6 +1227,124 @@ test("stat sheet import creates directional trades and guarantees from stat shee
   const pact = result.state.diplomacy.find((relation) => relation.relation_type === "Non-Aggression Pact");
   assert.equal(pact?.country_a_id, "a");
   assert.equal(pact?.country_b_id, "c");
+});
+
+test("stat sheet parser accepts parenthesized trade counterpart syntax", () => {
+  const parsed = parseStatSheetText(
+    [
+      "# Country A",
+      "## Resources:",
+      "**Trades to (imports) and amount:** 1 coal, 1 iron, 3.000 gold (Country B), 1 necessities (Country C)",
+      "**Trades to (exports) and amount:** 2 aluminium (Country B)"
+    ].join("\n")
+  );
+
+  assert.equal(parsed.report.errors.length, 0);
+  assert.equal(parsed.report.warnings.some((warning) => /Trade line could not be parsed/i.test(warning.message)), false);
+  assert.deepEqual(
+    parsed.sheet.trades.map((trade) => [
+      trade.direction,
+      trade.counterpart_name,
+      trade.resource_type,
+      trade.amount_per_turn
+    ]),
+    [
+      ["import", "Country B", "coal", 1],
+      ["import", "Country B", "iron", 1],
+      ["import", "Country B", "gold", 3000],
+      ["import", "Country C", "necessities", 1],
+      ["export", "Country B", "aluminium", 2]
+    ]
+  );
+});
+
+test("stat sheet import resolves player aliases in parenthesized trades and guarantee directions", () => {
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Current Country",
+        "## Resources:",
+        "**Trades to (imports) and amount:** 2 iron parts (Elf)",
+        "**Trades to (exports) and amount:** 1 food (Elf)",
+        "## Diplomatics",
+        "**Guarantee:** Elf"
+      ].join("\n")
+    },
+    { content: "# Counterpart Country" }
+  ]);
+  (bundle as typeof bundle & { countryAliases: StatSheetTextFixture["countryAliases"] }).countryAliases = [
+    { country_name: "Counterpart Country", aliases: ["Elf"] }
+  ];
+
+  const result = applyStatSheetImport(createEmptyState(), bundle);
+
+  assert.equal(
+    result.applied,
+    true,
+    result.report.errors.map((error) => error.message).join("\n")
+  );
+  const current = result.state.countries.find((country) => country.name === "Current Country");
+  const counterpart = result.state.countries.find((country) => country.name === "Counterpart Country");
+  assert.ok(current);
+  assert.ok(counterpart);
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === counterpart.id &&
+        trade.receiver_country_id === current.id &&
+        trade.resource_type === "iron_parts" &&
+        trade.amount_per_turn === 2
+    )
+  );
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === current.id &&
+        trade.receiver_country_id === counterpart.id &&
+        trade.resource_type === "food" &&
+        trade.amount_per_turn === 1
+    )
+  );
+  const guarantee = result.state.diplomacy.find((relation) => relation.relation_type === "Guarantee");
+  assert.equal(guarantee?.country_a_id, current.id);
+  assert.equal(guarantee?.country_b_id, counterpart.id);
+});
+
+test("stat sheet import resolves unambiguous shortened player alias references", () => {
+  const bundle = buildStatSheetBundleFromTexts([
+    {
+      content: [
+        "# Current Country",
+        "## Resources:",
+        "**Trades to (imports) and amount:** 1 coal (Coun)"
+      ].join("\n")
+    },
+    { content: "# Counterpart Country" }
+  ]);
+  (bundle as typeof bundle & { countryAliases: StatSheetTextFixture["countryAliases"] }).countryAliases = [
+    { country_name: "Counterpart Country", aliases: ["Counterpart"] }
+  ];
+
+  const result = applyStatSheetImport(createEmptyState(), bundle);
+
+  assert.equal(
+    result.applied,
+    true,
+    result.report.errors.map((error) => error.message).join("\n")
+  );
+  const current = result.state.countries.find((country) => country.name === "Current Country");
+  const counterpart = result.state.countries.find((country) => country.name === "Counterpart Country");
+  assert.ok(current);
+  assert.ok(counterpart);
+  assert.ok(
+    result.state.trades.some(
+      (trade) =>
+        trade.sender_country_id === counterpart.id &&
+        trade.receiver_country_id === current.id &&
+        trade.resource_type === "coal" &&
+        trade.amount_per_turn === 1
+    )
+  );
 });
 
 test("stat sheet import refuses malformed bundles with suggested fixes", () => {

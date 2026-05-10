@@ -7,7 +7,7 @@ export const defaultRules: RulesConfig = {
     partial_factory_production: false,
     partial_trade_transfer: false,
     apply_capital_bonus: true,
-    base_capital_gold_per_turn: 2000,
+    base_capital_gold_per_turn: 0,
     puppet_rebellion_immunity_turns: 4,
     sea_transport_cost_per_unit_resource: 500,
     base_manpower_cap: 40000,
@@ -31,7 +31,7 @@ export const defaultRules: RulesConfig = {
     },
     city: {
       gold_per_turn: 3000,
-      capital_extra_gold_per_turn: 3000,
+      capital_extra_gold_per_turn: 1000,
       manpower_cap_bonus: 20000,
       manpower_gain_per_turn: 5000,
       tier_number: 2,
@@ -43,7 +43,7 @@ export const defaultRules: RulesConfig = {
     },
     large_city: {
       gold_per_turn: 7000,
-      capital_extra_gold_per_turn: 6000,
+      capital_extra_gold_per_turn: 3000,
       manpower_cap_bonus: 50000,
       manpower_gain_per_turn: 15000,
       tier_number: 3,
@@ -55,7 +55,7 @@ export const defaultRules: RulesConfig = {
     },
     metropole: {
       gold_per_turn: 16000,
-      capital_extra_gold_per_turn: 10000,
+      capital_extra_gold_per_turn: 5000,
       manpower_cap_bonus: 200000,
       manpower_gain_per_turn: 30000,
       tier_number: 4,

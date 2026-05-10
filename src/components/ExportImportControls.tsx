@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { DatabaseBackup, FileJson, FolderOpen, ScrollText, Upload } from "lucide-react";
 import { GameState } from "../types";
-import { downloadJson, downloadText } from "../data/downloads";
-import { loadGameStateFromFile } from "../data/saveFiles";
+import { downloadJson, downloadSaveArchive, downloadText } from "../data/downloads";
+import { loadGameSaveFromFile } from "../data/saveFiles";
 import { renderAllCountryStatSheets } from "../export/statSheets";
 import { applyStatSheetImport } from "../import/statSheetImport";
 
@@ -31,10 +31,22 @@ export function ExportImportControls({
 }) {
   const jsonInputRef = useRef<HTMLInputElement>(null);
   const [statSheetStatus, setStatSheetStatus] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
 
   const importJson = async (file?: File) => {
     if (!file) return;
-    setState(await loadGameStateFromFile(file));
+    try {
+      const loaded = await loadGameSaveFromFile(file);
+      setState(loaded.state);
+      setSaveStatus(
+        [
+          `Imported ${loaded.formatLabel}.`,
+          ...loaded.warnings.map((warning) => `Warning: ${warning}`)
+        ].join(" ")
+      );
+    } catch (error) {
+      setSaveStatus(error instanceof Error ? error.message : "Could not import that save file.");
+    }
   };
 
   const importDiscordStatSheets = async () => {
@@ -103,14 +115,22 @@ export function ExportImportControls({
     }
   };
 
+  const savedAliasCount = state.countries.reduce(
+    (sum, country) => sum + (country.short_name ? 1 : 0) + (country.aliases?.length ?? 0),
+    0
+  );
+
   return (
     <details className="io-menu">
       <summary>
         <DatabaseBackup size={16} /> Import / Export
       </summary>
       <div className="menu-panel">
+        <button onClick={() => downloadSaveArchive(state, `gm-game-turn-${state.turnNumber}.gm-save.zip`)}>
+          <FileJson size={16} /> Export save archive
+        </button>
         <button onClick={() => downloadJson(state, `gm-game-turn-${state.turnNumber}.json`)}>
-          <FileJson size={16} /> Export JSON backup
+          <FileJson size={16} /> Export legacy JSON backup
         </button>
         <button
           onClick={() =>
@@ -133,7 +153,7 @@ export function ExportImportControls({
           <ScrollText size={16} /> Export verbatim stat sheets
         </button>
         <button onClick={() => (canRememberSave ? onRememberAndImport() : jsonInputRef.current?.click())}>
-          <Upload size={16} /> Import JSON backup
+          <Upload size={16} /> Import save archive / JSON backup
         </button>
         <button onClick={() => void importDiscordStatSheets()}>
           <Upload size={16} /> Import from Discord stat sheets
@@ -149,13 +169,19 @@ export function ExportImportControls({
           </>
         )}
         {rememberedSaveStatus && <p className="menu-note">{rememberedSaveStatus}</p>}
+        {saveStatus && <p className="menu-note">{saveStatus}</p>}
+        <p className="menu-note">
+          {savedAliasCount > 0
+            ? `${savedAliasCount} saved alias/short-name references loaded for Discord imports.`
+            : "No saved aliases loaded; Discord alias-only references will block until a save archive with aliases is imported."}
+        </p>
         {statSheetStatus && <p className="menu-note">{statSheetStatus}</p>}
       </div>
       <input
         ref={jsonInputRef}
         hidden
         type="file"
-        accept=".json,application/json"
+        accept=".gm-save.zip,.gmarchive,.zip,.json,application/zip,application/json"
         onChange={(event) => {
           void importJson(event.target.files?.[0]);
           event.currentTarget.value = "";

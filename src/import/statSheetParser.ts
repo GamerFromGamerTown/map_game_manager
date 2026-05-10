@@ -291,9 +291,6 @@ const resourceTypeFromPositiveOutput = (line: string): string => {
   const hasBauxite = Number(bag.bauxite ?? 0) > 0;
   const hasCopper = Number(bag.copper ?? 0) > 0;
   const hasGold = Number(bag.gold_ore ?? 0) > 0;
-  if (hasFood && hasBauxite) return "stat_food_bauxite";
-  if (hasFood && hasCoal) return "stat_food_coal";
-  if (hasFood && hasGold) return "stat_food_gold";
   if (hasWood) return "stat_wood";
   if (hasCoal) return "stat_coal";
   if (hasIron) return "stat_iron";
@@ -411,6 +408,98 @@ const splitListItems = (text: string): string[] =>
     .map((item) => item.trim())
     .filter(Boolean);
 
+const parseTradeResourceEntries = (
+  resourceText: string,
+  counterpartName: string,
+  direction: "import" | "export",
+  context: ParseContext,
+  report: StatSheetReport,
+  lineNumber: number,
+  sourceLine: string,
+  countryName: string,
+  notes: string
+): ParsedStatSheetTrade[] => {
+  const trades: ParsedStatSheetTrade[] = [];
+  const matcher = /([+-]?\d[\d., ]*)\s+([a-zA-Z][a-zA-Z _-]*?)(?=,|$)/g;
+  for (const match of resourceText.matchAll(matcher)) {
+    const amount = parseNumber(match[1]);
+    const rawResource = match[2].trim();
+    const resource = normalizeLabel(rawResource) === "gold" ? "gold" : resolveResource(rawResource);
+    if (amount === undefined || !resource) {
+      pushIssue(
+        report,
+        issue(
+          "warning",
+          "Trade line has an unknown resource or amount.",
+          "Use a known resource name and a numeric amount.",
+          context,
+          lineNumber,
+          sourceLine,
+          countryName
+        )
+      );
+      continue;
+    }
+    trades.push({
+      direction,
+      counterpart_name: counterpartName,
+      resource_type: resource as TradableType,
+      amount_per_turn: amount,
+      notes,
+      lineNumber,
+      sourceLine
+    });
+  }
+  return trades;
+};
+
+const parseParenthesizedTradeList = (
+  text: string,
+  direction: "import" | "export",
+  context: ParseContext,
+  report: StatSheetReport,
+  lineNumber: number,
+  sourceLine: string,
+  countryName: string
+): ParsedStatSheetTrade[] => {
+  const trades: ParsedStatSheetTrade[] = [];
+  let cursor = 0;
+  while (cursor < text.length) {
+    const open = text.indexOf("(", cursor);
+    if (open < 0) break;
+    const close = text.indexOf(")", open + 1);
+    if (close < 0) break;
+
+    const resourceText = text.slice(cursor, open).replace(/^[\s,]+|[\s,]+$/g, "");
+    const counterpartName = text.slice(open + 1, close).trim();
+    const groupEnd = close + 1;
+    if (resourceText && counterpartName) {
+      trades.push(
+        ...parseTradeResourceEntries(
+          resourceText,
+          counterpartName,
+          direction,
+          context,
+          report,
+          lineNumber,
+          sourceLine,
+          countryName,
+          text.slice(cursor, groupEnd).trim()
+        )
+      );
+    }
+
+    cursor = groupEnd;
+    while (true) {
+      const rest = text.slice(cursor);
+      const noteMatch = rest.match(/^\s*\([^)]*\)/);
+      if (!noteMatch) break;
+      cursor += noteMatch[0].length;
+    }
+  }
+  return trades;
+};
+
 const parseTradeList = (
   text: string,
   direction: "import" | "export",
@@ -421,6 +510,8 @@ const parseTradeList = (
   countryName: string
 ): ParsedStatSheetTrade[] => {
   if (!text || /^none$/i.test(text)) return [];
+  const parenthesized = parseParenthesizedTradeList(text, direction, context, report, lineNumber, sourceLine, countryName);
+  if (parenthesized.length > 0) return parenthesized;
   return splitListItems(text).flatMap((item) => {
     const match = item.match(/^([+-]?\d[\d., ]*)\s+(.+?)\s+(?:from|to)\s+(.+)$/i);
     if (!match) {
@@ -462,13 +553,15 @@ const parseTradeList = (
         counterpart_name: match[3].trim(),
         resource_type: resource as TradableType,
         amount_per_turn: amount,
-        notes: item
+        notes: item,
+        lineNumber,
+        sourceLine
       }
     ];
   });
 };
 
-const parseDiplomacyLine = (line: string): ParsedStatSheetRelation[] => {
+const parseDiplomacyLine = (line: string, lineNumber: number): ParsedStatSheetRelation[] => {
   const clean = stripMarkdown(line);
   const match = clean.match(/^([^:]+):\s*(.*)$/);
   if (!match) return [];
@@ -476,7 +569,9 @@ const parseDiplomacyLine = (line: string): ParsedStatSheetRelation[] => {
   if (!relationType || !match[2].trim() || /^none$/i.test(match[2].trim())) return [];
   return splitListItems(match[2]).map((counterpartName) => ({
     relation_type: relationType,
-    counterpart_name: counterpartName
+    counterpart_name: counterpartName,
+    lineNumber,
+    sourceLine: line
   }));
 };
 
@@ -633,7 +728,7 @@ export const parseStatSheetText = (text: string, context: ParseContext = {}): Mu
       const policy = parsePolicy(line);
       if (policy) policies.push(policy);
     } else if (section === "diplomacy") {
-      diplomacy.push(...parseDiplomacyLine(line));
+      diplomacy.push(...parseDiplomacyLine(line, lineNumber));
     }
   });
 

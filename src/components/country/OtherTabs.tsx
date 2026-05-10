@@ -57,7 +57,7 @@ export function DiplomacyTab({
       </button>
       <div className="table-wrap">
         <table>
-          <thead><tr><th>Type</th><th>A</th><th>B</th><th>Active</th><th>Notes</th><th></th></tr></thead>
+          <thead><tr><th>Type</th><th>A</th><th>B</th><th>Active</th><th></th></tr></thead>
           <tbody>
             {relations.map((relation) => (
               <tr key={relation.id}>
@@ -77,7 +77,6 @@ export function DiplomacyTab({
                   </select>
                 </td>
                 <td><input type="checkbox" checked={relation.active} onChange={(event) => update(relation.id, { active: event.target.checked })} /></td>
-                <td><input value={relation.notes} onChange={(event) => update(relation.id, { notes: event.target.value })} /></td>
                 <td><DeleteButton onClick={() => patchState((current) => ({ ...current, diplomacy: current.diplomacy.filter((item) => item.id !== relation.id) }))} /></td>
               </tr>
             ))}
@@ -118,7 +117,7 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
       )}
       <div className="table-wrap">
         <table>
-          <thead><tr><th>Master</th><th>Puppet</th><th>Type</th><th>Tribute %</th><th>Immunity</th><th>Active</th><th>Notes</th><th></th></tr></thead>
+          <thead><tr><th>Master</th><th>Puppet</th><th>Type</th><th>Tribute %</th><th>Immunity</th><th>Active</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id}>
@@ -136,7 +135,6 @@ export function PuppetsTab({ state, country, patchState }: { state: GameState; c
                 <td><input type="number" value={row.tribute_percent} onChange={(event) => update(row.id, { tribute_percent: asNumber(event.target.value) })} /></td>
                 <td><input type="number" value={row.rebellion_immunity_turns_remaining} onChange={(event) => update(row.id, { rebellion_immunity_turns_remaining: asNumber(event.target.value) })} /></td>
                 <td><input type="checkbox" checked={row.active} onChange={(event) => update(row.id, { active: event.target.checked })} /></td>
-                <td><input value={row.notes} onChange={(event) => update(row.id, { notes: event.target.value })} /></td>
                 <td><DeleteButton onClick={() => patchState((current) => ({ ...current, puppets: current.puppets.filter((item) => item.id !== row.id) }))} /></td>
               </tr>
             ))}
@@ -254,7 +252,6 @@ export function TradeTab({ state, country, patchState }: { state: GameState; cou
                 <tr className="trade-summary-row">
                   <td colSpan={9}>
                     <div className="trade-summary-line">{tradeSummary(state, row)}</div>
-                    <input value={row.notes} placeholder="Trade notes" onChange={(event) => update(row.id, { notes: event.target.value })} />
                   </td>
                 </tr>
               </Fragment>
@@ -316,7 +313,7 @@ export function MilitaryTab({ state, country, patchState }: { state: GameState; 
       <button onClick={() => addOperation(state, country, patchState)}><Plus size={16} /> Operation</button>
       <div className="table-wrap">
         <table>
-          <thead><tr><th>Name</th><th>Type</th><th>Attacker</th><th>Defender</th><th>Troops N/Q/T</th><th>Supply</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+          <thead><tr><th>Name</th><th>Type</th><th>Attacker</th><th>Defender</th><th>Troops N/Q/T</th><th>Supply</th><th>Status</th><th></th></tr></thead>
           <tbody>
             {rows.map((row) => (
               <tr key={row.id}>
@@ -327,7 +324,6 @@ export function MilitaryTab({ state, country, patchState }: { state: GameState; 
                 <td className="triple-input"><input type="number" value={row.troops_normal} onChange={(event) => update(row.id, { troops_normal: asNumber(event.target.value) })} /><input type="number" value={row.troops_high_quality} onChange={(event) => update(row.id, { troops_high_quality: asNumber(event.target.value) })} /><input type="number" value={row.troops_tank} onChange={(event) => update(row.id, { troops_tank: asNumber(event.target.value) })} /></td>
                 <td className="triple-input two"><input type="number" value={row.supply_required} onChange={(event) => update(row.id, { supply_required: asNumber(event.target.value) })} /><input type="number" value={row.supply_allocated} onChange={(event) => update(row.id, { supply_allocated: asNumber(event.target.value) })} /></td>
                 <td><input value={row.status} onChange={(event) => update(row.id, { status: event.target.value })} /></td>
-                <td><input value={row.notes} onChange={(event) => update(row.id, { notes: event.target.value })} /></td>
                 <td><DeleteButton onClick={() => patchState((current) => ({ ...current, operations: current.operations.filter((item) => item.id !== row.id) }))} /></td>
               </tr>
             ))}
@@ -369,12 +365,12 @@ function addOperation(state: GameState, country: Country, patchState: (updater: 
 
 export function DiceLogTab({ state, country }: { state: GameState; country: Country }) {
   const logs = state.diceRolls.filter((roll) => roll.country_id === country.id);
-  return <JsonTable rows={logs.map((log) => ({ turn: log.turn_number, type: log.roll_type, d20: log.raw_d20, final: log.final_score, result: log.result_category, modifiers: log.modifiers_json, notes: log.notes }))} />;
+  return <JsonTable rows={logs.map((log) => ({ turn: log.turn_number, type: log.roll_type, d20: log.raw_d20, final: log.final_score, result: log.result_category, modifiers: log.modifiers_json }))} />;
 }
 
 export function TurnHistoryTab({ state, country }: { state: GameState; country: Country }) {
   const rows = state.turnLogs.filter((log) => log.country_id === country.id).slice().reverse();
-  return <JsonTable rows={rows.map((log) => ({ turn: log.turn_number, gold: `${log.gold_before} -> ${log.gold_after}`, stability: `${log.stability_before} -> ${log.stability_after}`, manpower: `${log.manpower_before} -> ${log.manpower_after}`, warnings: log.warnings_json, formula: log.formula_breakdown_json, notes: log.gm_notes }))} />;
+  return <JsonTable rows={rows.map((log) => ({ turn: log.turn_number, gold: `${log.gold_before} -> ${log.gold_after}`, stability: `${log.stability_before} -> ${log.stability_after}`, manpower: `${log.manpower_before} -> ${log.manpower_after}`, warnings: log.warnings_json, formula: log.formula_breakdown_json }))} />;
 }
 
 function CountrySelect({ state, value, exclude, onChange }: { state: GameState; value: string; exclude?: string; onChange: (id: string) => void }) {

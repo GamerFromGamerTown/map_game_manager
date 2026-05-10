@@ -71,12 +71,6 @@ export function FactoriesTab({
                   <Trash2 size={16} />
                 </button>
               </div>
-              <div className="settlement-notes">
-                <details>
-                  <summary>Notes</summary>
-                  <input value={factory.notes} onChange={(event) => updateFactory(factory.id, { notes: event.target.value })} />
-                </details>
-              </div>
             </article>
           );
         })}

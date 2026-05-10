@@ -83,6 +83,27 @@ const aliasValuesForSheet = (sheet: ParsedStatSheet): string[] =>
 const aliasValuesForEntry = (entry: StatSheetCountryAlias): string[] =>
   uniqueStrings([entry.country_name, ...(entry.aliases ?? [])]);
 
+const aliasEntriesForState = (state: GameState): StatSheetCountryAlias[] =>
+  state.countries
+    .map((country) => ({
+      country_name: country.name,
+      aliases: uniqueStrings([country.short_name ?? "", ...(country.aliases ?? [])])
+    }))
+    .filter((entry) => entry.country_name && entry.aliases.length > 0);
+
+const mergeAliasEntries = (entries: StatSheetCountryAlias[]): StatSheetCountryAlias[] => {
+  const byCountry = new Map<string, StatSheetCountryAlias>();
+  entries.forEach((entry) => {
+    const key = normalizeKey(entry.country_name);
+    const existing = byCountry.get(key);
+    byCountry.set(key, {
+      country_name: existing?.country_name ?? entry.country_name,
+      aliases: uniqueStrings([...(existing?.aliases ?? []), ...(entry.aliases ?? [])])
+    });
+  });
+  return [...byCountry.values()];
+};
+
 const matchingAliasEntry = (
   values: string[],
   entries: StatSheetCountryAlias[]
@@ -103,31 +124,93 @@ const mergeAliases = (countryName: string, ...aliasLists: string[][]): string[] 
   return aliases.length > 0 ? aliases : undefined;
 };
 
+const pushAliasAmbiguityErrors = (
+  entries: Array<{ countryName: string; aliases: string[] }>,
+  report: StatSheetReport
+) => {
+  const index = new Map<string, { label: string; countryNames: Set<string> }>();
+  entries.forEach((entry) => {
+    entry.aliases.forEach((alias) => {
+      normalizedReferenceKeys(alias).forEach((key) => {
+        const existing = index.get(key) ?? { label: alias, countryNames: new Set<string>() };
+        existing.countryNames.add(entry.countryName);
+        index.set(key, existing);
+      });
+    });
+  });
+
+  const reported = new Set<string>();
+  index.forEach((entry, key) => {
+    if (entry.countryNames.size <= 1 || reported.has(key)) return;
+    reported.add(key);
+    report.errors.push(
+      reportError(
+        `Player alias ${entry.label} matches more than one country.`,
+        "Make that player/country alias unique in the loaded save archive aliases or the stat-sheet bundle."
+      )
+    );
+  });
+};
+
 interface CountryResolver {
   resolve: (reference: string) => { country?: Country; ambiguous?: Country[] };
 }
 
 const createCountryResolver = (countries: Country[]): CountryResolver => {
-  const index = new Map<string, Country[]>();
-  countries.forEach((country) => {
-    aliasValuesForCountry(country).forEach((value) => {
-      normalizedReferenceKeys(value).forEach((key) => {
-        const existing = index.get(key) ?? [];
-        if (!existing.some((item) => item.id === country.id)) {
-          index.set(key, [...existing, country]);
-        }
-      });
+  const nameIndex = new Map<string, Country[]>();
+  const shortNameIndex = new Map<string, Country[]>();
+  const aliasIndex = new Map<string, Country[]>();
+  const prefixEntries: Array<{ key: string; country: Country }> = [];
+
+  const addToIndex = (index: Map<string, Country[]>, key: string, country: Country) => {
+    const existing = index.get(key) ?? [];
+    if (!existing.some((item) => item.id === country.id)) {
+      index.set(key, [...existing, country]);
+    }
+  };
+
+  const addValue = (index: Map<string, Country[]>, value: string, country: Country) => {
+    normalizedReferenceKeys(value).forEach((key) => {
+      addToIndex(index, key, country);
+      prefixEntries.push({ key, country });
     });
+  };
+
+  countries.forEach((country) => {
+    addValue(nameIndex, country.name, country);
+    if (country.short_name) addValue(shortNameIndex, country.short_name, country);
+    (country.aliases ?? []).forEach((alias) => addValue(aliasIndex, alias, country));
   });
+
+  const matchesFromIndex = (index: Map<string, Country[]>, reference: string): Country[] =>
+    uniqueStrings(normalizedReferenceKeys(reference).flatMap((key) => (index.get(key) ?? []).map((country) => country.id)))
+      .map((id) => countries.find((country) => country.id === id))
+      .filter((country): country is Country => Boolean(country));
+
+  const resolved = (matches: Country[]): { country?: Country; ambiguous?: Country[] } => {
+    if (matches.length === 1) return { country: matches[0] };
+    if (matches.length > 1) return { ambiguous: matches };
+    return {};
+  };
+
+  const prefixMatches = (reference: string): Country[] => {
+    const referenceKeys = normalizedReferenceKeys(reference).filter((key) => key.length >= 3);
+    if (referenceKeys.length === 0) return [];
+    const ids = uniqueStrings(
+      prefixEntries
+        .filter((entry) => referenceKeys.some((key) => entry.key.startsWith(key)))
+        .map((entry) => entry.country.id)
+    );
+    return ids.map((id) => countries.find((country) => country.id === id)).filter((country): country is Country => Boolean(country));
+  };
 
   return {
     resolve(reference: string) {
-      const matches = uniqueStrings(normalizedReferenceKeys(reference).flatMap((key) => (index.get(key) ?? []).map((country) => country.id)))
-        .map((id) => countries.find((country) => country.id === id))
-        .filter((country): country is Country => Boolean(country));
-      if (matches.length === 1) return { country: matches[0] };
-      if (matches.length > 1) return { ambiguous: matches };
-      return {};
+      for (const index of [nameIndex, shortNameIndex, aliasIndex]) {
+        const exact = resolved(matchesFromIndex(index, reference));
+        if (exact.country || exact.ambiguous) return exact;
+      }
+      return resolved(prefixMatches(reference));
     }
   };
 };
@@ -138,10 +221,15 @@ const colorForName = (name: string): string => {
   return `#${hash.toString(16).padStart(6, "0")}`;
 };
 
-const reportError = (message: string, suggestedFix: string): StatSheetIssue => ({
+const reportError = (
+  message: string,
+  suggestedFix: string,
+  source?: Pick<StatSheetIssue, "countryName" | "threadId" | "lineNumber" | "sourceLine">
+): StatSheetIssue => ({
   severity: "error",
   message,
-  suggestedFix
+  suggestedFix,
+  ...source
 });
 
 const isBundle = (value: unknown): value is StatSheetImportBundle => {
@@ -308,7 +396,13 @@ const toRelations = (
       report.errors.push(
         reportError(
           `Diplomacy relation reference ${relation.counterpart_name} matches more than one country.`,
-          "Make that player/country alias unique in the imported save or stat-sheet alias map."
+          "Make that player/country alias unique in the loaded save archive aliases or the stat-sheet bundle.",
+          {
+            countryName: sheet.country.name,
+            threadId: sheet.threadId,
+            lineNumber: relation.lineNumber,
+            sourceLine: relation.sourceLine
+          }
         )
       );
       return [];
@@ -317,7 +411,13 @@ const toRelations = (
       report.errors.push(
         reportError(
           `Diplomacy relation references unknown country ${relation.counterpart_name}.`,
-          "Import that country in the same bundle or create it before importing this stat sheet."
+          "Import that country in the same bundle, create it before importing this stat sheet, or add the missing reference to the save archive aliases.",
+          {
+            countryName: sheet.country.name,
+            threadId: sheet.threadId,
+            lineNumber: relation.lineNumber,
+            sourceLine: relation.sourceLine
+          }
         )
       );
       return [];
@@ -361,7 +461,13 @@ const toTrades = (
       report.errors.push(
         reportError(
           `Trade route reference ${trade.counterpart_name} matches more than one country.`,
-          "Make that player/country alias unique in the imported save or stat-sheet alias map."
+          "Make that player/country alias unique in the loaded save archive aliases or the stat-sheet bundle.",
+          {
+            countryName: sheet.country.name,
+            threadId: sheet.threadId,
+            lineNumber: trade.lineNumber,
+            sourceLine: trade.sourceLine
+          }
         )
       );
       return [];
@@ -370,7 +476,13 @@ const toTrades = (
       report.errors.push(
         reportError(
           `Trade route references unknown country ${trade.counterpart_name}.`,
-          "Import that country in the same bundle or create it before importing this stat sheet."
+          "Import that country in the same bundle, create it before importing this stat sheet, or add the missing reference to the save archive aliases.",
+          {
+            countryName: sheet.country.name,
+            threadId: sheet.threadId,
+            lineNumber: trade.lineNumber,
+            sourceLine: trade.sourceLine
+          }
         )
       );
       return [];
@@ -425,8 +537,18 @@ export const applyStatSheetImport = (state: GameState, bundleValue: unknown): St
   if (report.errors.length > 0) {
     return { applied: false, state, report };
   }
-  const aliasEntries = bundle.countryAliases ?? [];
+  const aliasEntries = mergeAliasEntries([...aliasEntriesForState(next), ...(bundle.countryAliases ?? [])]);
+  pushAliasAmbiguityErrors(
+    aliasEntries.map((entry) => ({ countryName: entry.country_name, aliases: entry.aliases ?? [] })),
+    report
+  );
+  if (report.errors.length > 0) return { applied: false, state, report };
+
   const sheets = bundle.sheets.map((sheet) => prepareSheet(sheet, aliasEntries, report));
+  pushAliasAmbiguityErrors(
+    sheets.map((sheet) => ({ countryName: sheet.country.name, aliases: sheet.country.aliases ?? [] })),
+    report
+  );
 
   const seenNames = new Set<string>();
   for (const sheet of sheets) {

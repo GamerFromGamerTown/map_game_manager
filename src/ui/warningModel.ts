@@ -130,7 +130,7 @@ const normalizeGlobalWarning = (state: GameState, sourceMessage: string, index: 
   let entityType: WarningEntityType = "diplomacy";
   let fieldPath = "diplomacy";
   let message = sourceMessage;
-  let recommendedAction = "Open the relations graph and resolve the conflicting relation or mark the exception in notes.";
+  let recommendedAction = "Open the relations graph and resolve the conflicting relation.";
   let target: WarningTarget = {
     view: "graph",
     label: "Open relations graph"

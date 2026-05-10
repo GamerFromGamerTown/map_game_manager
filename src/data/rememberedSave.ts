@@ -38,6 +38,15 @@ const DB_NAME = "gm-economy-console-file-handles";
 const DB_VERSION = 1;
 const STORE_NAME = "handles";
 const REMEMBERED_SAVE_KEY = "remembered-save";
+const isSupportedSaveName = (name: string): boolean => {
+  const lowerName = name.toLowerCase();
+  return (
+    lowerName.endsWith(".json") ||
+    lowerName.endsWith(".zip") ||
+    lowerName.endsWith(".gm-save.zip") ||
+    lowerName.endsWith(".gmarchive")
+  );
+};
 
 const openHandleDb = () =>
   new Promise<IDBDatabase>((resolve, reject) => {
@@ -77,7 +86,7 @@ export const getRememberedSave = async (): Promise<RememberedSave | null> => {
   if (!canRememberSaveFiles()) return null;
   const saved = (await withStore<RememberedSave | undefined>("readonly", (store) => store.get(REMEMBERED_SAVE_KEY))) ?? null;
   if (!saved) return null;
-  if (!saved.name.toLowerCase().endsWith(".json")) {
+  if (!isSupportedSaveName(saved.name)) {
     await clearRememberedSave();
     return null;
   }
@@ -102,8 +111,10 @@ export const pickRememberedSave = async (): Promise<Omit<RememberedSave, "key"> 
     multiple: false,
     types: [
       {
-        description: "GM JSON backup files",
+        description: "GM save archives or legacy JSON backups",
         accept: {
+          "application/vnd.gm-economy-console.save+zip": [".gm-save.zip", ".gmarchive"],
+          "application/zip": [".zip"],
           "application/json": [".json"]
         }
       }

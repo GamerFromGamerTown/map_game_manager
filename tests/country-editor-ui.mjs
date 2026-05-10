@@ -58,11 +58,11 @@ try {
   assert.equal(await page.locator(".settlement-card").count(), 2);
   assert.equal(await page.locator(".settlement-card select option[value='calculated']").count(), 0);
   assert.equal(await page.locator(".derived-output").first().isVisible(), true);
-  assert.equal(await page.locator(".settlement-notes details").first().isVisible(), true);
+  assert.equal(await page.locator(".settlement-notes").count(), 0);
   await page.locator(".settlement-card").first().locator("select").first().selectOption("city");
   assert.equal(await page.locator(".upkeep-route-toggle").first().isVisible(), true);
   assert.equal(
-    await page.locator(".upkeep-route-toggle").first().getByRole("button", { name: "Aluminium", exact: true }).getAttribute("aria-pressed"),
+    await page.locator(".upkeep-route-toggle").first().getByRole("button", { name: "Aluminium parts", exact: true }).getAttribute("aria-pressed"),
     "true"
   );
 
@@ -87,6 +87,7 @@ try {
   await page.locator(".modal-footer").getByRole("button", { name: "Create", exact: true }).click();
   await page.locator(".factory-card").first().waitFor({ state: "visible" });
   assert.equal(await page.locator(".factory-card").count(), 1);
+  assert.equal(await page.locator(".factory-card .settlement-notes").count(), 0);
   const productionLayout = await page.evaluate(() => ({
     bodyScrollWidth: document.body.scrollWidth,
     viewportWidth: window.innerWidth

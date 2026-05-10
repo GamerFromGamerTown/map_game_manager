@@ -112,7 +112,7 @@ export function SettlementsTab({
                     onClick={() => updateSettlement(settlement.id, { upkeep_option: "A" })}
                     aria-pressed={(settlement.upkeep_option ?? "A") === "A"}
                   >
-                    Aluminium
+                    Aluminium parts
                   </button>
                   <button
                     type="button"
@@ -120,7 +120,7 @@ export function SettlementsTab({
                     onClick={() => updateSettlement(settlement.id, { upkeep_option: "B" })}
                     aria-pressed={settlement.upkeep_option === "B"}
                   >
-                    Iron
+                    Iron parts
                   </button>
                 </div>
               )}
@@ -136,12 +136,6 @@ export function SettlementsTab({
               >
                 <Trash2 size={16} />
               </button>
-            </div>
-            <div className="settlement-notes">
-              <details>
-                <summary>Notes</summary>
-                <input value={settlement.notes} onChange={(event) => updateSettlement(settlement.id, { notes: event.target.value })} />
-              </details>
             </div>
           </article>
         ))}

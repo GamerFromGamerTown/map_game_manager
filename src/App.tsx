@@ -14,7 +14,7 @@ import {
   setRememberedSave
 } from "./data/rememberedSave";
 import type { RememberedSave } from "./data/rememberedSave";
-import { loadGameStateFromFile } from "./data/saveFiles";
+import { loadGameSaveFromFile } from "./data/saveFiles";
 import { withUpdatedTurn } from "./data/turnTracking";
 import { Dashboard } from "./components/Dashboard";
 import { CountrySheet, CountryTab } from "./components/CountrySheet";
@@ -49,7 +49,6 @@ function App() {
   const [view, setView] = useState<View>("dashboard");
   const [selectedCountryId, setSelectedCountryId] = useState(state.countries[0]?.id ?? "");
   const [countryTab, setCountryTab] = useState<CountryTab>("Overview");
-  const [gmNotes, setGmNotes] = useState("");
   const [creatingCountry, setCreatingCountry] = useState(false);
   const [focusTargetId, setFocusTargetId] = useState("");
   const [rememberedSave, setRememberedSaveState] = useState<RememberedSave | null>(null);
@@ -79,11 +78,11 @@ function App() {
           return;
         }
 
-        const next = await loadGameStateFromFile(await saved.handle.getFile());
+        const loaded = await loadGameSaveFromFile(await saved.handle.getFile());
         if (cancelled) return;
-        setState(next);
+        setState(loaded.state);
         setHistory([]);
-        setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+        setRememberedSaveStatus(`Loaded remembered save: ${saved.name} (${loaded.formatLabel}).`);
       } catch (error) {
         if (!cancelled) {
           setRememberedSaveStatus(error instanceof Error ? error.message : "Could not load the remembered save file.");
@@ -195,8 +194,7 @@ function App() {
   };
 
   const commit = () => {
-    patchState((current) => commitTurn(current, previewNextTurn(current), gmNotes));
-    setGmNotes("");
+    patchState((current) => commitTurn(current, previewNextTurn(current), ""));
   };
 
   const loadRememberedSave = async (saved: RememberedSave, requestPermission: boolean) => {
@@ -209,8 +207,9 @@ function App() {
       return;
     }
 
-    setTrackedState(await loadGameStateFromFile(await saved.handle.getFile()));
-    setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+    const loaded = await loadGameSaveFromFile(await saved.handle.getFile());
+    setTrackedState(loaded.state);
+    setRememberedSaveStatus(`Loaded remembered save: ${saved.name} (${loaded.formatLabel}).`);
   };
 
   const rememberAndImportSave = async () => {
@@ -219,11 +218,22 @@ function App() {
       if (!picked) return;
 
       const saved: RememberedSave = { ...picked, key: "remembered-save" };
-      const next = await loadGameStateFromFile(await saved.handle.getFile());
-      await setRememberedSave(picked);
-      setRememberedSaveState(saved);
-      setTrackedState(next);
-      setRememberedSaveStatus(`Loaded remembered save: ${saved.name}`);
+      const loaded = await loadGameSaveFromFile(await saved.handle.getFile());
+      let rememberWarning = "";
+      try {
+        await setRememberedSave(picked);
+        setRememberedSaveState(saved);
+      } catch {
+        rememberWarning = "Warning: Could not remember this save handle; imported for this session only.";
+      }
+      setTrackedState(loaded.state);
+      setRememberedSaveStatus(
+        [
+          `Imported ${loaded.formatLabel}: ${saved.name}.`,
+          rememberWarning,
+          ...loaded.warnings.map((warning) => `Warning: ${warning}`)
+        ].filter(Boolean).join(" ")
+      );
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;
       setRememberedSaveStatus(error instanceof Error ? error.message : "Could not remember and import that save file.");
@@ -311,10 +321,6 @@ function App() {
           </div>
           <button className="primary commit-button" onClick={commit}><Save size={16} /> Commit Turn</button>
         </header>
-
-        <section className="gm-notes-line">
-          <input value={gmNotes} onChange={(event) => setGmNotes(event.target.value)} placeholder="GM notes for next commit" />
-        </section>
 
         {view === "dashboard" && (
           <Dashboard

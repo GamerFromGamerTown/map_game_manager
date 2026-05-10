@@ -75,8 +75,7 @@ const rulingPartyFieldKeys: Array<keyof RulingPartyRuleItem> = [
   "stability_per_council_player",
   "minimum_players_required",
   "fallback_party_when_below_minimum",
-  "fallback_stability_when_below_minimum",
-  "notes"
+  "fallback_stability_when_below_minimum"
 ];
 
 export function RulesEditor({

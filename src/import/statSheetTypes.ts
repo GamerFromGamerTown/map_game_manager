@@ -58,6 +58,8 @@ export interface ParsedStatSheetPolicy {
 export interface ParsedStatSheetRelation {
   relation_type: string;
   counterpart_name: string;
+  lineNumber?: number;
+  sourceLine?: string;
 }
 
 export interface ParsedStatSheetTrade {
@@ -66,6 +68,8 @@ export interface ParsedStatSheetTrade {
   resource_type: TradableType;
   amount_per_turn: number;
   notes?: string;
+  lineNumber?: number;
+  sourceLine?: string;
 }
 
 export interface ParsedStatSheet {

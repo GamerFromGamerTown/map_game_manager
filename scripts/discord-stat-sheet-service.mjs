@@ -11,7 +11,6 @@ const DISCORD_API_BASE = "https://discord.com/api/v10";
 const REQUEST_DELAY_MS = 1250;
 const MESSAGE_PAGE_LIMIT = String(Math.max(1, Math.min(100, Number(process.env.DISCORD_MESSAGE_LIMIT ?? 100))));
 const SECRET_IMPORTER_PATH = path.resolve("secrets_importer.sh");
-const ALIAS_MAP_PATH = process.env.DISCORD_STAT_SHEET_ALIAS_MAP?.trim();
 
 export const ALLOWED_THREAD_URLS = [
   "https://discord.com/channels/1131858833438937130/1498805743766474973/threads/1499127265177501890",
@@ -116,7 +115,7 @@ const normalizeAliasMap = (value) => {
 
 const loadCountryAliases = async (explicitAliases) => {
   if (Array.isArray(explicitAliases)) return normalizeAliasMap(explicitAliases);
-  const aliasMapPath = typeof explicitAliases === "string" && explicitAliases.trim() ? explicitAliases.trim() : ALIAS_MAP_PATH;
+  const aliasMapPath = typeof explicitAliases === "string" && explicitAliases.trim() ? explicitAliases.trim() : "";
   if (!aliasMapPath) return [];
   const text = await readFile(path.resolve(aliasMapPath), "utf8");
   return normalizeAliasMap(JSON.parse(text));
